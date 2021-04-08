@@ -1,0 +1,9 @@
+@RHOST.desc(Target)
+
+@IFACE.recommend_cmd()
+
+@WORDLIST.desc(wordlist is in /usr/share/wordlists/ ?)
+
+@USER.desc(Username)
+
+@PWD.desc(Password)
