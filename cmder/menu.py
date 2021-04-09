@@ -11,18 +11,23 @@ if not is_windows():
 
 def menu_select_file(path):
     """用于递归做文件的选择"""
-    list_file = os.listdir(path)
+
     menu_list = []
     back_title = '(Back)'
 
-    for f in list_file:
-        f_path = os.path.join(path, f)
-        if os.path.isdir(f_path):
-            if not is_empty_dir(f_path):
-                menu_list.append(f)
+    for p in cmder.unit.get_path_list(path):  # 软件与用户目录的两次循环
+        for f in os.listdir(p):  # 取目录下的文件名
+            f_path = os.path.join(p, f)
+            if os.path.isdir(f_path):  # 如果是目录
+                if is_empty_dir(f_path):  # 并且目录内不为空
+                    continue
 
-        else:
-            menu_list.append(f)
+                if f not in menu_list:  # 并且菜单列表中没有文件名称
+                    menu_list.append(f)  # 则添加
+
+            else:
+                if f not in menu_list:
+                    menu_list.append(f)
 
     # 美化，并呼出菜单
     b_list = beautify_list(filter_files(menu_list))
@@ -36,10 +41,10 @@ def menu_select_file(path):
     if select == back_title:
         back_path = os.path.split(path)[0]
         if len(back_path) < len(cmder.db_path):
-            back_path = path
+            back_path = cmder.db_path
         return menu_select_file(back_path)
 
-    select_path = os.path.join(path, select)
+    select_path = cmder.unit.get_select_path(path, select)
     if os.path.isdir(select_path):
         return menu_select_file(select_path)
 
@@ -49,11 +54,10 @@ def menu_select_file(path):
 
 def is_empty_dir(path):
     """判断目录是否为空"""
-    files = os.listdir(path)
-    if not filter_files(files):
-        return True
+    if os.listdir(path):
+        return False
 
-    return False
+    return True
 
 
 def filter_files(files):

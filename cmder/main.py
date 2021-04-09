@@ -132,10 +132,9 @@ def workspace(args):
 
 def parse_files(select_file_path):
     """解析选择的文件"""
-    init_list = cmder.unit.db_recursion_init_file(select_file_path)
-    init_list.append(select_file_path)
+    file_list = cmder.unit.db_recursion_file(select_file_path)
     parse = Parse()
-    parse.parse_files(init_list)
+    parse.parse_files(file_list)
     return parse
 
 

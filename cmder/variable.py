@@ -41,15 +41,19 @@ class Variable:
     def set(self, info: dict):
         """info = {"func": function, "value": value}"""
         if info["func"] == "desc":
-            self.desc = info["value"]
+            if info["value"]:
+                self.desc = info["value"]
         elif info["func"] == "refresh":
             self.refresh()
         elif info["func"] == "recommend":
-            self.append_recomm(info["value"])
+            if info["value"]:
+                self.append_recomm(info["value"])
         elif info["func"] == "recommend_cmd":
-            self.append_recomm_cmd(info["value"])
+            if info["value"]:
+                self.append_recomm_cmd(info["value"])
         elif info["func"] == "if_has":
-            self.if_has = info["value"]
+            if info["value"]:
+                self.if_has = info["value"]
 
     def merge(self, other_var):
         if not self.desc:
