@@ -53,7 +53,10 @@ def menu(args):
     """默认情况下呼出菜单, 并存储选择的文件"""
     try:
         select_file_path = menu_select_file(cmder.db_path)
-    except:
+    except TypeError:
+        exit()
+    except Exception as e:
+        print(f"[-] {repr(e)}")
         exit()
     cmder.conf.latest_select = select_file_path
     parse = parse_files(select_file_path)
@@ -153,6 +156,6 @@ def merge_varlist(cmd, parse):
         _ = {"name": key, "func": "recommend", "value": val}
         custom_varlist.set(_)
 
-    parse.g_varlist.merge(config_varlist)
-    parse.g_varlist.merge(custom_varlist)
     cmd.merge_var(parse.g_varlist)
+    cmd.merge_var(config_varlist)
+    cmd.merge_var(custom_varlist)

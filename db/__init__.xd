@@ -1,6 +1,6 @@
 @RHOST.desc(Target)
 
-@IFACE.recommend_cmd()
+@LHOST.recommend_cmd()
 
 @WORDLIST.desc(wordlist is in /usr/share/wordlists/ ?)
 

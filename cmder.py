@@ -5,3 +5,6 @@ try:
     args.func(args)
 except ValueError as e:
     print("[-] " + repr(e))
+
+except TypeError as e:
+    exit()

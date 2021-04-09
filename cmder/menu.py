@@ -16,6 +16,9 @@ def menu_select_file(path):
     back_title = '(Back)'
 
     for p in cmder.unit.get_path_list(path):  # 软件与用户目录的两次循环
+        if not os.path.exists(p):
+            continue
+
         for f in os.listdir(p):  # 取目录下的文件名
             f_path = os.path.join(p, f)
             if os.path.isdir(f_path):  # 如果是目录
@@ -28,6 +31,9 @@ def menu_select_file(path):
             else:
                 if f not in menu_list:
                     menu_list.append(f)
+
+    # 排序
+    menu_list = sorted(menu_list, key=str2int)
 
     # 美化，并呼出菜单
     b_list = beautify_list(filter_files(menu_list))
@@ -50,6 +56,17 @@ def menu_select_file(path):
 
     elif os.path.isfile(select_path):
         return select_path
+
+
+def tryint(s):
+    try:
+        return int(s)
+    except:
+        return s
+
+
+def str2int(v_str):
+    return [tryint(s) for s in v_str.split("_", 2)]
 
 
 def is_empty_dir(path):

@@ -131,6 +131,7 @@ class VariableList:
         var.set(info)
 
     def merge(self, other_varlist):
+        """合并，当原来的列表中有相应的变量才会合并"""
         for key, var in self.list.items():
             if not other_varlist.has_key(key):
                 continue

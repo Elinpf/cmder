@@ -16,7 +16,7 @@ def generate_custom_file_path():
         os.makedirs(custom_cmder_path)
 
     custom_db_path = os.path.join(custom_cmder_path, 'db')
-    if not os.path.exists(custom_cmder_path):
+    if not os.path.exists(custom_db_path):
         os.makedirs(custom_db_path)
 
     return custom_cmder_path

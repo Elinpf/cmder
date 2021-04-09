@@ -37,7 +37,9 @@ cmd文件已空行为域分隔，如果开头不是已`#`和`@`开头，则认�
 现有的变量：
 
    - RHOST
-   - IFACE
-   - WORDLIST
+   - RPORT
+   - LHOST
+   - LPORT
    - USER
    - PWD
+   - WORDLIST
