@@ -14,8 +14,12 @@ class Command():
     def __repr__(self):
         return "<cmd:" + self.cmd[0] + ">"
 
-    def to_shell(self):
-        str = '; '.join(self.cmd)
+    def to_shell(self, one_line=False):
+        if one_line:
+            str = ";".join(self.cmd)
+        else:
+            str = "\n".join(self.cmd)
+
         for key, val in self.vars.key_with_var():
             str = str.replace("#{"+key+"}", val.select)
 

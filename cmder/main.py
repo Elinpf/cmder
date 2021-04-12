@@ -31,6 +31,8 @@ def get_options():
     parser_use = subparsers.add_parser('use', help='use command')
     parser_use.add_argument(
         'index', type=int, help='index of the lastest list')
+    parser_use.add_argument(
+        '-l', '--one_line', action='store_true', help='output shell in one line')
     parser_use.set_defaults(func=use)
 
     parser_workspace = subparsers.add_parser(
@@ -90,7 +92,10 @@ def use(args):
     merge_varlist(cmd, parse)
 
     menu_select_cmd_var(cmd)
-    shell = cmd.to_shell()
+    if args.one_line:
+        shell = cmd.to_shell(one_line=True)
+    else:
+        shell = cmd.to_shell()
 
     print()
     print(shell)

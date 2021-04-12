@@ -44,7 +44,10 @@ class Parse():
         cmd = None
         for line in area:  # first loop to find cmd
             if line[0] != '#' and line[0] != '@':
-                cmd = Command(line)
+                if cmd:
+                    cmd.add_cmd(line)
+                else:
+                    cmd = Command(line)
 
         if cmd:
             self.cmdlist.append(self._parse_cmd_area(cmd, area))
