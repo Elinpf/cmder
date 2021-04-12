@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from cmder.unit import is_windows
+from src.unit import is_windows
 
 if not is_windows():
     from colorama import Fore, Style

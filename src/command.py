@@ -1,6 +1,6 @@
 import re
 
-from cmder.variable import VariableList
+from src.variable import VariableList
 
 
 class Command():

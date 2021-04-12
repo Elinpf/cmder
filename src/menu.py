@@ -1,8 +1,8 @@
 import os
 import re
 
-import cmder
-from cmder.unit import is_windows
+import src
+from src.unit import is_windows
 
 if not is_windows():
     from colorama import Fore, Style
@@ -15,7 +15,7 @@ def menu_select_file(path):
     menu_list = []
     back_title = '(Back)'
 
-    for p in cmder.unit.get_path_list(path):  # 软件与用户目录的两次循环
+    for p in src.unit.get_path_list(path):  # 软件与用户目录的两次循环
         if not os.path.exists(p):
             continue
 
@@ -46,11 +46,11 @@ def menu_select_file(path):
     # 递归菜单
     if select == back_title:
         back_path = os.path.split(path)[0]
-        if len(back_path) < len(cmder.db_path):
-            back_path = cmder.db_path
+        if len(back_path) < len(src.db_path):
+            back_path = src.db_path
         return menu_select_file(back_path)
 
-    select_path = cmder.unit.get_select_path(path, select)
+    select_path = src.unit.get_select_path(path, select)
     if os.path.isdir(select_path):
         return menu_select_file(select_path)
 
@@ -153,7 +153,7 @@ def menu_select_cmd_var(cmd):
             title = var.name
 
         select = menu_with_custom_choice(title, list)
-        cmder.conf.workspace_set_custom_input(var.name, select)
+        src.conf.workspace_set_custom_input(var.name, select)
         var.select = select
 
 

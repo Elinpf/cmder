@@ -1,7 +1,7 @@
 import os
 import sys
 import platform
-import cmder
+import src
 
 
 def get_root_path():
@@ -28,8 +28,8 @@ def db_recursion_file(file_path):
     else:
         path_split_list = relate_path.split('/')
 
-    p = cmder.root_path
-    c = cmder.custom_file_path  # 用户文件夹
+    p = src.root_path
+    c = src.custom_file_path  # 用户文件夹
     list = []
     for i in path_split_list:
         p = os.path.join(p, i)
@@ -59,16 +59,16 @@ def get_select_path(path, select):
 
 def get_relate_path(path):
     """获取相对路径"""
-    relate_path = path.replace(cmder.root_path, '')
-    relate_path = relate_path.replace(cmder.custom_file_path, '')
+    relate_path = path.replace(src.root_path, '')
+    relate_path = relate_path.replace(src.custom_file_path, '')
     return relate_path[1:]
 
 
 def get_path_list(path):
     """取软件目录与用户目录的list"""
     relate_path = get_relate_path(path)
-    root_path = os.path.join(cmder.root_path, relate_path)
-    custom_path = os.path.join(cmder.custom_file_path, relate_path)
+    root_path = os.path.join(src.root_path, relate_path)
+    custom_path = os.path.join(src.custom_file_path, relate_path)
     return [root_path, custom_path]
 
 
@@ -89,4 +89,4 @@ def open_custom_file(file_relate_path, mode):
 
 def custom_abspath(file_relate_path):
     """返回用户目录绝对路径"""
-    return os.path.join(cmder.custom_file_path, file_relate_path)
+    return os.path.join(src.custom_file_path, file_relate_path)

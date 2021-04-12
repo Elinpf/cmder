@@ -1,9 +1,9 @@
-from cmder.menu import menu_select_file, menu_select_cmd_var
+from src.menu import menu_select_file, menu_select_cmd_var
 import argparse
-import cmder
-from cmder.parse import Parse
-from cmder.output import print_cmds
-from cmder.variable import VariableList
+import src
+from src.parse import Parse
+from src.output import print_cmds
+from src.variable import VariableList
 
 
 def get_options():
@@ -54,13 +54,13 @@ def get_options():
 def menu(args):
     """默认情况下呼出菜单, 并存储选择的文件"""
     try:
-        select_file_path = menu_select_file(cmder.db_path)
+        select_file_path = menu_select_file(src.db_path)
     except TypeError:
         exit()
     except Exception as e:
         print(f"[-] {repr(e)}")
         exit()
-    cmder.conf.latest_select = select_file_path
+    src.conf.latest_select = select_file_path
     parse = parse_files(select_file_path)
     print_cmds(parse.cmdlist)
 
@@ -72,16 +72,16 @@ def search(args):
 
 def show(args):
     """浏览最近一次的命令列表"""
-    if not cmder.conf.latest_select:
+    if not src.conf.latest_select:
         return
 
-    parse = parse_files(cmder.conf.latest_select)
+    parse = parse_files(src.conf.latest_select)
     print_cmds(parse.cmdlist)
 
 
 def use(args):
     """使用命令, 并存储到历史记录中"""
-    parse = parse_files(cmder.conf.latest_select)
+    parse = parse_files(src.conf.latest_select)
 
     try:
         cmd = parse.cmdlist[args.index - 1]
@@ -105,31 +105,31 @@ def info(args):
 
 def workspace(args):
     if args.new:
-        cmder.conf.add_workspace(args.new)
+        src.conf.add_workspace(args.new)
 
     elif args.delete:
-        cmder.conf.del_workspace(args.delete)
+        src.conf.del_workspace(args.delete)
 
     elif args.set:
         key, val = args.set.split('=', 2)
-        cmder.conf.workspace_set_var(key, val)
+        src.conf.workspace_set_var(key, val)
 
     elif args.get:
         if args.get == 'all':
-            for key in cmder.conf.workspace_get_var_keys():
-                val = cmder.conf.workspace_get_var(key)
+            for key in src.conf.workspace_get_var_keys():
+                val = src.conf.workspace_get_var(key)
                 print(f"{key}={val}")
             return
 
-        val = cmder.conf.workspace_get_var(args.get)
+        val = src.conf.workspace_get_var(args.get)
         print(f"{args.get}={val}")
 
     elif args.change:
-        cmder.conf.workspace_change(args.change)
+        src.conf.workspace_change(args.change)
 
     else:
-        now = cmder.conf.workspace_now()
-        for name in cmder.conf.workspaces_name():
+        now = src.conf.workspace_now()
+        for name in src.conf.workspaces_name():
             if name == now:
                 print(f" * {name}")
             else:
@@ -138,7 +138,7 @@ def workspace(args):
 
 def parse_files(select_file_path):
     """解析选择的文件"""
-    file_list = cmder.unit.db_recursion_file(select_file_path)
+    file_list = src.unit.db_recursion_file(select_file_path)
     parse = Parse()
     parse.parse_files(file_list)
     return parse
@@ -149,12 +149,12 @@ def merge_varlist(cmd, parse):
     config_varlist = VariableList()
     custom_varlist = VariableList()
 
-    for key, val in cmder.conf.workspace_var_key_with_val():
+    for key, val in src.conf.workspace_var_key_with_val():
         config_varlist.append(key)
         _ = {"name": key, "func": "recommend", "value": val}
         config_varlist.set(_)
 
-    for key, val in cmder.conf.workspace_custom_key_with_val():
+    for key, val in src.conf.workspace_custom_key_with_val():
         custom_varlist.append(key)
         _ = {"name": key, "func": "recommend", "value": val}
         custom_varlist.set(_)
