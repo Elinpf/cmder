@@ -92,10 +92,8 @@ def use(args):
     merge_varlist(cmd, parse)
 
     menu_select_cmd_var(cmd)
-    if args.one_line:
-        shell = cmd.to_shell(one_line=True)
-    else:
-        shell = cmd.to_shell()
+
+    shell = cmd.to_shell(one_line=args.one_line)
 
     print()
     print(shell)

