@@ -1,0 +1,2 @@
+colorama
+simple_term_menu
