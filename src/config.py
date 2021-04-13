@@ -35,9 +35,14 @@ class Config():
                     'custom_input': {}
                 }
             },
-            'latest_select': ''
+            'latest_select': '',
+            'extend_dir': ['.git']
         }
         self.save()
+
+    @property
+    def extend_dir(self):
+        return self.conf['extend_dir']
 
     def add_workspace(self, name):
         """添加工作区"""
