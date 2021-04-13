@@ -1,6 +1,6 @@
 import os
 import json
-import cmder
+import src
 
 
 class Config():
@@ -12,7 +12,7 @@ class Config():
 
     def load(self, config_path):
         """加载配置文件, 如果没有则创建"""
-        self.config_abspath = cmder.unit.custom_abspath(config_path)
+        self.config_abspath = src.unit.custom_abspath(config_path)
         if os.path.exists(self.config_abspath):
             json_str = open(self.config_abspath, 'r').read()
             self.conf = json.loads(json_str)
@@ -35,9 +35,14 @@ class Config():
                     'custom_input': {}
                 }
             },
-            'latest_select': ''
+            'latest_select': '',
+            'extend_dir': ['.git']
         }
         self.save()
+
+    @property
+    def extend_dir(self):
+        return self.conf['extend_dir']
 
     def add_workspace(self, name):
         """添加工作区"""

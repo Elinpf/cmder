@@ -1,5 +1,5 @@
-from cmder.variable import VariableList
-from cmder.command import Command, CommandList
+from src.variable import VariableList
+from src.command import Command, CommandList
 
 import re
 

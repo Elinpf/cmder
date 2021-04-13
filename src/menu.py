@@ -1,8 +1,8 @@
 import os
 import re
 
-import cmder
-from cmder.unit import is_windows
+import src
+from src.unit import is_windows
 
 if not is_windows():
     from colorama import Fore, Style
@@ -15,13 +15,16 @@ def menu_select_file(path):
     menu_list = []
     back_title = '(Back)'
 
-    for p in cmder.unit.get_path_list(path):  # 软件与用户目录的两次循环
+    for p in src.unit.get_path_list(path):  # 软件与用户目录的两次循环
         if not os.path.exists(p):
             continue
 
         for f in os.listdir(p):  # 取目录下的文件名
             f_path = os.path.join(p, f)
             if os.path.isdir(f_path):  # 如果是目录
+                if f in src.conf.extend_dir:
+                    continue
+
                 if is_empty_dir(f_path):  # 并且目录内不为空
                     continue
 
@@ -30,7 +33,8 @@ def menu_select_file(path):
 
             else:
                 if f not in menu_list:
-                    menu_list.append(f)
+                    if os.path.splitext(f)[1] == '.xd':  # 后缀为.xd的
+                        menu_list.append(f)
 
     # 排序
     menu_list = sorted(menu_list, key=str2int)
@@ -46,11 +50,11 @@ def menu_select_file(path):
     # 递归菜单
     if select == back_title:
         back_path = os.path.split(path)[0]
-        if len(back_path) < len(cmder.db_path):
-            back_path = cmder.db_path
+        if len(back_path) < len(src.db_path):
+            back_path = src.db_path
         return menu_select_file(back_path)
 
-    select_path = cmder.unit.get_select_path(path, select)
+    select_path = src.unit.get_select_path(path, select)
     if os.path.isdir(select_path):
         return menu_select_file(select_path)
 
@@ -79,11 +83,10 @@ def is_empty_dir(path):
 
 def filter_files(files):
     """过滤文件"""
-    filter = ["__init__.xd", "readme.md"]
+    init = "__init__.xd"
 
-    for x in filter:
-        if x in files:
-            files.remove(x)
+    if init in files:
+        files.remove(init)
 
     return files
 
@@ -153,7 +156,7 @@ def menu_select_cmd_var(cmd):
             title = var.name
 
         select = menu_with_custom_choice(title, list)
-        cmder.conf.workspace_set_custom_input(var.name, select)
+        src.conf.workspace_set_custom_input(var.name, select)
         var.select = select
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Author: Elin
 
-from cmder.main import get_options
+from src.main import get_options
 
 args = get_options()
 try:

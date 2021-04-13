@@ -1,6 +1,6 @@
 import os
-import cmder.unit as unit
-from cmder.config import Config
+import src.unit as unit
+from src.config import Config
 
 
 root_path = unit.get_root_path()
