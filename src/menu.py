@@ -22,6 +22,9 @@ def menu_select_file(path):
         for f in os.listdir(p):  # 取目录下的文件名
             f_path = os.path.join(p, f)
             if os.path.isdir(f_path):  # 如果是目录
+                if f in src.conf.extend_dir:
+                    continue
+
                 if is_empty_dir(f_path):  # 并且目录内不为空
                     continue
 
@@ -30,7 +33,8 @@ def menu_select_file(path):
 
             else:
                 if f not in menu_list:
-                    menu_list.append(f)
+                    if os.path.splitext(f)[1] == '.xd':  # 后缀为.xd的
+                        menu_list.append(f)
 
     # 排序
     menu_list = sorted(menu_list, key=str2int)
@@ -79,11 +83,10 @@ def is_empty_dir(path):
 
 def filter_files(files):
     """过滤文件"""
-    filter = ["__init__.xd", "readme.md"]
+    init = "__init__.xd"
 
-    for x in filter:
-        if x in files:
-            files.remove(x)
+    if init in files:
+        files.remove(init)
 
     return files
 
