@@ -1,15 +1,16 @@
 import os
-import sys
 import platform
 import src
 
 
 def get_root_path():
-    return os.path.split(os.path.abspath(sys.argv[0]))[0]
+    _ = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
+    return _
+    # return os.path.split(os.path.abspath(sys.argv[0]))[0]
 
 
 def get_db_path():
-    return os.path.join(get_root_path(), 'db')
+    return os.path.join(src.root_path, 'db')
 
 
 def is_windows():
