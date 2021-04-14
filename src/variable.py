@@ -63,8 +63,11 @@ class Variable:
             self.if_has = other_var.if_has
 
         if not self.refresh_tag:
-            self.recomm += other_var.recomm
-            self.recomm_cmd += other_var.recomm_cmd
+            for o in other_var.recomm:
+                if o not in self.recomm:
+                    self.recomm.append(o)
+
+                # self.recomm_cmd += other_var.recomm_cmd
 
     @property
     def select(self):
