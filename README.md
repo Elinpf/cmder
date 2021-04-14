@@ -13,6 +13,7 @@
 # 安装方法
 
 ```
+git clone https://github.com/Elinpf/cmder
 cd cmder
 python3 setup.py install --user
 ```
@@ -42,7 +43,7 @@ optional arguments:
 
 运行后会创建`~/.cmder`目录，其中`db`是用户可以自定义添加的命令文件，可以自行添加目录或者按照软件中的目录路径添加命令文件。
 
-命令文件语法请参考[这里]()。
+命令文件语法请参考[这里](https://github.com/Elinpf/cmder/blob/master/db/readme.md)。
 
 # 灵感来源与命令来源
 
