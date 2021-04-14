@@ -1,0 +1,34 @@
+# refer: https://book.hacktricks.xyz/shells/shells/full-ttys
+
+# Spawn Shell
+
+python -c 'import pty; pty.spawn("/bin/sh")'
+
+echo os.system('/bin/bash')
+
+/bin/sh -i
+
+script -qc /bin/bash /dev/null
+
+perl -e 'exec "/bin/sh";'
+
+# desc: Perl
+exec "/bin/sh";
+
+# desc: Ruby
+exec "/bin/sh"
+
+# desc: lua
+os.execute('/bin/sh')
+
+# desc: IRB 
+exec "/bin/sh"
+
+# desc: vi
+:!bash
+
+# desc: vi
+:set shell=/bin/bash:shell
+
+# desc: nmap
+!sh

