@@ -29,7 +29,7 @@ class Parse():
         fi = open(file_path, 'r', encoding='UTF-8')
 
         for line in fi.readlines():
-            line = line.strip()
+            line = line.rstrip()
             if line == '':
                 if len(new_area):
                     self._parse_area(new_area)
@@ -45,7 +45,7 @@ class Parse():
         """分析区域"""
         cmd = None
         for line in area:  # first loop to find cmd
-            if line[0] != '#' and line[0] != '@':
+            if line.strip()[0] != '#' and line.strip()[0] != '@':
                 if cmd:
                     cmd.add_cmd(line)
                 else:
