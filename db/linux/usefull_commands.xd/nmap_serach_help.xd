@@ -1,0 +1,9 @@
+# refer: https://book.hacktricks.xyz/linux-unix/useful-linux-commands#nmap-search-help
+
+# Nmap scripts ((default or version) and smb))
+nmap --script-help "(default or version) and *#{module}*"
+
+locate -r '\.nse$' | xargs grep categories | grep 'default\|version\|safe' | grep #{module}
+
+@module.desc(want to search name)
+@module.recommend(smb)

