@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
-from src.unit import is_windows
+from src import conf
 
-if not is_windows():
-    from colorama import Fore, Style
+from colorama import Fore, Style
 
 
 def print_cmd(index, cmd):
@@ -17,12 +16,8 @@ def print_cmd(index, cmd):
     if cmd.desc:
         desc = cmd.desc + " "
 
-    if is_windows():
-        print(index + " "*pad_index + desc + cmd.cmd[0])
-
-    else:
-        print(Fore.BLUE + Style.BRIGHT + index +
-              " "*pad_index + desc + Fore.RESET + cmd.cmd[0])
+    print(Fore.BLUE + Style.BRIGHT + index +
+          " "*pad_index + desc + Style.RESET_ALL + cmd.cmd[0])
 
     for cmd in cmd.cmd[1:]:
         print(" "*pad + cmd)
@@ -35,3 +30,31 @@ def print_cmds(cmdlist):
     for cmd in cmdlist:
         print_cmd(idx, cmd)
         idx += 1
+
+
+def print_info(cmd):
+    print("PATH: " + conf.latest_select)
+    for note in cmd.notes:
+        print(f'# {note}')
+
+    print()
+
+    print(Fore.BLUE + Style.BRIGHT + cmd.desc + Style.RESET_ALL)
+
+    for c in cmd.cmd:
+        print(Style.BRIGHT + c + Style.RESET_ALL)
+
+    if cmd.vars:
+        print()
+        print(Fore.BLUE + Style.BRIGHT + 'Variable List:' +
+              Style.RESET_ALL)
+        for v in cmd.vars.list:
+            desc = cmd.vars.list[v].desc
+            if desc:
+                print("  %s: %s" % (v, desc))
+            else:
+                print(f"  {v}")
+
+    print()
+    for r in cmd.refer:
+        print(f'refer: {r}')

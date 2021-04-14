@@ -139,3 +139,6 @@ class VariableList:
             var.merge(other_varlist[key])
 
         return self.list
+
+    def __bool__(self):
+        return bool(self.list)

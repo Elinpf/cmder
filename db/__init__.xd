@@ -1,6 +1,10 @@
-@RHOST.desc(Target)
+@RHOST.desc(Remote Host)
 
-@LHOST.recommend_cmd()
+@RPORT.desc(Remote Port)
+
+@LHOST.desc(Local Host)
+
+@LPORT.desc(Local Port)
 
 @WORDLIST.desc(wordlist is in /usr/share/wordlists/ ?)
 

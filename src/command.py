@@ -37,6 +37,15 @@ class Command():
     def merge_var(self, g_varlist):
         return self.vars.merge(g_varlist)
 
+    def merge_notes(self, notes):
+        # 合并的notes放在前面
+        self.notes = notes + self.notes
+        return self.notes
+
+    def merge_refers(self, refers):
+        self.refer = refers + self.refer
+        return self.refer
+
     def parse(self):
         """在添加完了命令后使用, 分析里面的变量"""
         var_list = []

@@ -1,8 +1,9 @@
+from colorama import Style
 from src.menu import menu_select_file, menu_select_cmd_var
 import argparse
 import src
 from src.parse import Parse
-from src.output import print_cmds
+from src.output import print_cmds, print_info
 from src.variable import VariableList
 
 
@@ -96,11 +97,23 @@ def use(args):
     shell = cmd.to_shell(one_line=args.one_line)
 
     print()
-    print(shell)
+    print(Style.BRIGHT + shell + Style.RESET_ALL)
 
 
 def info(args):
-    print(f'this is info: {args.index}')
+    """使用命令, 并存储到历史记录中"""
+    parse = parse_files(src.conf.latest_select)
+
+    try:
+        cmd = parse.cmdlist[args.index - 1]
+    except:
+        print("[-] Error input of index")
+        exit()
+
+    merge_varlist(cmd, parse)
+    cmd.merge_notes(parse.notes)
+    cmd.merge_refers(parse.refers)
+    print_info(cmd)
 
 
 def workspace(args):

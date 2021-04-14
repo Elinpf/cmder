@@ -1,13 +1,12 @@
 # refer:https://book.hacktricks.xyz/shells/shells/untitled
-# refer:https://github.com/ShutdownRepo/shellerator
 
 
 # Common params when creating a shellcode
-# desc: Common params
+# desc: Recommend params
 -b "\x00\x0a\x0d" -f c -e x86/shikata_ga_nai -i 5 EXITFUNC=thread PrependSetuid=True
 
 
-@params.desc(Common params)
+@params.desc(Encode recommend params)
 @params.recommend(-b "\x00\x0a\x0d" -f c -e x86/shikata_ga_nai -i 5 EXITFUNC=thread PrependSetuid=True)
 
 

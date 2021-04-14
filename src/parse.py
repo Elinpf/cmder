@@ -11,6 +11,8 @@ class Parse():
         self.file_path = None
         self.g_varlist = VariableList()
         self.cmdlist = CommandList()
+        self.notes = []
+        self.refers = []
 
     def parse_file(self, file_path):
         """设置解析的文件"""
@@ -24,7 +26,7 @@ class Parse():
     def _split_area(self, file_path):
         """已空行为界线进行分割区域"""
         new_area = []
-        fi = open(file_path, 'r')
+        fi = open(file_path, 'r', encoding='UTF-8')
 
         for line in fi.readlines():
             line = line.strip()
@@ -97,3 +99,9 @@ class Parse():
                     exit()
 
                 self.g_varlist.set(info)
+
+            if line[0] == '#':
+                if re.match(r"^#\s*refer\s*:", line):
+                    self.refers.append(line.split(':', 1)[1].strip())
+                else:
+                    self.notes.append(line[1:].strip())

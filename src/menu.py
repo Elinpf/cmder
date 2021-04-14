@@ -138,10 +138,13 @@ def menu_windows(title, menu_list):
 def input_custom(title):
     """自定义输入，并且保存到config中"""
     print(f'(custom) {title}')
-    if is_windows():
-        selection = input('>> ')
-    else:
-        selection = input(Fore.RED + Style.BRIGHT + '> ' + Style.RESET_ALL)
+    try:
+        if is_windows():
+            selection = input('>> ')
+        else:
+            selection = input(Fore.RED + Style.BRIGHT + '> ' + Style.RESET_ALL)
+    except InterruptedError:
+        exit()
 
     return selection
 
