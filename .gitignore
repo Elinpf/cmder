@@ -1,0 +1,6 @@
+src/__pycache__/*
+.vscode/*
+build/*
+cmder.egg-info/*
+dist/*
+*.pyc
