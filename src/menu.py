@@ -140,7 +140,7 @@ def input_custom(title):
     print(f'(custom) {title}')
     try:
         selection = input(Fore.RED + Style.BRIGHT + '> ' + Style.RESET_ALL)
-    except InterruptedError:
+    except (InterruptedError, KeyboardInterrupt):
         exit()
 
     return selection
