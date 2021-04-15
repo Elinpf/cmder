@@ -3,9 +3,9 @@ import re
 
 import src
 from src.unit import is_windows
+from colorama import Fore, Style
 
 if not is_windows():
-    from colorama import Fore, Style
     from simple_term_menu import TerminalMenu
 
 
@@ -139,10 +139,7 @@ def input_custom(title):
     """自定义输入，并且保存到config中"""
     print(f'(custom) {title}')
     try:
-        if is_windows():
-            selection = input('>> ')
-        else:
-            selection = input(Fore.RED + Style.BRIGHT + '> ' + Style.RESET_ALL)
+        selection = input(Fore.RED + Style.BRIGHT + '> ' + Style.RESET_ALL)
     except InterruptedError:
         exit()
 
