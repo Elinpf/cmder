@@ -17,6 +17,10 @@ def is_windows():
     return platform.system() == 'Windows'
 
 
+def is_linux():
+    return platform.system() == 'Linux'
+
+
 def db_recursion_file(file_path):
     """用于对指定的文件递归查询所有存在的__init__.xd文件,
     以及用户目录下自定义的文件
@@ -91,3 +95,12 @@ def open_custom_file(file_relate_path, mode):
 def custom_abspath(file_relate_path):
     """返回用户目录绝对路径"""
     return os.path.join(src.custom_file_path, file_relate_path)
+
+
+def escap_chars(string: str):
+    """转义一些字符"""
+    if is_linux():
+        string = string.replace('\\', '\\\\')
+        string = string.replace('!', '\!')
+
+    return string

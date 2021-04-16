@@ -156,12 +156,8 @@ def use(args):
         print()
         print(f"file output to {args.output}")
 
-    if args.run:
-        os.system(shell)
-
-    history_file = os.path.join(src.custom_file_path, 'history')
-
     # 写入history 并当超过长度长度时删除首行
+    history_file = os.path.join(src.custom_file_path, 'history')
     with open(history_file, "a+") as f:
         f.seek(0)
         d = f.readlines()
@@ -173,6 +169,10 @@ def use(args):
             f.truncate()
         else:
             f.write(shell + "\n")
+
+    if args.run:
+        shell = src.unit.escap_char(shell)
+        os.system(shell)
 
 
 def info(args):
