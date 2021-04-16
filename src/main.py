@@ -171,7 +171,7 @@ def use(args):
             f.write(shell + "\n")
 
     if args.run:
-        shell = src.unit.escap_char(shell)
+        shell = src.unit.escap_chars(shell)
         os.system(shell)
 
 
