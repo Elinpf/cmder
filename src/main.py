@@ -1,3 +1,5 @@
+import os
+
 from colorama import Style
 from src.menu import menu_select_file, menu_select_cmd_var
 import argparse
@@ -23,6 +25,14 @@ def get_options():
         'tool_name', type=str, metavar='string', help='tool name')
     parser_search.set_defaults(func=search)
 
+    parser_history = subparsers.add_parser(
+        'history', help='Get history')
+    parser_history.add_argument(
+        '-u', '--use', metavar='NUM', type=int, help='use the history cmd')
+    parser_history.add_argument(
+        '--size', metavar='NUM', type=int, help='set history size')
+    parser_history.set_defaults(func=history)
+
     parser_info = subparsers.add_parser(
         'info', help='show command information')
     parser_info.add_argument(
@@ -34,6 +44,14 @@ def get_options():
         'index', type=int, help='index of the lastest list')
     parser_use.add_argument(
         '-l', '--one_line', action='store_true', help='output shell in one line')
+    parser_use.add_argument(
+        '-r', '--run', action='store_true', help="running the select command."
+    )
+    parser_use.add_argument(
+        '-d', '--daemon', action='store_true', help='daemon running')
+    parser_use.add_argument(
+        '-o', '--output', type=str, help="output the command to a file"
+    )
     parser_use.set_defaults(func=use)
 
     parser_workspace = subparsers.add_parser(
@@ -43,8 +61,11 @@ def get_options():
     parser_workspace.add_argument(
         '-d', '--delete', metavar='name', help='delete a workspace')
     parser_workspace.add_argument(
-        '-s', '--set', help='set a Variable eg: RHOST=192.168.0.1')
-    parser_workspace.add_argument('-g', '--get', help='get all config')
+        '-s', '--set', metavar='key=val', help='set a variable eg: RHOST=192.168.0.1')
+    parser_workspace.add_argument(
+        '-u', '--unset', metavar='key', help='unset variable')
+    parser_workspace.add_argument(
+        '-g', '--get', action='store_true', help='get all config')
     parser_workspace.add_argument(
         '-c', '--change', metavar='name', help='change to new')
     parser_workspace.set_defaults(func=workspace)
@@ -69,6 +90,32 @@ def menu(args):
 def search(args):
     """查找工具命令"""
     print(f'this is search: {args.tool_name}')
+
+
+def history(args):
+    """历史命令"""
+    if args.size:
+        src.conf.history_size = args.size
+        exit()
+
+    history_file = os.path.join(src.custom_file_path, 'history')
+
+    if args.use:
+        if args.use < 1:
+            return
+
+        import linecache
+        line = linecache.getline(history_file, args.use)
+        print(line)
+
+        os.system(line)
+        exit()
+
+    with open(history_file, 'r', encoding='UTF-8') as f:
+        index = 1
+        for line in f.readlines():
+            print(format(" %-3s %s" % (index, line.rstrip())))
+            index += 1
 
 
 def show(args):
@@ -96,8 +143,35 @@ def use(args):
 
     shell = cmd.to_shell(one_line=args.one_line)
 
+    if args.daemon:
+        shell = format("%s &" % shell)
+
     print()
     print(Style.BRIGHT + shell + Style.RESET_ALL)
+
+    if args.output:
+        with open(args.output, 'w') as fi:
+            fi.write(shell)
+
+        print()
+        print(f"file output to {args.output}")
+
+    if args.run:
+        os.system(shell)
+
+    history_file = os.path.join(src.custom_file_path, 'history')
+
+    # 写入history 并当超过长度长度时删除首行
+    with open(history_file, "r+") as f:
+        d = f.readlines()
+        if src.conf.history_size < len(d):
+            f.seek(0)
+            for i in d[1:]:
+                f.write(i)
+            f.write(shell + "\n")
+            f.truncate()
+        else:
+            f.write(shell + "\n")
 
 
 def info(args):
@@ -123,19 +197,18 @@ def workspace(args):
     elif args.delete:
         src.conf.del_workspace(args.delete)
 
+    elif args.unset:
+        src.conf.workspace_unset_var(args.unset)
+
     elif args.set:
         key, val = args.set.split('=', 2)
         src.conf.workspace_set_var(key, val)
 
     elif args.get:
-        if args.get == 'all':
-            for key in src.conf.workspace_get_var_keys():
-                val = src.conf.workspace_get_var(key)
-                print(f"{key}={val}")
-            return
-
-        val = src.conf.workspace_get_var(args.get)
-        print(f"{args.get}={val}")
+        for key in src.conf.workspace_get_var_keys():
+            val = src.conf.workspace_get_var(key)
+            for v in val:
+                print(f"{key}={v}")
 
     elif args.change:
         src.conf.workspace_change(args.change)

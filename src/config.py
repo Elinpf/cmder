@@ -36,13 +36,26 @@ class Config():
                 }
             },
             'latest_select': '',
-            'extend_dir': ['.git']
+            'extend_dir': ['.git'],
+            'history_size': 50
         }
         self.save()
 
     @property
     def extend_dir(self):
         return self.conf['extend_dir']
+
+    @property
+    def history_size(self):
+        return self.conf['history_size']
+
+    @history_size.setter
+    def history_size(self, v: int):
+        if v < 0:
+            self.conf['history_size'] = 0
+        else:
+            self.conf['history_size'] = v
+        self.save()
 
     def add_workspace(self, name):
         """添加工作区"""
@@ -91,13 +104,21 @@ class Config():
     def workspace_set_var(self, key, val):
         """设置工作区变量信息"""
         workspace_var = self.workspace_get('variable')
-        workspace_var[key] = val
+        if key in workspace_var:
+            workspace_var[key].append(val)
+        else:
+            workspace_var[key] = [val]
         self.save()
 
     def workspace_get_var(self, key):
-        """获取工作区变量信息"""
+        """获取工作区变量信息 return List"""
         workspace_var = self.workspace_get('variable')
         return workspace_var[key]
+
+    def workspace_unset_var(self, key):
+        workspace_var = self.workspace_get('variable')
+        del workspace_var[key]
+        self.save()
 
     def workspace_get_var_keys(self):
         """获取工作区变量的keys"""
@@ -108,7 +129,8 @@ class Config():
         """获取变量的key和val"""
         for key in self.workspace_get_var_keys():
             val = self.workspace_get_var(key)
-            yield (key, val)
+            for v in val:
+                yield (key, v)
 
     def workspace_set_custom_input(self, key, val):
         """设置用户最近一次输入的变量"""

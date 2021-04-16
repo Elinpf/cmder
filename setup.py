@@ -31,7 +31,7 @@ shutil.copyfile("cmder.py", 'cmder')
 
 setup(
     name='cmder',
-    version='0.1',
+    version='1.0',
     author='Elin',
     description='Simple CLI tool for the generation hack commands.',
     long_description=long_description,
