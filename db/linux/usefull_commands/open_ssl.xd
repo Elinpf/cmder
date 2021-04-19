@@ -1,0 +1,31 @@
+# Openssl
+
+#Get the certificate from a server
+openssl s_client -connect 10.10.10.127:443 
+
+#Read certificate
+openssl x509 -in ca.cert.pem -text 
+
+#Create new RSA2048 key
+openssl genrsa -out newuser.key 2048 
+
+# Generate certificate from a private key. Recommended to set the "Organizatoin Name"(Fortune) and the "Common Name" (newuser@fortune.htb)
+openssl req -new -key newuser.key -out newuser.csr 
+
+# desc: Create certificate
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes 
+
+# desc: Create a signed certificate
+openssl x510 -req -in newuser.csr -CA intermediate.cert.pem -CAkey intermediate.key.pem -CAcreateserial -out newuser.pem -days 1024 -sha256 
+
+#Create from the signed certificate the pkcs12 certificate format (firefox)
+openssl pkcs12 -export -out newuser.pfx -inkey newuser.key -in newuser.pem 
+
+# If you only needs to create a client certificate from a Ca certificate and the CA key, you can do it using:
+openssl pkcs12 -export -in ca.cert.pem -inkey ca.key.pem -out client.p12
+
+# Decrypt ssh key
+openssl rsa -in key.ssh.enc -out key.ssh
+
+# Decrypt
+openssl enc -aes256 -k #{key} -d -in backup.tgz.enc -out b.tgz

@@ -33,6 +33,12 @@ cmd文件已空行为域分隔，如果开头不是已`#`和`@`开头，则认�
     - `# port:` 文件所描述的接口
     - `# refer:` 文件所参考的网址
 
+5. 分割符
+
+    - `--- [description]` 语法为前面三个`-`，跟描述
+    - 在Pentesting中，推荐按照 `RECON`、`EXPLOIT`、`POST`、`PRIV` 四个阶段进行分割
+
+
 
 现有的变量：
 
@@ -42,4 +48,5 @@ cmd文件已空行为域分隔，如果开头不是已`#`和`@`开头，则认�
    - LPORT
    - USER
    - PWD
+   - DOMAIN
    - WORDLIST

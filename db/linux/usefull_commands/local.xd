@@ -53,23 +53,6 @@ dd if=file.bin bs=28 skip=1 of=blob
 sudo apt-get install libguestfs-tools
 guestmount --add NAME.vhd --inspector --ro /mnt/vhd 
 
-# desc: Openssl
-openssl s_client -connect 10.10.10.127:443 #Get the certificate from a server
-openssl x509 -in ca.cert.pem -text #Read certificate
-openssl genrsa -out newuser.key 2048 #Create new RSA2048 key
-openssl req -new -key newuser.key -out newuser.csr #Generate certificate from a private key. Recommended to set the "Organizatoin Name"(Fortune) and the "Common Name" (newuser@fortune.htb)
-openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes #Create certificate
-openssl x509 -req -in newuser.csr -CA intermediate.cert.pem -CAkey intermediate.key.pem -CAcreateserial -out newuser.pem -days 1024 -sha256 #Create a signed certificate
-openssl pkcs12 -export -out newuser.pfx -inkey newuser.key -in newuser.pem #Create from the signed certificate the pkcs12 certificate format (firefox)
-
-# If you only needs to create a client certificate from a Ca certificate and the CA key, you can do it using:
-openssl pkcs12 -export -in ca.cert.pem -inkey ca.key.pem -out client.p12
-
-# Decrypt ssh key
-openssl rsa -in key.ssh.enc -out key.ssh
-
-# Decrypt
-openssl enc -aes256 -k #{key} -d -in backup.tgz.enc -out b.tgz
 
 # Count number of instructions executed by a program, need a host based linux (not working in VM)
 perf stat -x, -e instructions:u "ls"
