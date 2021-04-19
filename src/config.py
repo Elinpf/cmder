@@ -163,7 +163,6 @@ class Config():
     @latest_select.setter
     def latest_select(self, string):
         if self.latest_select == string:
-            print('ret')
             return
 
         self.history_select = string
