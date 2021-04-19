@@ -1,6 +1,7 @@
 import re
-
+import wcwidth
 from src.variable import VariableList
+from colorama import Style
 
 
 class Command():
@@ -71,3 +72,23 @@ class CommandList():
 
     def __getitem__(self, index: int):
         return self.list[index]
+
+
+class SplitLine():
+    """分割行"""
+
+    def __init__(self, desc):
+        self.desc = desc
+
+    def to_s(self, style=''):
+        total_len = 60
+        lc = total_len - wcwidth.wcswidth(self.desc) - 2
+        llc = int(lc / 2)
+        rlc = llc
+        if lc % 2 == 1:
+            rlc += 1
+
+        _ = ("-"*llc + ' ' + style + self.desc +
+             Style.RESET_ALL + ' ' + "-"*rlc)
+
+        return _

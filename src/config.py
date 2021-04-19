@@ -35,7 +35,7 @@ class Config():
                     'custom_input': {}
                 }
             },
-            'latest_select': '',
+            'history_select': [],
             'extend_dir': ['.git'],
             'history_size': 50
         }
@@ -155,9 +155,26 @@ class Config():
 
     @property
     def latest_select(self):
-        return self.conf['latest_select']
+        if len(self.history_select) == 0:
+            return ''
+
+        return self.history_select[0]
 
     @latest_select.setter
     def latest_select(self, string):
-        self.conf['latest_select'] = string
+        if self.latest_select == string:
+            print('ret')
+            return
+
+        self.history_select = string
+
+    @property
+    def history_select(self):
+        return self.conf['history_select']
+
+    @history_select.setter
+    def history_select(self, string):
+        tmp = self.conf['history_select']
+        tmp.insert(0, string)
+        self.conf['history_select'] = tmp[:5]
         self.save()

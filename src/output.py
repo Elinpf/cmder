@@ -2,6 +2,7 @@
 from src import conf
 
 from colorama import Fore, Style
+from src.command import Command, SplitLine
 
 
 def print_cmd(index, cmd):
@@ -28,8 +29,12 @@ def print_cmd(index, cmd):
 def print_cmds(cmdlist):
     idx = 1
     for cmd in cmdlist:
-        print_cmd(idx, cmd)
-        idx += 1
+        if type(cmd) == Command:
+            print_cmd(idx, cmd)
+            idx += 1
+        elif type(cmd) == SplitLine:
+            print(cmd.to_s(Fore.BLUE + Style.BRIGHT))
+            print()
 
 
 def print_info(cmd):

@@ -1,5 +1,5 @@
 from src.variable import VariableList
-from src.command import Command, CommandList
+from src.command import Command, CommandList, SplitLine
 
 import re
 
@@ -49,7 +49,11 @@ class Parse():
                 if cmd:
                     cmd.add_cmd(line)
                 else:
-                    cmd = Command(line)
+                    sl = re.match(r'---(.*)', line)
+                    if sl:     # is split line
+                        self.cmdlist.append(SplitLine(sl[1].strip()))
+                    else:
+                        cmd = Command(line)
 
         if cmd:
             self.cmdlist.append(self._parse_cmd_area(cmd, area))

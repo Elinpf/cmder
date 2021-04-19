@@ -1,7 +1,7 @@
 import os
 
 from colorama import Style
-from src.menu import menu_select_file, menu_select_cmd_var
+from src.menu import menu_select_file, menu_select_cmd_var, menu
 import argparse
 import src
 from src.parse import Parse
@@ -12,11 +12,13 @@ from src.variable import VariableList
 def get_options():
     parser = argparse.ArgumentParser(
         description='Generate a pentesting command')
-    parser.set_defaults(func=menu)
+    parser.set_defaults(func=default_menu)
 
     subparsers = parser.add_subparsers(help='sub-command help')
     parser_show = subparsers.add_parser(
         'show', help='show the latest table')
+    parser_show.add_argument(
+        '-s', '--history', action='store_true', help='show the history')
     parser_show.set_defaults(func=show)
 
     parser_search = subparsers.add_parser(
@@ -73,7 +75,7 @@ def get_options():
     return parser.parse_args()
 
 
-def menu(args):
+def default_menu(args):
     """默认情况下呼出菜单, 并存储选择的文件"""
     try:
         select_file_path = menu_select_file(src.db_path)
@@ -123,7 +125,18 @@ def show(args):
     if not src.conf.latest_select:
         return
 
-    parse = parse_files(src.conf.latest_select)
+    file = src.conf.latest_select
+
+    if args.history:
+        hs = src.conf.history_select
+        hs = [x.replace(src.db_path, 'db') for x in hs]
+        hs = [x.replace(os.path.join(src.custom_file_path, 'db'), 'db')
+              for x in hs]
+        idx = menu('History Select:', hs)
+        file = src.conf.history_select[idx]
+        src.conf.latest_select = file
+
+    parse = parse_files(file)
     print_cmds(parse.cmdlist)
 
 
