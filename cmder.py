@@ -9,5 +9,5 @@ try:
 except ValueError as e:
     print("[-] " + repr(e))
 
-# except TypeError as e:
-#     exit()
+except TypeError as e:
+    exit()
