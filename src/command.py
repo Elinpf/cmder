@@ -71,7 +71,17 @@ class CommandList():
         return next(self.list)
 
     def __getitem__(self, index: int):
-        return self.list[index]
+        return self.get_cmd_list()[index]
+        # return self.list[index]
+
+    def get_cmd_list(self):
+        """只包含command类"""
+        cmds = []
+        for c in self.list:
+            if type(c) == Command:
+                cmds.append(c)
+
+        return cmds
 
 
 class SplitLine():

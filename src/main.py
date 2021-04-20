@@ -12,6 +12,8 @@ from src.variable import VariableList
 def get_options():
     parser = argparse.ArgumentParser(
         description='Generate a pentesting command')
+    parser.add_argument(
+        '-l', '--link', metavar='path', help='show the link file')
     parser.set_defaults(func=default_menu)
 
     subparsers = parser.add_subparsers(help='sub-command help')
@@ -30,7 +32,7 @@ def get_options():
     parser_history = subparsers.add_parser(
         'history', help='Get history')
     parser_history.add_argument(
-        '-u', '--use', metavar='NUM', type=int, help='use the history cmd')
+        '-u', '--use', metavar='index', type=int, help='use the history cmd')
     parser_history.add_argument(
         '--size', metavar='NUM', type=int, help='set history size')
     parser_history.set_defaults(func=history)
@@ -78,14 +80,25 @@ def get_options():
 def default_menu(args):
     """默认情况下呼出菜单, 并存储选择的文件"""
     try:
-        select_file_path = menu_select_file(src.db_path)
+        if args.link:
+            fp = os.path.join(src.root_path, args.link)
+            fcp = os.path.join(src.custom_file_path, args.link)
+            if os.path.exists(fp):
+                file = fp
+            elif os.path.exists(fcp):
+                file = fcp
+            else:
+                raise ValueError("Can't find file")
+
+        else:
+            file = menu_select_file(src.db_path)
     except TypeError:
         exit()
     except Exception as e:
         print(f"[-] {repr(e)}")
         exit()
-    src.conf.latest_select = select_file_path
-    parse = parse_files(select_file_path)
+    src.conf.latest_select = file
+    parse = parse_files(file)
     print_cmds(parse.cmdlist)
 
 
