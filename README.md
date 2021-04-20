@@ -24,28 +24,30 @@ python3 setup.py install --user
 # 使用方法
 
 ```
-usage: cmder [-h] {show,search,info,use,workspace} ...
+usage: cmder.py [-h] [-l path] {show,search,history,info,use,workspace} ...
 
 Generate a pentesting command
 
 positional arguments:
-  {show,search,info,use,workspace}
+  {show,search,history,info,use,workspace}
                         sub-command help
     show                show the latest table
     search              Search tools in the database
+    history             Get history
     info                show command information
     use                 use command
     workspace           workspace config
 
 optional arguments:
   -h, --help            show this help message and exit
+  -l path, --link path  show the link file
 ```
 
 # 自定义命令
 
 运行后会创建`~/.cmder`目录，其中`db`是用户可以自定义添加的命令文件，可以自行添加目录或者按照软件中的目录路径添加命令文件。
 
-命令文件语法请参考[这里](https://github.com/Elinpf/cmder/blob/master/db/README.md)。
+命令文件语法请参考[这里](https://github.com/Elinpf/cmder/blob/master/db/readme.md)。
 
 # 灵感来源与命令来源
 
