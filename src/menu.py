@@ -62,15 +62,12 @@ def menu_select_file(path):
         return select_path
 
 
-def tryint(s):
+def str2int(v_str):
+    s = v_str.split('_', 2)[0]
     try:
         return int(s)
     except:
-        return s
-
-
-def str2int(v_str):
-    return [tryint(s) for s in v_str.split("_", 2)]
+        return 0xffffff
 
 
 def is_empty_dir(path):
@@ -95,8 +92,8 @@ def beautify_list(menu_list):
     """将文件名转化为固定格式的标题
     eg: 139_445_smb_client.xd => Smb Client (139 445)"""
     b_list = []
-    ports = ''
     for b in menu_list:
+        ports = ''
         if re.match(r"^\d+_", b):
             ports = ' '.join(re.findall(r"(\d+)_", b))
             _ = re.match(r"^(\d+_)+", b).span()[1]
