@@ -1,0 +1,32 @@
+--- General purpose automatic scanners
+
+nikto -h #{RHOST}
+
+whatweb -a 4 #{RHOST}
+
+wapiti -u #{RHOST}
+
+W3af #{RHOST}
+
+
+--- CMS scanners
+
+# desc: [INFO]
+# refer: https://book.hacktricks.xyz/pentesting/pentesting-web#cms-scanners
+Clusterd: JBoss, ColdFusion, WebLogic, Tomcat, Railo, Axis2, Glassfish
+CMSScan: WordPress, Drupal, Joomla, vBulletin websites for Security issues. (GUI)
+VulnX: Joomla, Wordpress, Drupal, PrestaShop, Opencart
+CMSMap: (W)ordpress, (J)oomla, (D)rupal or (M)oodle
+droopscan: Drupal, Joomla, Moodle, Silverstripe, Wordpress
+
+
+cmsmap -f W -F -d #{RHOST}
+
+wpscan --force update -e --url #{RHOST}
+
+joomscan --ec -u #{RHOST}
+
+# refer: https://github.com/rastating/joomlavs
+joomlavs.rb
+
+

