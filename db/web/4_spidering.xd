@@ -1,0 +1,18 @@
+--- spidering
+
+
+# refer: https://github.com/Nekmo/dirhunt
+dirhunt #{RHOST}
+
+# refer: https://github.com/saeeddhqan/evine
+./evine -url #{RHOST}
+
+# refer: https://github.com/jaeles-project/gospider
+gospider -s #{RHOST} --depth 3 --no-redirect -t 50 0c 3 -o gospider_output.txt
+
+# refer: https://github.com/devanshbatham/ParamSpider
+python3 paramspider.py --domain #{RHOST} --level high --output paramspider_output.txt
+
+# refer: https://book.hacktricks.xyz/pentesting/pentesting-web#spidering
+# desc: [INFO]
+More tools

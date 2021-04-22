@@ -1,0 +1,36 @@
+@WORDLIST.recommend(/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt)
+@WORDLIST.recommend(/usr/share/wordlists/dirb/common.txt)
+@WORDLIST.recommend(/usr/share/wordlists/dirb/big.txt)
+@WORDLIST.recommend(/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt)
+
+--- Brute Force directories and files
+
+# refer: https://github.com/maurosoria/dirsearch
+./dirsearch.py -u #{RHOST} -f -e #{extensions} --simple-report=dirsearch_output.txt
+@extensions.recommend(php,html)
+@extensions.recommend(asp)
+
+# refer: https://github.com/epi052/feroxbuster
+# desc: Fast Cool
+feroxbuster -u #{RHOST} --depth 3 --wordlist #{WORDLIST}
+
+# refer: https://github.com/OJ/gobuster
+gobuster dir -u #{RHOST} #{[-c ']cookie[']}-w #{WORDLIST}
+@cookie.desc(Cookie string)
+
+# refer: https://github.com/ffuf/ffuf
+# desc: Fast
+ffuf -c -w #{WORDLIST} -u #{RHOST}
+
+# refer: https://github.com/xmendez/wfuzz
+wfuzz -w #{WORDLIST} #{RHOST}
+
+# refer:https://book.hacktricks.xyz/pentesting/pentesting-web#brute-force-directories-and-files
+# desc: [INFO]
+More tools
+
+# desc: [INFO]
+# refer: https://wordlists.assetnote.io/ (Recommend Dictionary)
+# refer: https://github.com/danielmiessler/RobotsDisallowed (Recommend Use curated.txt)
+# refer: http://gist.github.com/jhaddix/b80ea67d85c13206125806f0828f4d10 (Recommend Dictionary)
+Recommended Dictionaries
