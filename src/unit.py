@@ -64,9 +64,10 @@ def get_select_path(path, select):
 
 def get_relate_path(path):
     """获取相对路径"""
-    relate_path = path.replace(src.root_path, '')
-    relate_path = relate_path.replace(src.custom_file_path, '')
-    return relate_path[1:]
+    relate_path = path.replace(os.path.join(src.root_path, 'db'), 'db')
+    relate_path = relate_path.replace(
+        os.path.join(src.custom_file_path, 'db'), 'db')
+    return relate_path
 
 
 def get_path_list(path):

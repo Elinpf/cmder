@@ -67,12 +67,7 @@ class Parse():
         for line in area:
             line = line.strip()
             if line[0] == '#':
-                if re.match(r"^#\s*desc\s*:", line):
-                    cmd.desc = line.split(':', 1)[1].strip()
-                elif re.match(r"^#\s*refer\s*:", line):
-                    cmd.add_refer(line.split(':', 1)[1].strip())
-                else:
-                    cmd.add_note(line[1:].strip())
+                cmd.add_note(line[1:].strip())
 
             elif line[0] == '@':
                 res = re.match(r"^@(.*?)\.(.*?)\((.*)\)", line)
@@ -105,7 +100,4 @@ class Parse():
                 self.g_varlist.set(info)
 
             if line[0] == '#':
-                if re.match(r"^#\s*refer\s*:", line):
-                    self.refers.append(line.split(':', 1)[1].strip())
-                else:
-                    self.notes.append(line[1:].strip())
+                self.notes.append(line[1:].strip())

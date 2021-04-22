@@ -47,7 +47,7 @@ def print_info(cmd):
     print(Fore.BLUE + Style.BRIGHT + cmd.desc + Style.RESET_ALL)
 
     for c in cmd.cmd:
-        print(Style.BRIGHT + c + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + c + Style.RESET_ALL)
 
     if cmd.vars:
         print()
@@ -60,6 +60,18 @@ def print_info(cmd):
             else:
                 print(f"  {v}")
 
-    print()
-    for r in cmd.refer:
-        print(f'refer: {r}')
+    if cmd.refer:
+        print()
+        print(Fore.BLUE + Style.BRIGHT + 'Refer List:' +
+              Style.RESET_ALL)
+
+        for r in cmd.refer:
+            print(r)
+
+    if cmd.links:
+        print()
+        print(Fore.BLUE + Style.BRIGHT + 'Link List:' +
+              Style.RESET_ALL)
+
+        for l in cmd.links:
+            print(l)

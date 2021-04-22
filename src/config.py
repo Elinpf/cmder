@@ -135,8 +135,9 @@ class Config():
     def workspace_set_custom_input(self, key, val):
         """设置用户最近一次输入的变量"""
         workspace_custom = self.workspace_get('custom_input')
-        workspace_custom[key] = val
-        self.save()
+        if val:
+            workspace_custom[key] = val
+            self.save()
 
     def workspace_get_custom_input(self, key):
         """获取用户最近一次的变量输入"""
@@ -165,7 +166,7 @@ class Config():
         if self.latest_select == string:
             return
 
-        self.history_select = string
+        self.history_select = src.unit.get_relate_path(string)
 
     @property
     def history_select(self):

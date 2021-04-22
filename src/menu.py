@@ -63,11 +63,20 @@ def menu_select_file(path):
 
 
 def str2int(v_str):
-    s = v_str.split('_', 2)[0]
-    try:
+    """排序使用"""
+    s = v_str.split('_', 1)[0]
+
+    if not s:
+        return 0xffff
+
+    if s.isdigit():
         return int(s)
-    except:
-        return 0xffffff
+
+    fc = s[0].lower()
+    if fc.isalpha():
+        return (ord(fc) + 0xff)
+    else:
+        return 0xffff
 
 
 def is_empty_dir(path):

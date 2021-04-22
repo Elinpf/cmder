@@ -9,6 +9,7 @@ class Command():
         self.cmd = [line]
         self.refer = []
         self.notes = []
+        self.links = []
         self.desc = ""
         self.vars = VariableList()
 
@@ -26,8 +27,22 @@ class Command():
 
         return str
 
-    def add_note(self, line):
-        self.notes.append(line)
+    def add_note(self, line, reverse=0):
+
+        if re.match(r"^\s*desc\s*:", line):
+            self.desc = line.split(':', 1)[1].strip()
+
+        elif re.match(r"^\s*refer\s*:", line):
+            self.add_refer(line.split(':', 1)[1].strip())
+
+        elif re.match(r"^\s*link\s*:", line):
+            self.add_link(line.split(':', 1)[1].strip())
+
+        else:
+            if reverse:  # 当是全局note的时候，放在前面
+                self.notes.insert(len(self.notes)-reverse, line)
+            else:
+                self.notes.append(line)
 
     def add_refer(self, line):
         self.refer.append(line)
@@ -35,17 +50,19 @@ class Command():
     def add_cmd(self, line):
         self.cmd.append(line)
 
+    def add_link(self, line):
+        self.links.append(line)
+
     def merge_var(self, g_varlist):
         return self.vars.merge(g_varlist)
 
     def merge_notes(self, notes):
         # 合并的notes放在前面
-        self.notes = notes + self.notes
-        return self.notes
+        ln = len(notes)
+        for note in notes:
+            self.add_note(note, reverse=ln)
 
-    def merge_refers(self, refers):
-        self.refer = refers + self.refer
-        return self.refer
+        return self.notes
 
     def parse(self):
         """在添加完了命令后使用, 分析里面的变量"""

@@ -47,7 +47,11 @@ def get_options():
     parser_use.add_argument(
         'index', type=int, help='index of the lastest list')
     parser_use.add_argument(
-        '-l', '--one_line', action='store_true', help='output shell in one line')
+        '-i', '--info', action='store_true', help='show the cmd information')
+    parser_use.add_argument(
+        '--one_line', action='store_true', help='output shell in one line')
+    parser_use.add_argument(
+        '-l', '--link', action='store_true', help='select the command link path')
     parser_use.add_argument(
         '-r', '--run', action='store_true', help="running the select command."
     )
@@ -164,6 +168,15 @@ def use(args):
         exit()
 
     merge_varlist(cmd, parse)
+    cmd.merge_notes(parse.notes)
+
+    if args.link:
+        select_link(cmd)
+        return
+
+    if args.info:
+        print_info(cmd)
+        return
 
     menu_select_cmd_var(cmd)
 
@@ -202,7 +215,6 @@ def use(args):
 
 
 def info(args):
-    """使用命令, 并存储到历史记录中"""
     parse = parse_files(src.conf.latest_select)
 
     try:
@@ -213,7 +225,6 @@ def info(args):
 
     merge_varlist(cmd, parse)
     cmd.merge_notes(parse.notes)
-    cmd.merge_refers(parse.refers)
     print_info(cmd)
 
 
@@ -228,7 +239,7 @@ def workspace(args):
         src.conf.workspace_unset_var(args.unset)
 
     elif args.set:
-        key, val = args.set.split('=', 2)
+        key, val = args.set.split('=', 1)
         src.conf.workspace_set_var(key, val)
 
     elif args.get:
@@ -275,3 +286,11 @@ def merge_varlist(cmd, parse):
     cmd.merge_var(parse.g_varlist)
     cmd.merge_var(config_varlist)
     cmd.merge_var(custom_varlist)
+
+
+def select_link(cmd):
+    idx = menu('select link to:', cmd.links)
+    file = cmd.links[idx]
+    parse = parse_files(file)
+    src.conf.latest_select = file
+    print_cmds(parse.cmdlist)
