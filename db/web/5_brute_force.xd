@@ -6,7 +6,7 @@
 --- Brute Force directories and files
 
 # refer: https://github.com/maurosoria/dirsearch
-./dirsearch.py -u #{RHOST} -f -e #{extensions} --simple-report=dirsearch_output.txt
+dirsearch.py -u #{RHOST} -f -e #{extensions} --simple-report=dirsearch_output.txt
 @extensions.recommend(php,html)
 @extensions.recommend(asp)
 

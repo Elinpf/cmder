@@ -5,7 +5,7 @@
 dirhunt #{RHOST}
 
 # refer: https://github.com/saeeddhqan/evine
-./evine -url #{RHOST}
+evine -url #{RHOST}
 
 # refer: https://github.com/jaeles-project/gospider
 gospider -s #{RHOST} --depth 3 --no-redirect -t 50 0c 3 -o gospider_output.txt

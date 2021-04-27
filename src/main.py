@@ -49,7 +49,7 @@ def get_options():
     parser_use.add_argument(
         '-i', '--info', action='store_true', help='show the cmd information')
     parser_use.add_argument(
-        '--one_line', action='store_true', help='output shell in one line')
+        '--one-line', action='store_true', help='output shell in one line')
     parser_use.add_argument(
         '-l', '--link', action='store_true', help='select the command link path')
     parser_use.add_argument(
