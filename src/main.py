@@ -197,12 +197,11 @@ def use(args):
 
     # 写入history 并当超过长度长度时删除首行
     history_file = os.path.join(src.custom_file_path, 'history')
-    with open(history_file, "a+") as f:
-        f.seek(0)
+    with open(history_file, "r+") as f:
         d = f.readlines()
-        if src.conf.history_size < len(d):
+        if src.conf.history_size <= len(d):
             f.seek(0)
-            for i in d[1:]:
+            for i in d[1:src.conf.history_size]:
                 f.write(i)
             f.write(shell + "\n")
             f.truncate()
