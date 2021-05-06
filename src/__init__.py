@@ -19,6 +19,10 @@ def generate_custom_file_path():
     if not os.path.exists(custom_db_path):
         os.makedirs(custom_db_path)
 
+    history_path = os.path.join(custom_cmder_path, 'history')
+    if not os.path.exists(history_path):
+        open(history_path, 'a').close()
+
     return custom_cmder_path
 
 
