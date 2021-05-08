@@ -7,6 +7,7 @@ import src
 from src.parse import Parse
 from src.output import print_cmds, print_info
 from src.variable import VariableList
+from src.data import pypaths
 
 
 def get_options():
@@ -85,8 +86,8 @@ def default_menu(args):
     """默认情况下呼出菜单, 并存储选择的文件"""
     try:
         if args.link:
-            fp = os.path.join(src.root_path, args.link)
-            fcp = os.path.join(src.custom_file_path, args.link)
+            fp = os.path.join(pypaths.root_path, args.link)
+            fcp = os.path.join(pypaths.custom_path, args.link)
             if os.path.exists(fp):
                 file = fp
             elif os.path.exists(fcp):
@@ -95,7 +96,7 @@ def default_menu(args):
                 raise ValueError("Can't find file")
 
         else:
-            file = menu_select_file(src.db_path)
+            file = menu_select_file(pypaths.db_path)
     except TypeError:
         exit()
     except Exception as e:
@@ -117,20 +118,18 @@ def history(args):
         src.conf.history_size = args.size
         exit()
 
-    history_file = os.path.join(src.custom_file_path, 'history')
-
     if args.use:
         if args.use < 1:
             return
 
         import linecache
-        line = linecache.getline(history_file, args.use)
+        line = linecache.getline(pypaths.history_path, args.use)
         print(line)
 
         os.system(line)
         exit()
 
-    with open(history_file, 'r', encoding='UTF-8') as f:
+    with open(pypaths.history_path, 'r', encoding='UTF-8') as f:
         index = 1
         for line in f.readlines():
             print(format(" %-3s %s" % (index, line.rstrip())))
@@ -146,8 +145,8 @@ def show(args):
 
     if args.history:
         hs = src.conf.history_select
-        hs = [x.replace(src.db_path, 'db') for x in hs]
-        hs = [x.replace(os.path.join(src.custom_file_path, 'db'), 'db')
+        hs = [x.replace(pypaths.db_path, 'db') for x in hs]
+        hs = [x.replace(pypaths.custom_db_path, 'db')
               for x in hs]
         idx = menu('History Select:', hs)
         file = src.conf.history_select[idx]
@@ -196,8 +195,7 @@ def use(args):
         print(f"file output to {args.output}")
 
     # 写入history 并当超过长度长度时删除首行
-    history_file = os.path.join(src.custom_file_path, 'history')
-    with open(history_file, "r+") as f:
+    with open(pypaths.history_path, "r+") as f:
         d = f.readlines()
         if src.conf.history_size <= len(d):
             f.seek(0)
