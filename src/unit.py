@@ -1,16 +1,7 @@
 import os
 import platform
-import src
-
-
-def get_root_path():
-    _ = os.path.split(os.path.split(os.path.abspath(__file__))[0])[0]
-    return _
-    # return os.path.split(os.path.abspath(sys.argv[0]))[0]
-
-
-def get_db_path():
-    return os.path.join(src.root_path, 'db')
+from colorama import Fore, Style
+from src.data import pypaths, pystrs, pyoptions
 
 
 def is_windows():
@@ -29,18 +20,18 @@ def db_recursion_file(file_path):
     relate_path = get_relate_path(file_path)
 
     if is_windows():
-        path_split_list = relate_path.split('\\')
+        path_split_list = relate_path.split(pyoptions.windows_separator)
     else:
-        path_split_list = relate_path.split('/')
+        path_split_list = relate_path.split(pyoptions.linux_separator)
 
-    p = src.root_path
-    c = src.custom_file_path  # 用户文件夹
+    p = pypaths.root_path
+    c = pypaths.custom_path
     list = []
     for i in path_split_list:
         p = os.path.join(p, i)
         c = os.path.join(c, i)
 
-        for init_path in [os.path.join(p, '__init__.xd'), os.path.join(c, '__init__.xd')]:
+        for init_path in [os.path.join(p, pystrs.init_file), os.path.join(c, pystrs.init_file)]:
             if not os.path.exists(init_path):
                 continue
 
@@ -64,17 +55,16 @@ def get_select_path(path, select):
 
 def get_relate_path(path):
     """获取相对路径"""
-    relate_path = path.replace(os.path.join(src.root_path, 'db'), 'db')
-    relate_path = relate_path.replace(
-        os.path.join(src.custom_file_path, 'db'), 'db')
+    relate_path = path.replace(pypaths.custom_db_path, 'db')
+    relate_path = relate_path.replace(pypaths.custom_db_path, 'db')
     return relate_path
 
 
 def get_path_list(path):
     """取软件目录与用户目录的list"""
     relate_path = get_relate_path(path)
-    root_path = os.path.join(src.root_path, relate_path)
-    custom_path = os.path.join(src.custom_file_path, relate_path)
+    root_path = os.path.join(pypaths.root_path, relate_path)
+    custom_path = os.path.join(pypaths.custom_path, relate_path)
     return [root_path, custom_path]
 
 
@@ -95,7 +85,7 @@ def open_custom_file(file_relate_path, mode):
 
 def custom_abspath(file_relate_path):
     """返回用户目录绝对路径"""
-    return os.path.join(src.custom_file_path, file_relate_path)
+    return os.path.join(pypaths.custom_path, file_relate_path)
 
 
 def escap_chars(string: str):
@@ -105,3 +95,62 @@ def escap_chars(string: str):
         string = string.replace('!', '\!')
 
     return string
+
+
+class Colored():
+    RED = Fore.RED
+    GREEN = Fore.GREEN
+    YELLOW = Fore.YELLOW
+    ORANGE = '\033[0;33;1m'
+    BLUE = Fore.BLUE
+    FUCHSIA = '\033[35m'
+    WHITE = Fore.WHITE
+
+    def color_str(self, color, s, bright=False):
+
+        if bright:
+            return '{}{}{}'.format(getattr(self, color) + Style.BRIGHT, s, Style.RESET_ALL)
+        else:
+            return '{}{}{}'.format(getattr(self, color), s, Style.RESET_ALL)
+
+    def red(self, s):
+        return self.color_str('RED', s)
+
+    def green(self, s):
+        return self.color_str('GREEN', s)
+
+    def yellow(self, s):
+        return self.color_str('YELLOW', s)
+
+    def orange(self, s):
+        return self.color_str('ORANGE', s)
+
+    def blue(self, s):
+        return self.color_str('BLUE', s)
+
+    def fuchsia(self, s):
+        return self.color_str('FUCHSIA', s)
+
+    def white(self, s):
+        return self.color_str('WHITE', s)
+
+    def red_bright(self, s):
+        return self.color_str('RED', s, True)
+
+    def green_bright(self, s):
+        return self.color_str('GREEN', s, True)
+
+    def yellow_bright(self, s):
+        return self.color_str('YELLOW', s, True)
+
+    def orange_bright(self, s):
+        return self.color_str('ORANGE', s, True)
+
+    def blue_bright(self, s):
+        return self.color_str('BLUE', s, True)
+
+    def fuchsia_bright(self, s):
+        return self.color_str('FUCHSIA', s, True)
+
+    def white_bright(self, s):
+        return self.color_str('WHITE', s, True)

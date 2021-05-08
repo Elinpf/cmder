@@ -1,7 +1,8 @@
 import re
 import wcwidth
 from src.variable import VariableList
-from colorama import Style
+from src.data import pyoptions
+from src import cool
 
 
 class Command():
@@ -29,14 +30,14 @@ class Command():
 
     def add_note(self, line, reverse=0):
 
-        if re.match(r"^\s*desc\s*:", line):
-            self.desc = line.split(':', 1)[1].strip()
+        if re.match(pyoptions.note_desc_pattern, line):
+            self.desc = line.split(pyoptions.note_separator, 1)[1].strip()
 
-        elif re.match(r"^\s*refer\s*:", line):
-            self.add_refer(line.split(':', 1)[1].strip())
+        elif re.match(pyoptions.note_refer_pattern, line):
+            self.add_refer(line.split(pyoptions.note_separator, 1)[1].strip())
 
-        elif re.match(r"^\s*link\s*:", line):
-            self.add_link(line.split(':', 1)[1].strip())
+        elif re.match(pyoptions.note_link_pattern, line):
+            self.add_link(line.split(pyoptions.note_separator, 1)[1].strip())
 
         else:
             if reverse:  # 当是全局note的时候，放在前面
@@ -68,7 +69,7 @@ class Command():
         """在添加完了命令后使用, 分析里面的变量"""
         var_list = []
         for c in self.cmd:
-            var_list += (re.findall(r"#{(.*?)}", c))
+            var_list += (re.findall(pyoptions.variable_pattern, c))
 
         for v in var_list:
             self.vars.append(v)
@@ -89,7 +90,6 @@ class CommandList():
 
     def __getitem__(self, index: int):
         return self.get_cmd_list()[index]
-        # return self.list[index]
 
     def get_cmd_list(self):
         """只包含command类"""
@@ -107,7 +107,7 @@ class SplitLine():
     def __init__(self, desc):
         self.desc = desc
 
-    def to_s(self, style=''):
+    def to_s(self):
         total_len = 60
         lc = total_len - wcwidth.wcswidth(self.desc) - 2
         llc = int(lc / 2)
@@ -115,7 +115,7 @@ class SplitLine():
         if lc % 2 == 1:
             rlc += 1
 
-        _ = ("-"*llc + ' ' + style + self.desc +
-             Style.RESET_ALL + ' ' + "-"*rlc)
+        _ = (pyoptions.splitline_char*llc + ' ' + cool.blue_bright(self.desc) +
+             ' ' + pyoptions.splitline_char*rlc)
 
         return _

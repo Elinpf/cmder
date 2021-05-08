@@ -1,7 +1,5 @@
 # -*- coding: UTF-8 -*-
-from src import conf
-
-from colorama import Fore, Style
+from src import conf, cool
 from src.command import Command, SplitLine
 
 
@@ -17,8 +15,7 @@ def print_cmd(index, cmd):
     if cmd.desc:
         desc = cmd.desc + " "
 
-    print(Fore.BLUE + Style.BRIGHT + index +
-          " "*pad_index + desc + Style.RESET_ALL + cmd.cmd[0])
+    print(cool.blue_bright(index+" "*pad_index+desc) + cmd.cmd[0])
 
     for cmd in cmd.cmd[1:]:
         print(" "*pad + cmd)
@@ -33,7 +30,7 @@ def print_cmds(cmdlist):
             print_cmd(idx, cmd)
             idx += 1
         elif type(cmd) == SplitLine:
-            print(cmd.to_s(Fore.BLUE + Style.BRIGHT))
+            print(cmd.to_s())
             print()
 
 
@@ -44,15 +41,14 @@ def print_info(cmd):
 
     print()
 
-    print(Fore.BLUE + Style.BRIGHT + cmd.desc + Style.RESET_ALL)
+    print(cool.blue_bright(cmd.desc))
 
     for c in cmd.cmd:
-        print(Fore.LIGHTYELLOW_EX + c + Style.RESET_ALL)
+        print(cool.yellow_bright(c))
 
     if cmd.vars:
         print()
-        print(Fore.BLUE + Style.BRIGHT + 'Variable List:' +
-              Style.RESET_ALL)
+        print(cool.blue_bright('Variable List:'))
         for v in cmd.vars.list:
             desc = cmd.vars.list[v].desc
             if desc:
@@ -62,16 +58,14 @@ def print_info(cmd):
 
     if cmd.refer:
         print()
-        print(Fore.BLUE + Style.BRIGHT + 'Refer List:' +
-              Style.RESET_ALL)
+        print(cool.blue_bright('Reference List:'))
 
         for r in cmd.refer:
             print(r)
 
     if cmd.links:
         print()
-        print(Fore.BLUE + Style.BRIGHT + 'Link List:' +
-              Style.RESET_ALL)
+        print(cool.blue_bright('Link List:'))
 
         for l in cmd.links:
             print(l)

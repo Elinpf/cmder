@@ -3,7 +3,7 @@ import re
 
 import src
 from src.unit import is_windows
-from colorama import Fore, Style
+from src.data import pypaths, pystrs
 
 if not is_windows():
     from simple_term_menu import TerminalMenu
@@ -50,8 +50,8 @@ def menu_select_file(path):
     # 递归菜单
     if select == back_title:
         back_path = os.path.split(path)[0]
-        if len(back_path) < len(src.db_path):
-            back_path = src.db_path
+        if len(back_path) < len(pypaths.db_path):
+            back_path = pypaths.db_path
         return menu_select_file(back_path)
 
     select_path = src.unit.get_select_path(path, select)
@@ -145,7 +145,7 @@ def input_custom(title):
     """自定义输入，并且保存到config中"""
     print(f'(custom) {title}')
     try:
-        selection = input(Fore.RED + Style.BRIGHT + '> ' + Style.RESET_ALL)
+        selection = input(src.cool.red_bright('> '))
     except (InterruptedError, KeyboardInterrupt):
         exit()
 
@@ -170,10 +170,10 @@ def menu_with_custom_choice(title, menu_list):
     if not menu_list:
         return input_custom(title)
 
-    menu_list.append('(Custom)')
+    menu_list.append(pystrs.menu_custom_str)
     idx = menu(title, menu_list)
     selection = menu_list[idx]
-    if selection == '(Custom)':
+    if selection == pystrs.menu_custom_str:
         return input_custom(title)
     else:
         return selection.split('(')[0].strip()
