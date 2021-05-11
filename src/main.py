@@ -1,13 +1,17 @@
 import os
+import pickle
+from src.unit import get_relate_path
 
-from colorama import Style
 from src.menu import menu_select_file, menu_select_cmd_var, menu
 import argparse
 import src
 from src.parse import Parse
 from src.output import print_cmds, print_info
 from src.variable import VariableList
-from src.data import pypaths
+from src.command import CommandList
+from src.data import pypaths, pyoptions
+from src.decorator import load
+from src import cool
 
 
 def get_options():
@@ -103,13 +107,43 @@ def default_menu(args):
         print(f"[-] {repr(e)}")
         exit()
     src.conf.latest_select = file
-    parse = parse_files(file)
-    print_cmds(parse.cmdlist)
+    pyoptions.cmd_list = parse_files(file).cmdlist
+    print_cmds(pyoptions.cmd_list)
+    dump()
 
 
 def search(args):
     """查找工具命令"""
-    print(f'this is search: {args.tool_name}')
+    file_list = []
+    for root, _, files in os.walk(pypaths.db_path):
+        for file in files:
+            if os.path.splitext(file)[1] == pyoptions.db_file_suffix:
+                file_path = os.path.join(root, file)
+                file_obj = open(file_path, 'rU')
+                for line in file_obj:
+                    if args.tool_name in line:
+                        file_list.append(get_relate_path(file_path))
+                        break
+
+    for root, _, files in os.walk(pypaths.custom_db_path):
+        for file in files:
+            if os.path.splitext(file)[1] == pyoptions.db_file_suffix:
+                file_path = os.path.join(root, file)
+                relate_path = get_relate_path(file_path)
+                if not relate_path in files:
+                    file_obj = open(file_path, 'rU')
+                    for line in file_obj:
+                        if args.tool_name in line:
+                            file_list.append(relate_path)
+                            break
+
+    pyoptions.cmd_list = CommandList()
+    for file in file_list:
+        parse = parse_files(file)
+        pyoptions.cmd_list.append(parse.cmdlist.filter(args.tool_name))
+
+    print_cmds(pyoptions.cmd_list)
+    dump()
 
 
 def history(args):
@@ -136,13 +170,8 @@ def history(args):
             index += 1
 
 
+@load
 def show(args):
-    """浏览最近一次的命令列表"""
-    if not src.conf.latest_select:
-        return
-
-    file = src.conf.latest_select
-
     if args.history:
         hs = src.conf.history_select
         hs = [x.replace(pypaths.db_path, 'db') for x in hs]
@@ -151,23 +180,18 @@ def show(args):
         idx = menu('History Select:', hs)
         file = src.conf.history_select[idx]
         src.conf.latest_select = file
+        pyoptions.cmd_list = parse_files(file).cmdlist
+        dump()
 
-    parse = parse_files(file)
-    print_cmds(parse.cmdlist)
+    print_cmds(pyoptions.cmd_list)
 
 
+@load
 def use(args):
     """使用命令, 并存储到历史记录中"""
-    parse = parse_files(src.conf.latest_select)
 
-    try:
-        cmd = parse.cmdlist[args.index - 1]
-    except:
-        print("[-] Error input of index")
-        exit()
-
-    merge_varlist(cmd, parse)
-    cmd.merge_notes(parse.notes)
+    cmd = pyoptions.cmd_list[args.index - 1]
+    merge_varlist(cmd)
 
     if args.link:
         select_link(cmd)
@@ -185,7 +209,7 @@ def use(args):
         shell = format("%s &" % shell)
 
     print()
-    print(Style.BRIGHT + shell + Style.RESET_ALL)
+    print(cool.white_bright(shell))
 
     if args.output:
         with open(args.output, 'w') as fi:
@@ -211,17 +235,11 @@ def use(args):
         os.system(shell)
 
 
+@load
 def info(args):
-    parse = parse_files(src.conf.latest_select)
+    cmd = pyoptions.cmd_list[args.index - 1]
 
-    try:
-        cmd = parse.cmdlist[args.index - 1]
-    except:
-        print("[-] Error input of index")
-        exit()
-
-    merge_varlist(cmd, parse)
-    cmd.merge_notes(parse.notes)
+    merge_varlist(cmd)
     print_info(cmd)
 
 
@@ -265,7 +283,7 @@ def parse_files(select_file_path):
     return parse
 
 
-def merge_varlist(cmd, parse):
+def merge_varlist(cmd):
     """合并包括config文件中variables"""
     config_varlist = VariableList()
     custom_varlist = VariableList()
@@ -280,7 +298,6 @@ def merge_varlist(cmd, parse):
         _ = {"name": key, "func": "recommend", "value": val}
         custom_varlist.set(_)
 
-    cmd.merge_var(parse.g_varlist)
     cmd.merge_var(config_varlist)
     cmd.merge_var(custom_varlist)
 
@@ -291,3 +308,8 @@ def select_link(cmd):
     parse = parse_files(file)
     src.conf.latest_select = file
     print_cmds(parse.cmdlist)
+
+
+def dump():
+    f = open(pypaths.sequence_path, 'wb')
+    pickle.dump(pyoptions.cmd_list, f)

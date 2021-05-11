@@ -13,6 +13,7 @@ class PyPaths():
         self.custom_path = os.path.join(self.user_path, '.cmder')
         self.custom_db_path = os.path.join(self.custom_path, 'db')
         self.history_path = os.path.join(self.custom_path, 'history')
+        self.sequence_path = os.path.join(self.custom_path, '.sequence')
 
 
 class PyStrs():
@@ -28,12 +29,16 @@ class PyOptions():
         self.linux_separator = '/'
         self.splitline_char = '-'
         self.note_separator = ':'
+        self.db_file_suffix = '.xd'
 
         # patterns
         self.note_desc_pattern = r"^\s*desc\s*:"
         self.note_refer_pattern = r"^\s*refer\s*:"
         self.note_link_pattern = r"^\s*link\s*:"
         self.variable_pattern = r"#{(.*?)}"
+
+        # cmdlist
+        self.cmd_list = None
 
 
 pypaths = PyPaths()
