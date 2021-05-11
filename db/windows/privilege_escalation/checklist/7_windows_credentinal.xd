@@ -1,0 +1,20 @@
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#windows-credentials
+
+Winlogon credentials
+
+Windows Vault credentials that you could use?
+
+Interesting DPAPI credentials?
+
+Passwords of saved Wifi networks?
+
+Interesting info in saved RDP Connections?
+
+Passwords in recently run commands?
+
+Remote Desktop Credentials Manager passwords?
+
+AppCmd.exe exists? Credentials?
+
+SCClient.exe? DLL Side Loading?

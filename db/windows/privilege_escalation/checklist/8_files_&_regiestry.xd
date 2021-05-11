@@ -1,0 +1,32 @@
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#files-and-registry-credentials
+
+Putty: Creds and SSH host keys​
+
+​SSH keys in registry?
+
+Passwords in unattended files?
+
+Any SAM & SYSTEM backup?
+
+​Cloud credentials?
+
+​McAfee SiteList.xml file?
+
+​Cached GPP Password?
+
+Password in IIS Web config file?
+
+Interesting info in web logs?
+
+Do you want to ask for credentials to the user?
+
+Interesting files inside the Recycle Bin?
+
+Other registry containing credentials?
+
+Inside Browser data (dbs, history, bookmarks....)?
+
+​Generic password search in files and registry
+
+​Tools to automatically search for passwords

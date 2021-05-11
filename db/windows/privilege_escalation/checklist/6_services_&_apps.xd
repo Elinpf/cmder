@@ -1,0 +1,38 @@
+# desc: [Check]
+
+--- Services
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#services
+Can you modify any service?
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#services
+Can you modify the binary that is executed by any service?
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#services
+Can you modify the registry of any service?
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#services
+Can you take advantage of any unquoted service binary path?
+
+--- Applications
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#applications
+Write permissions on installed applications​
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#applications
+​Startup Applications​
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#applications
+Vulnerable Drivers
+
+
+--- Dll Hacking
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#dll-hijacking
+Can you write in any folder inside PATH?
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#dll-hijacking
+Is there any known service binary that tries to load any non-existant DLL?
+
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#dll-hijacking
+Can you write in any binaries folder?

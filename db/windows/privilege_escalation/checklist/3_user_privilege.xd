@@ -1,0 +1,19 @@
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#user-privileges
+
+Check current user privileges
+
+Are you member of any privileged group?
+
+Check if you have any of these tokens enabled: 
+SeImpersonatePrivilege, SeAssignPrimaryPrivilege, SeTcbPrivilege, 
+SeBackupPrivilege, SeRestorePrivilege, SeCreateTokenPrivilege, 
+SeLoadDriverPrivilege, SeTakeOwnershipPrivilege, SeDebugPrivilege ? 
+
+Users Sessions?
+
+Check users homes (access?)
+
+Check Password Policy
+
+What is inside the Clipboard?

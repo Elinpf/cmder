@@ -1,4 +1,5 @@
 # desc: [Check]
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#system-info
 
 Obtain System information
 

@@ -1,0 +1,20 @@
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#logging-av-enumeration
+
+Check Audit and WEF settings
+
+Check LAPS
+
+Check if WDigest is active
+
+LSA Protection?
+
+Credentials Guard?
+
+Cached Credentials?
+
+Check if any AV
+
+AppLocker Policy?
+
+UAC?

@@ -1,0 +1,8 @@
+# desc: [Check]
+# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#running-processes
+
+Processes binaries file and folders permissions
+
+Memory Password mining
+
+Insecure GUI apps
