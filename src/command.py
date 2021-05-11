@@ -80,7 +80,10 @@ class CommandList():
         self.list = []
 
     def append(self, cmd: Command):
-        self.list.append(cmd)
+        if type(cmd) == Command:
+            self.list.append(cmd)
+        elif isinstance(cmd, list):
+            self.list.extend(cmd)
 
     def __iter__(self):
         return self.list.__iter__()
@@ -101,6 +104,15 @@ class CommandList():
         for c in self.list:
             if type(c) == Command:
                 cmds.append(c)
+
+        return cmds
+
+    def filter(self, str):
+        """筛选cmd"""
+        cmds = []
+        for cmd in self.get_cmd_list():
+            if str in cmd.to_shell():
+                cmds.append(cmd)
 
         return cmds
 

@@ -1,5 +1,6 @@
 import os
 import pickle
+from src.unit import get_relate_path
 
 from src.menu import menu_select_file, menu_select_cmd_var, menu
 import argparse
@@ -7,6 +8,7 @@ import src
 from src.parse import Parse
 from src.output import print_cmds, print_info
 from src.variable import VariableList
+from src.command import CommandList
 from src.data import pypaths, pyoptions
 from src.decorator import load
 from src import cool
@@ -107,13 +109,41 @@ def default_menu(args):
     src.conf.latest_select = file
     pyoptions.cmd_list = parse_files(file).cmdlist
     print_cmds(pyoptions.cmd_list)
-    f = open(pypaths.sequence_path, 'wb')
-    pickle.dump(pyoptions.cmd_list, f)
+    dump()
 
 
 def search(args):
     """查找工具命令"""
-    print(f'this is search: {args.tool_name}')
+    file_list = []
+    for root, _, files in os.walk(pypaths.db_path):
+        for file in files:
+            if os.path.splitext(file)[1] == pyoptions.db_file_suffix:
+                file_path = os.path.join(root, file)
+                file_obj = open(file_path, 'rU')
+                for line in file_obj:
+                    if args.tool_name in line:
+                        file_list.append(get_relate_path(file_path))
+                        break
+
+    for root, _, files in os.walk(pypaths.custom_db_path):
+        for file in files:
+            if os.path.splitext(file)[1] == pyoptions.db_file_suffix:
+                file_path = os.path.join(root, file)
+                relate_path = get_relate_path(file_path)
+                if not relate_path in files:
+                    file_obj = open(file_path, 'rU')
+                    for line in file_obj:
+                        if args.tool_name in line:
+                            file_list.append(relate_path)
+                            break
+
+    pyoptions.cmd_list = CommandList()
+    for file in file_list:
+        parse = parse_files(file)
+        pyoptions.cmd_list.append(parse.cmdlist.filter(args.tool_name))
+
+    print_cmds(pyoptions.cmd_list)
+    dump()
 
 
 def history(args):
@@ -151,8 +181,7 @@ def show(args):
         file = src.conf.history_select[idx]
         src.conf.latest_select = file
         pyoptions.cmd_list = parse_files(file).cmdlist
-        f = open(pypaths.sequence_path, 'wb')
-        pickle.dump(pyoptions.cmd_list, f)
+        dump()
 
     print_cmds(pyoptions.cmd_list)
 
@@ -279,3 +308,8 @@ def select_link(cmd):
     parse = parse_files(file)
     src.conf.latest_select = file
     print_cmds(parse.cmdlist)
+
+
+def dump():
+    f = open(pypaths.sequence_path, 'wb')
+    pickle.dump(pyoptions.cmd_list, f)

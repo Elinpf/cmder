@@ -29,6 +29,7 @@ class PyOptions():
         self.linux_separator = '/'
         self.splitline_char = '-'
         self.note_separator = ':'
+        self.db_file_suffix = '.xd'
 
         # patterns
         self.note_desc_pattern = r"^\s*desc\s*:"
