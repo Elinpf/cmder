@@ -3,6 +3,7 @@ import wcwidth
 from src.variable import VariableList
 from src.data import pyoptions
 from src import cool
+from src.unit import get_relate_path
 
 
 class Command():
@@ -13,6 +14,7 @@ class Command():
         self.links = []
         self.desc = ""
         self.vars = VariableList()
+        self._path = ""
 
     def __repr__(self):
         return "<cmd:" + self.cmd[0] + ">"
@@ -73,6 +75,14 @@ class Command():
 
         for v in var_list:
             self.vars.append(v)
+
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, file):
+        self._path = get_relate_path(file)
 
 
 class CommandList():

@@ -26,6 +26,7 @@ class Parse():
         for cmd in self.cmdlist:
             cmd.merge_var(self.g_varlist)
             cmd.merge_notes(self.notes)
+            cmd.path = files[-1]
 
     def _split_area(self, file_path):
         """已空行为界线进行分割区域"""

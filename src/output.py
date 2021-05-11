@@ -35,7 +35,7 @@ def print_cmds(cmdlist):
 
 
 def print_info(cmd):
-    print("PATH: " + conf.latest_select)
+    print("PATH: " + cmd.path)
     for note in cmd.notes:
         print(f'# {note}')
 
