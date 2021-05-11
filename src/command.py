@@ -90,10 +90,10 @@ class CommandList():
         self.list = []
 
     def append(self, cmd: Command):
-        if type(cmd) == Command:
-            self.list.append(cmd)
-        elif isinstance(cmd, list):
+        if isinstance(cmd, list):
             self.list.extend(cmd)
+        else:
+            self.list.append(cmd)
 
     def __iter__(self):
         return self.list.__iter__()
