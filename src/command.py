@@ -89,7 +89,11 @@ class CommandList():
         return next(self.list)
 
     def __getitem__(self, index: int):
-        return self.get_cmd_list()[index]
+        try:
+            return self.get_cmd_list()[index]
+        except:
+            print("[-] Error input of index")
+            exit()
 
     def get_cmd_list(self):
         """只包含command类"""
@@ -119,3 +123,9 @@ class SplitLine():
              ' ' + pyoptions.splitline_char*rlc)
 
         return _
+
+    def merge_var(self, key):
+        pass
+
+    def merge_notes(self, key):
+        pass
