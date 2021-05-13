@@ -141,7 +141,8 @@ class SplitLine():
         if lc % 2 == 1:
             rlc += 1
 
-        _ = (pyoptions.splitline_char*llc + ' ' + cool.blue_bright(self.desc) +
+        _ = (pyoptions.splitline_char*llc + ' ' +
+             cool.color_str(pyoptions.splitline_color, self.desc, True) +
              ' ' + pyoptions.splitline_char*rlc)
 
         return _

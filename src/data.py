@@ -30,6 +30,7 @@ class PyOptions():
         self.splitline_char = '-'
         self.note_separator = ':'
         self.db_file_suffix = '.xd'
+        self.splitline_color = 'FUCHSIA'
 
         # patterns
         self.note_desc_pattern = r"^\s*desc\s*:"

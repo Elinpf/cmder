@@ -78,9 +78,9 @@ class Parse():
                 res = re.match(r"^@(.*?)\.(.*?)\((.*)\)", line)
                 try:
                     var = cmd.vars[res[1]]
-                except KeyError:
+                except (KeyError, TypeError):
                     print(
-                        format("[-] %s file various write error: #{%s}" % (self.file_path, res[1])))
+                        format("[-] (%s) file various write error: #{%s}" % (self.file_path, line)))
                     exit()
                 info = {"func": res[2], "value": res[3]}
                 var.set(info)
