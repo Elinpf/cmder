@@ -1,0 +1,23 @@
+--- PS location
+
+C:\windows\syswow64\windowspowershell\v1.0\powershell
+
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell
+
+--- Start Commands
+
+# desc: List everything loaded
+Get-Help * 
+
+# desc: List everything containing "process"
+Get-Help process 
+
+# desc: Get full helpabout a topic
+Get-Help Get-Item -Full 
+
+# desc: List examples
+Get-Help Get-Item -Examples 
+
+Import-Module #{modulepath}
+
+Get-Command -Module #{modulename}

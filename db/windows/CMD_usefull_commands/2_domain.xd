@@ -1,0 +1,55 @@
+--- Domain info
+
+# desc: Get domain name
+echo %USERDOMAIN% 
+
+# desc: Get domain name
+echo %USERDNSDOMAIN% 
+
+# desc: Get name of the domain controller
+echo %logonserver% 
+
+# desc: Get name of the domain controller
+set logonserver 
+
+# desc: Get name of the domain controller
+set log 
+
+# desc: List of domain groups
+net groups /domain 
+
+# desc: List of PCs connected to the domain
+net group "domain computers" /domain 
+
+# desc: Lis of PCs of the domain
+net view /domain 
+
+# desc: List domain controllers
+nltest /dclist:#{DOMAIN}
+
+# desc: List PC accounts of domains controllers
+net group "Domain Controllers" /domain 
+
+# desc: List users with domain admin privileges
+net group "Domain Admins" /domain 
+
+# desc: List uses that belongs to the administrators group inside the domain 
+# (the grup "Domain Admins" is included here)
+net localgroup administrators /domain 
+
+# desc: List all users of the domain
+net user /domain 
+
+# desc: Get information about that user
+net user #{USER} /domain 
+
+# desc: Password and lockout policy
+net accounts /domain 
+
+# desc: Mapping of the trust relationships.
+nltest /domain_trust 
+
+--- Logs & Events
+
+# desc: Make a security query using another credentials
+wevtutil qe security /rd:true /f:text /r:helpline /u:HELPLINE\zachary /p:0987654321

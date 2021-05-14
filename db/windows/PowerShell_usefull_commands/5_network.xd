@@ -1,0 +1,22 @@
+# desc: Interface IP
+Get-NetIPConfiguration | ft InterfaceAlias,InterfaceDescription,IPv4Address
+
+# des: DNS Server
+Get-DnsClientServerAddress -AddressFamily IPv4 | ft
+
+# desc: Route
+route print
+
+# desc: ARP
+Get-NetNeighbor -AddressFamily IPv4 | ft ifIndex,IPAddress,LinkLayerAddress,State
+
+# desc: Hosts
+Get-Content C:\WINDOWS\System32\drivers\etc\hosts
+
+# desc: Ping Range
+$ping = New-Object System.Net.Networkinformation.Ping
+1..254 | % { $ping.send("#{network_prefix}.$_") | select address, status }
+@network_prefix.desc(Network Suffix. eg. 192.168.1)
+
+# desc: SNMP
+Get-ChildItem -path HKLM:\SYSTEM\CurrentControlSet\Services\SNMP -Recurse

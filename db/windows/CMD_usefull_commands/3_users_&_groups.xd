@@ -1,0 +1,91 @@
+--- Users
+
+# desc: All info about me, take a look at the enabled tokens
+whoami /all 
+
+# desc: Show only privileges
+whoami /priv 
+
+# desc: All users
+net users 
+
+dir /b /ad "C:\Users"
+
+# desc: Info about a user (me)
+net user %username% 
+
+# desc: Information about password requirements
+net accounts 
+
+# desc: Anyone else logged in?
+qwinsta 
+
+# desc: List credential
+cmdkey /list 
+
+# desc: Create user
+net user /add #{USER} #{PWD}
+
+# desc: Lauch new cmd.exe with new creds 
+# (to impersonate in network)
+# The password will be prompted
+runas /netonly /user:#{DOMAIN}\#{USER} "cmd.exe" 
+
+# desc: Check current logon session as administrator using logonsessions from sysinternals
+logonsessions.exe
+logonsessions64.exe
+
+--- Groups
+
+# Local
+# desc: All available groups
+net localgroup 
+
+# Local
+# desc: Info about a group (admins)
+net localgroup Administrators 
+
+# Local
+# desc: Add user to administrators
+net localgroup administrators #{USER} /add 
+
+
+# Domain
+# desc: Info about domain groups
+net group /domain 
+
+# Domain
+# desc: Users that belongs to the group
+net group /domain #{DOMAIN} 
+@DOMAIN.desc(domain group name)
+
+--- List Sessions
+
+klist sessions
+
+--- Password policy
+
+net accounts
+
+--- Persistence with users
+
+# desc: Add domain user 
+net user #{USER} #{PWD} /ADD /DOMAIN
+
+# desc: put them in Domain Admins group
+net group "Domain Admins" #{USER} /ADD /DOMAIN
+
+# desc: Add local user 
+net user #{USER} #{PWD} /ADD
+
+# desc: put them local Administrators group
+net localgroup Administrators #{USER} /ADD
+
+# desc: Add user to insteresting groups
+net localgroup "Remote Desktop Users" #{USER}  /add
+
+# desc: Add user to insteresting groups
+net localgroup "Debugger users" #{USER} /add
+
+# desc: Add user to insteresting groups
+net localgroup "Power users" #{USER} /add

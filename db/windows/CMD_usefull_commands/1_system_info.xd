@@ -1,0 +1,43 @@
+# refer: https://book.hacktricks.xyz/windows/basic-cmd-for-pentesters#system-info
+
+--- Version and Patches info
+
+# desc: Get architecture
+wmic os get osarchitecture || echo %PROCESSOR_ARCHITECTURE% 
+
+systeminfo
+
+# desc: Get only that information
+systeminfo | findstr /B /C:"OS Name" /C:"OS Version" 
+
+# desc: Patches
+wmic qfe get Caption,Description,HotFixID,InstalledOn 
+
+hostname
+
+# desc: 3rd party driver vulnerable?
+DRIVERQUERY 
+
+--- Environment
+
+# desc: List all environment variables
+set
+
+# desc: DNS request for DC
+nslookup %LOGONSERVER%.%USERDNSDOMAIN%
+
+--- Mounted disks
+
+(wmic logicaldisk get caption 2>nul | more) || (fsutil fsinfo drives 2>nul)
+
+wmic logicaldisk get caption,description,providername
+
+--- AntiVirus
+
+WMIC /Node:localhost /Namespace:\\root\SecurityCenter2 Path AntiVirusProduct Get displayName /Format:List
+
+sc query windefend
+
+# desc: Delete all rules of Defender 
+# (useful for machines without internet access)
+"C:\Program Files\Windows Defender\MpCmdRun.exe" -RemoveDefinitions -All

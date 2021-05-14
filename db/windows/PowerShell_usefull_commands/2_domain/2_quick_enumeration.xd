@@ -1,0 +1,65 @@
+# desc: Basic domain info
+Get-NetDomain 
+
+--- User info
+# desc: Basic user enabled info
+Get-NetUser -UACFilter NOT_ACCOUNTDISABLE | select samaccountname, description, pwdlastset, logoncount, badpwdcount 
+
+# desc: Find users with sidHistory set
+Get-NetUser -LDAPFilter '(sidHistory=*)' 
+
+# desc: ASREPRoastable users
+Get-NetUser -PreauthNotRequired 
+
+# desc: Kerberoastable users
+Get-NetUser -SPN 
+
+--- Groups info
+
+Get-NetGroup | select samaccountname, admincount, description
+
+# desc: Get AdminSDHolders
+Get-DomainObjectAcl -SearchBase 'CN=AdminSDHolder,CN=System,DC=EGOTISTICAL-BANK,DC=local' | %{ $_.SecurityIdentifier } | Convert-SidToName 
+
+--- Computers
+
+Get-NetComputer | select samaccountname, operatingsystem
+
+# desc: DCs always appear but aren't useful for privesc
+Get-NetComputer -Unconstrained | select samaccountname 
+
+# desc: Find computers with Constrained Delegation
+Get-NetComputer -TrustedToAuth | select samaccountname 
+
+# desc: Find any machine accounts in privileged groups
+Get-DomainGroup -AdminCount | Get-DomainGroupMember -Recurse | ?{$_.MemberName -like '*$'} 
+
+--- Shares
+
+# desc: Search readable shares
+Find-DomainShare -CheckShareAccess 
+
+--- Domain trusts
+
+# desc: Get all domain trusts (parent, children and external)
+Get-NetDomainTrust 
+
+# desc: Enumerate all the trusts of all the domains found
+Get-NetForestDomain | Get-NetDomainTrust 
+
+--- LHF
+
+# desc: Check if any user passwords are set
+$FormatEnumerationLimit=-1;Get-DomainUser -LDAPFilter '(userPassword=*)' -Properties samaccountname,memberof,userPassword | % {Add-Member -InputObject $_ NoteProperty 'Password' "$([System.Text.Encoding]::ASCII.GetString($_.userPassword))" -PassThru} | fl
+
+# desc: Asks DC for all computers
+# Asks DC for all computers
+# , and asks every compute if it has admin access (very noisy). You need RCP and SMB ports opened.
+Find-LocalAdminAccess
+
+# desc: Get members from Domain Admins 
+# (default) and a list of computers and check if any of the users is logged in any machine running Get-NetSession/Get-NetLoggedon on each host. If -Checkaccess, then it also check for LocalAdmin access in the hosts.
+Invoke-UserHunter -CheckAccess
+
+# desc: Find interesting ACLs
+Invoke-ACLScanner -ResolveGUIDs | select IdentityReferenceName, ObjectDN, ActiveDirectoryRights | fl

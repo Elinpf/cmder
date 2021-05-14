@@ -1,0 +1,26 @@
+--- Domain Info
+# desc: Get info about the current domain
+Get-NetDomain 
+
+Get-NetDomain -Domain #{DOMAIN}
+
+# desc: Get domain SID
+Get-DomainSID 
+
+--- Policy
+# desc: Get info about the policy
+Get-DomainPolicy 
+
+# desc: Kerberos tickets info(MaxServiceAge)
+(Get-DomainPolicy)."KerberosPolicy" 
+
+# desc: Password policy
+(Get-DomainPolicy)."SystemAccess" 
+
+# desc: Check your privileges
+(Get-DomainPolicy).PrivilegeRights 
+
+--- Domain Controller
+
+# desc: Get Domain Controller
+Get-NetDomainController -Domain #{DOMAIN}
