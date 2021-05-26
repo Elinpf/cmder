@@ -75,3 +75,9 @@ echo "CIKUmMesGw==" | base64 -d | protoc --decode_raw
 # Remove the bit so you can delete it (-i)
 sudo chattr +i #{file}
 sudo chattr -i #{file}
+
+# desc: Check sudo list
+sudo -l
+
+# desc: Load a new shell
+/bin/bash -p

