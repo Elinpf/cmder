@@ -28,10 +28,9 @@ cat #{file} | sort | uniq
 sed -i 's/#{old}/#{new}/g' #{file} 
 
 # desc: Decompress
-tar -xvzf /path/to/yourfile.tgz
-tar -xvjf /path/to/yourfile.tbz
+tar -zxvf /path/to/yourfile.tar.gz
+tar -jxvf /path/to/yourfile.tar.bz2
 bzip2 -d /path/to/yourfile.bz2
-tar jxf file.tar.bz2
 gunzip /path/to/yourfile.gz
 unzip file.zip
 7z -x file.7z

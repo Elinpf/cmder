@@ -1,0 +1,16 @@
+# refer: https://danielmiessler.com/study/tcpdump/
+
+# desc: By ip
+tcpdump host #{RHOST}
+
+# desc: By network
+tcpdump net #{RHOST}
+
+# desc: Get HTTP Hex traffic
+tcpdump -nnSX port 80
+
+# desc: Get HTTP Raw traffic
+tcpdump -ttttnnvvS port 80
+
+# desc: Get HTTP Cleartext
+tcpdump -vvAls0 port 80

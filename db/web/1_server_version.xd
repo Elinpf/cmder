@@ -8,6 +8,10 @@ whatweb -a 1 #{RHOST}
 # desc: Aggresive
 whatweb -a 3 #{RHOST}
 
+# This can get Hostname
+# desc: ssl information
+curl --insecure -vvI https://#{RHOST} 2>&1 | awk 'BEGIN { cert=0 } /^\* SSL connection/ { cert=1 } /^\*/ { if (cert) print }'
+@RHOST.desc(ip or domain)
 
 --- check WAF
 

