@@ -2,7 +2,7 @@
 
 这是一款命令行模式下运行的命令生成框架。目标是帮助渗透测试人员快速生成测试命令。并且记录所选择的参数，方便下次使用。
 
-![Example](https://github.com/Elinpf/cmder/blob/master/assert/example_1.gif)
+![Example](assert/example_1.gif)
 
 # 特色
 
