@@ -2,16 +2,16 @@
 
 
 # refer: https://github.com/Nekmo/dirhunt
-dirhunt #{RHOST}
+dirhunt #{URL}
 
 # refer: https://github.com/saeeddhqan/evine
-evine -url #{RHOST}
+evine -url #{URL}
 
 # refer: https://github.com/jaeles-project/gospider
-gospider -s #{RHOST} --depth 3 --no-redirect -t 50 0c 3 -o gospider_output.txt
+gospider -s #{URL} --depth 3 --no-redirect -t 50 0c 3 -o gospider_output.txt
 
 # refer: https://github.com/devanshbatham/ParamSpider
-python3 paramspider.py --domain #{RHOST} --level high --output paramspider_output.txt
+python3 paramspider.py --domain #{URL} --level high --output paramspider_output.txt
 
 # refer: https://book.hacktricks.xyz/pentesting/pentesting-web#spidering
 # desc: [INFO]

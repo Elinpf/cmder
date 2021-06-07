@@ -3,7 +3,7 @@
 # desc: Broken link checker
 # refer: https://github.com/stevenvachon/broken-link-checker
 # Find broken links inside HTMLs that may be prone to takeovers
-blc #{RHOST} -ro
+blc #{URL} -ro
 
 # desc: [Check]
 # file.ext~, #file.ext#, ~file.ext, file.ext.bak, file.ext.tmp, file.ext.old, file.bak, file.tmp and file.old
@@ -11,11 +11,11 @@ Check File Backups
 
 # desc: Discover new parameters
 # refer: https://github.com/s0md3v/Arjun/wiki/Usage#scan-a-single-url
-arjun -u #{RHOST}
+arjun -u #{URL}
 
 # desc: Discover new parameters
 # refer: https://github.com/maK-/parameth
-parameth.py -u #{RHOST}
+parameth.py -u #{URL}
 
 # desc: [Check]
 Comments

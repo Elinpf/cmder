@@ -1,12 +1,12 @@
 --- General purpose automatic scanners
 
-nikto -h #{RHOST}
+nikto -h #{URL}
 
-whatweb -a 4 #{RHOST}
+whatweb -a 4 #{URL}
 
-wapiti -u #{RHOST}
+wapiti -u #{URL}
 
-W3af #{RHOST}
+W3af #{URL}
 
 
 --- CMS scanners
@@ -20,11 +20,11 @@ CMSMap: (W)ordpress, (J)oomla, (D)rupal or (M)oodle
 droopscan: Drupal, Joomla, Moodle, Silverstripe, Wordpress
 
 
-cmsmap -f W -F -d #{RHOST}
+cmsmap -f W -F -d #{URL}
 
-wpscan --force update -e --url #{RHOST}
+wpscan --force update -e --url #{URL}
 
-joomscan --ec -u #{RHOST}
+joomscan --ec -u #{URL}
 
 # refer: https://github.com/rastating/joomlavs
 joomlavs.rb

@@ -13,11 +13,11 @@ Check if you can upload files
 
 # desc: SSL/TLS vulnerabilites
 # refer: https://github.com/drwetter/testssl.sh
-./testssl.sh #{save_output} #{RHOST}:443
+./testssl.sh #{save_output} #{URL}:443
 @save_output.desc(save the output inside an htmlfile also)
 @save_output.recommed(--htmlfile)
 
 # desc: SSL/TLS vulnerabilites
 # refer: https://github.com/hahwul/a2sv
-python a2sv.py -t #{RHOST}
+python a2sv.py -t #{URL}
 

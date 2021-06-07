@@ -3,10 +3,10 @@
 --- identify
 
 # desc: Stealthy
-whatweb -a 1 #{RHOST}
+whatweb -a 1 #{URL}
 
 # desc: Aggresive
-whatweb -a 3 #{RHOST}
+whatweb -a 3 #{URL}
 
 # This can get Hostname
 # desc: ssl information
@@ -16,9 +16,9 @@ curl --insecure -vvI https://#{RHOST} 2>&1 | awk 'BEGIN { cert=0 } /^\* SSL conn
 --- check WAF
 
 # refer: https://github.com/EnableSecurity/wafw00f
-wafw00f #{RHOST}
+wafw00f #{URL}
 
-nmap -p80 --script http-waf-detect #{RHOST}
+nmap -p80 --script http-waf-detect #{URL}
 
 
 --- check cookies
