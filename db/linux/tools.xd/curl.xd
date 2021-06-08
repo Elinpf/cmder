@@ -7,7 +7,12 @@ curl #{URL}
 curl -b "#{cookie}" #{URL}
 
 # desc: -b 读取本地cookie文件
+# 读取的为 -c 写入的cookie文件
 curl -b cookies.txt #{URL}
+
+# desc: -H 写入头部文件参数
+# 在自己写入Cookie的话，使用这个方式
+curl -H @#{file} #{URL}
 
 # desc: -c 将服务器的cookie写入本地
 curl -c cookies.txt #{URL}
