@@ -30,4 +30,6 @@ crul -vI #{URL}
 crul -L #{URL}
 
 # desc: -o -O 保存文件
+# -o 为指定保存文件名
+# -O 为自动保存文件名
 curl #{URL} -O

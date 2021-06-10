@@ -1,0 +1,14 @@
+# refer: https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS
+
+@file.recommend(linpeas.sh)
+@out_file.recommend(linpeas.out)
+@enc_file.recommend(lp.enc)
+
+--- Download
+
+wget https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh
+
+# desc: Quick Start
+curl https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh | sh
+
+

@@ -1,0 +1,13 @@
+# refer: https://github.com/rebootuser/LinEnum/blob/master/LinEnum.sh
+
+@file.recommend(linenum.sh)
+@out_file.recommend(linenum.out)
+@enc_file.recommend(le.enc)
+
+--- Download
+
+wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
+
+# desc: Quick Start
+
+curl https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh | sh
