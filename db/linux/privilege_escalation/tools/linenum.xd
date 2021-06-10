@@ -6,8 +6,7 @@
 
 --- Download
 
-wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh
+curl https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh -o linenum.sh
 
 # desc: Quick Start
-
 curl https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh | sh
