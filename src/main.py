@@ -25,7 +25,7 @@ def get_options():
     parser_show = subparsers.add_parser(
         'show', help='show the latest table')
     parser_show.add_argument(
-        '-s', '--history', action='store_true', help='show the history')
+        '-hs', '--history', action='store_true', help='show the history')
     parser_show.set_defaults(func=show)
 
     parser_search = subparsers.add_parser(
