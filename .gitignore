@@ -4,3 +4,4 @@ build/*
 cmder.egg-info/*
 dist/*
 *.pyc
+cmder

