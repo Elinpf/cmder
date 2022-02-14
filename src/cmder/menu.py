@@ -1,9 +1,9 @@
 import os
 import re
 
-import src
-from src.unit import is_windows
-from src.data import pypaths, pystrs
+from .unit import is_windows, get_path_list, get_select_path
+from .data import pypaths, pystrs
+from . import conf, cool
 
 if not is_windows():
     from simple_term_menu import TerminalMenu
@@ -15,14 +15,14 @@ def menu_select_file(path):
     menu_list = []
     back_title = '(Back)'
 
-    for p in src.unit.get_path_list(path):  # 软件与用户目录的两次循环
+    for p in get_path_list(path):  # 软件与用户目录的两次循环
         if not os.path.exists(p):
             continue
 
         for f in os.listdir(p):  # 取目录下的文件名
             f_path = os.path.join(p, f)
             if os.path.isdir(f_path):  # 如果是目录
-                if f in src.conf.extend_dir:
+                if f in conf.extend_dir:
                     continue
 
                 if is_empty_dir(f_path):  # 并且目录内不为空
@@ -54,7 +54,7 @@ def menu_select_file(path):
             back_path = pypaths.db_path
         return menu_select_file(back_path)
 
-    select_path = src.unit.get_select_path(path, select)
+    select_path = get_select_path(path, select)
     if os.path.isdir(select_path):
         return menu_select_file(select_path)
 
@@ -145,7 +145,7 @@ def input_custom(title):
     """自定义输入，并且保存到config中"""
     print(f'(custom) {title}')
     try:
-        selection = input(src.cool.red_bright('> '))
+        selection = input(cool.red_bright('> '))
     except (InterruptedError, KeyboardInterrupt):
         exit()
 
@@ -162,7 +162,7 @@ def menu_select_cmd_var(cmd):
             title = var.name
 
         select = menu_with_custom_choice(title, list)
-        src.conf.workspace_set_custom_input(var.name, select)
+        conf.workspace_set_custom_input(var.name, select)
         var.select = select
 
 

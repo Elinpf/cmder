@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
-from src import conf, cool
-from src.command import Command, SplitLine
+from . import conf, cool
+from .command import Command, SplitLine
 
 
 def print_cmd(index, cmd):

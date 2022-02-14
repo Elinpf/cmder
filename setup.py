@@ -47,8 +47,10 @@ setup(
     python_requires='>=3.6',
     install_requires=requirements,
     data_files=data_files,
-    packages=find_packages(),
-    scripts=['cmder']
+    # packages=find_packages(),
+    scripts=['cmder'],
+    packages=find_packages('src'),
+    package_dir={'': "src"},
 )
 
 os.remove('cmder')

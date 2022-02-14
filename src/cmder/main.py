@@ -1,17 +1,16 @@
 import os
 import pickle
-from src.unit import get_relate_path
-
-from src.menu import menu_select_file, menu_select_cmd_var, menu
 import argparse
-import src
-from src.parse import Parse
-from src.output import print_cmds, print_info
-from src.variable import VariableList
-from src.command import CommandList
-from src.data import pypaths, pyoptions
-from src.decorator import load
-from src import cool
+
+from .unit import get_relate_path, escap_chars, db_recursion_file
+from .menu import menu_select_file, menu_select_cmd_var, menu
+from .parse import Parse
+from .output import print_cmds, print_info
+from .variable import VariableList
+from .command import CommandList
+from .data import pypaths, pyoptions
+from .decorator import load
+from . import cool, conf
 
 
 def get_options():
@@ -106,7 +105,7 @@ def default_menu(args):
     except Exception as e:
         print(f"[-] {repr(e)}")
         exit()
-    src.conf.latest_select = file
+    conf.latest_select = file
     pyoptions.cmd_list = parse_files(file).cmdlist
     print_cmds(pyoptions.cmd_list)
     dump()
@@ -149,7 +148,7 @@ def search(args):
 def history(args):
     """历史命令"""
     if args.size:
-        src.conf.history_size = args.size
+        conf.history_size = args.size
         exit()
 
     if args.use:
@@ -173,13 +172,13 @@ def history(args):
 @load
 def show(args):
     if args.history:
-        hs = src.conf.history_select
+        hs = conf.history_select
         hs = [x.replace(pypaths.db_path, 'db') for x in hs]
         hs = [x.replace(pypaths.custom_db_path, 'db')
               for x in hs]
         idx = menu('History Select:', hs)
-        file = src.conf.history_select[idx]
-        src.conf.latest_select = file
+        file = conf.history_select[idx]
+        conf.latest_select = file
         pyoptions.cmd_list = parse_files(file).cmdlist
         dump()
 
@@ -221,9 +220,9 @@ def use(args):
     # 写入history 并当超过长度长度时删除首行
     with open(pypaths.history_path, "r+") as f:
         d = f.readlines()
-        if src.conf.history_size <= len(d):
+        if conf.history_size <= len(d):
             f.seek(0)
-            for i in d[1:src.conf.history_size]:
+            for i in d[1:conf.history_size]:
                 f.write(i)
             f.write(shell + "\n")
             f.truncate()
@@ -231,7 +230,7 @@ def use(args):
             f.write(shell + "\n")
 
     if args.run:
-        shell = src.unit.escap_chars(shell)
+        shell = escap_chars(shell)
         os.system(shell)
 
 
@@ -245,30 +244,30 @@ def info(args):
 
 def workspace(args):
     if args.new:
-        src.conf.add_workspace(args.new)
+        conf.add_workspace(args.new)
 
     elif args.delete:
-        src.conf.del_workspace(args.delete)
+        conf.del_workspace(args.delete)
 
     elif args.unset:
-        src.conf.workspace_unset_var(args.unset)
+        conf.workspace_unset_var(args.unset)
 
     elif args.set:
         key, val = args.set.split('=', 1)
-        src.conf.workspace_set_var(key, val)
+        conf.workspace_set_var(key, val)
 
     elif args.get:
-        for key in src.conf.workspace_get_var_keys():
-            val = src.conf.workspace_get_var(key)
+        for key in conf.workspace_get_var_keys():
+            val = conf.workspace_get_var(key)
             for v in val:
                 print(f"{key}={v}")
 
     elif args.change:
-        src.conf.workspace_change(args.change)
+        conf.workspace_change(args.change)
 
     else:
-        now = src.conf.workspace_now()
-        for name in src.conf.workspaces_name():
+        now = conf.workspace_now()
+        for name in conf.workspaces_name():
             if name == now:
                 print(f" * {name}")
             else:
@@ -277,7 +276,7 @@ def workspace(args):
 
 def parse_files(select_file_path):
     """解析选择的文件"""
-    file_list = src.unit.db_recursion_file(select_file_path)
+    file_list = db_recursion_file(select_file_path)
     parse = Parse()
     parse.parse_files(file_list)
     return parse
@@ -288,12 +287,12 @@ def merge_varlist(cmd):
     config_varlist = VariableList()
     custom_varlist = VariableList()
 
-    for key, val in src.conf.workspace_var_key_with_val():
+    for key, val in conf.workspace_var_key_with_val():
         config_varlist.append(key)
         _ = {"name": key, "func": "recommend", "value": val}
         config_varlist.set(_)
 
-    for key, val in src.conf.workspace_custom_key_with_val():
+    for key, val in conf.workspace_custom_key_with_val():
         custom_varlist.append(key)
         _ = {"name": key, "func": "recommend", "value": val}
         custom_varlist.set(_)
@@ -306,7 +305,7 @@ def select_link(cmd):
     idx = menu('select link to:', cmd.links)
     file = cmd.links[idx]
     parse = parse_files(file)
-    src.conf.latest_select = file
+    conf.latest_select = file
     print_cmds(parse.cmdlist)
 
 

@@ -1,9 +1,9 @@
 import re
 import wcwidth
-from src.variable import VariableList
-from src.data import pyoptions
-from src import cool
-from src.unit import get_relate_path
+from .variable import VariableList
+from .data import pyoptions
+from . import cool
+from .unit import get_relate_path
 
 
 class Command():

@@ -1,7 +1,7 @@
 import os
 import platform
 from colorama import Fore, Style
-from src.data import pypaths, pystrs, pyoptions
+from .data import pypaths, pystrs, pyoptions
 
 
 def is_windows():

@@ -1,5 +1,5 @@
-from src.variable import VariableList
-from src.command import Command, CommandList, SplitLine
+from .variable import VariableList
+from .command import Command, CommandList, SplitLine
 
 import re
 
