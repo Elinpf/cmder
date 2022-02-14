@@ -7,7 +7,7 @@ class Config():
 
     def __init__(self, config_path):
         self.conf = {}
-        self.config_abspath = None
+        self.config_abspath = ''
         self.load(config_path)
 
     def load(self, config_path):

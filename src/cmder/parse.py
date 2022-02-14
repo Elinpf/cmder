@@ -1,3 +1,4 @@
+from typing import List
 from .variable import VariableList
 from .command import Command, CommandList, SplitLine
 
@@ -30,7 +31,7 @@ class Parse():
 
     def _split_area(self, file_path):
         """已空行为界线进行分割区域"""
-        new_area = []
+        new_area = []  # type: List[str]
         fi = open(file_path, 'r', encoding='UTF-8')
 
         for line in fi.readlines():
