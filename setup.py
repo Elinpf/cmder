@@ -27,7 +27,7 @@ def get_file(path, all_files=[]):
 
 data_files = get_file(db_path)
 
-shutil.copyfile("cmder.py", 'cmder')
+shutil.copyfile("start.py", 'cmder')
 
 setup(
     name='cmder',
