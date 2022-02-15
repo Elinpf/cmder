@@ -1,0 +1,15 @@
+Notes
+# """
+These are the commands I run every time I see an open DNS port
+
+dnsrecon -r 127.0.0.0/24 -n #{IP} -d #{Domain_Name}
+dnsrecon -r 127.0.1.0/24 -n {IP} -d {Domain_Name}
+dnsrecon -r {Network}{CIDR} -n {IP} -d {Domain_Name}
+dig axfr @{IP}
+dig axfr {Domain_Name} @{IP}
+nslookup
+    SERVER {IP}
+    127.0.0.1
+    {IP}
+    Domain_Name
+    exit"""

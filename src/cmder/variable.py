@@ -35,7 +35,8 @@ class Variable:
         self.recomm_cmd.append(string)
 
     def refresh(self):
-        self.recomm = []
+        self.recomm.clear()
+        self.recomm_cmd.clear()
         self.refresh_tag = True
 
     def set(self, info: dict):
@@ -55,7 +56,7 @@ class Variable:
             if info["value"]:
                 self.if_has = info["value"]
 
-    def merge(self, other_var):
+    def merge(self, other_var: "Variable"):
         if not self.desc:
             self.desc = other_var.desc
 
@@ -71,6 +72,7 @@ class Variable:
 
     @property
     def select(self):
+        # ! 这个判断可以去掉
         if not self._select:
             return ""
 
@@ -87,7 +89,7 @@ class Variable:
         """获取所有推荐选项，返回数组"""
         list = []
         for c in self.recomm_cmd:
-            #! 这里是要运行bash的
+            # TODO 增加 bash 语句生成推荐项的支持
             list.append(c)
 
         list += self.recomm
@@ -102,10 +104,10 @@ class VariableList:
 
     def append(self, var):
         if type(var) == Variable:
-            if not self.has_key(var.name):
+            if var.name not in self:
                 self.list[var.name] = var
         else:
-            if not self.has_key(var):
+            if var not in self:
                 var = Variable(var)
                 self.list[var.name] = var
 
@@ -125,18 +127,25 @@ class VariableList:
     def has_key(self, key):
         return key in self.list
 
+    def __iter__(self):
+        for _, var in self.items():
+            yield (var.key, var)
+
+    def __contains__(self, key):
+        return key in self.list
+
     def set(self, info: dict):
         """info = {"name": variables_name, "func": function, "value": value}"""
-        if not self.has_key(info["name"]):
+        if info['name'] not in self:
             self.append(info["name"])
 
         var = self.list[info["name"]]
         var.set(info)
 
-    def merge(self, other_varlist):
+    def merge(self, other_varlist: "VariableList"):
         """合并，当原来的列表中有相应的变量才会合并"""
         for key, var in self.list.items():
-            if not other_varlist.has_key(key):
+            if key not in other_varlist:
                 continue
 
             var.merge(other_varlist[key])
