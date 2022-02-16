@@ -14,21 +14,21 @@ class TestVariable:
         assert var.desc == 'remote host'
 
         var.set({'func': 'recommend', 'value': '192.168.1.1'})
-        assert var.recomm[0] == '192.168.1.1'
+        assert var.recommend[0] == '192.168.1.1'
         var.set({'func': 'recommend', 'value': '192.168.1.2'})
-        assert var.recomm[1] == '192.168.1.2'
+        assert var.recommend[1] == '192.168.1.2'
 
         var.set({'func': 'recommend_cmd', 'value': '-r'})
-        assert var.recomm_cmd[0] == '-r'
+        assert var.recommend_cmd[0] == '-r'
         var.set({'func': 'recommend_cmd', 'value': '-d'})
-        assert var.recomm_cmd[1] == '-d'
+        assert var.recommend_cmd[1] == '-d'
 
         var.set({'func': 'if_has', 'value': '-r %s'})
         assert var.if_has == '-r %s'
 
         var.set({'func': 'refresh'})
-        assert len(var.recomm) == 0
-        assert len(var.recomm_cmd) == 0
+        assert len(var.recommend) == 0
+        assert len(var.recommend_cmd) == 0
 
     def test_parse(cls):
         var = Variable('[-s] RHOST')
@@ -48,18 +48,18 @@ class TestVariable:
         var.merge(other_var)
 
         assert var.desc == 'remote host'
-        assert len(var.recomm) == 3
-        assert var.recomm[2] == '10.10.10.1'
+        assert len(var.recommend) == 3
+        assert var.recommend[2] == '10.10.10.1'
 
-    def test_get_recomm(cls):
+    def test_get_recommend(cls):
         var = Variable('RHOST')
         var.set({'func': 'recommend', 'value': '192.168.1.1'})
         var.set({'func': 'recommend', 'value': '192.168.1.2'})
         # TODO 还要增加 recommend_cmd
 
-        recomm = var.get_recomm()
-        assert len(recomm) == 2
-        assert recomm == ['192.168.1.1', '192.168.1.2']
+        recommend = var.get_recommend()
+        assert len(recommend) == 2
+        assert recommend == ['192.168.1.1', '192.168.1.2']
 
     def test_select(cls):
         var = Variable('RHOST')

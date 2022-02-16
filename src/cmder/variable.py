@@ -5,8 +5,8 @@ class Variable:
     def __init__(self, name):
         self.name = ""  # 变量名称
         self.desc = ""  # 简短的描述，用于选择的时候给出标题
-        self.recomm = []  # 推荐参数
-        self.recomm_cmd = []  # 推荐参数，可以作为shell命令传入
+        self.recommend = []  # 推荐参数
+        self.recommend_cmd = []  # 推荐参数，可以作为shell命令传入
         self.if_has = ""  # 当有if_has的使用，有选项值会将if_has带入进去替换
         self._select = ""  # 在选择后填入选项值
         self.refresh_tag = False
@@ -25,18 +25,18 @@ class Variable:
 
         self.key = name
 
-    def append_recomm(self, string):
-        if string in self.recomm:
+    def append_recommend(self, string):
+        if string in self.recommend:
             return
 
-        self.recomm.append(string)
+        self.recommend.append(string)
 
-    def append_recomm_cmd(self, string):
-        self.recomm_cmd.append(string)
+    def append_recommend_cmd(self, string):
+        self.recommend_cmd.append(string)
 
     def refresh(self):
-        self.recomm.clear()
-        self.recomm_cmd.clear()
+        self.recommend.clear()
+        self.recommend_cmd.clear()
         self.refresh_tag = True
 
     def set(self, info: dict):
@@ -48,10 +48,10 @@ class Variable:
             self.refresh()
         elif info["func"] == "recommend":
             if info["value"]:
-                self.append_recomm(info["value"])
+                self.append_recommend(info["value"])
         elif info["func"] == "recommend_cmd":
             if info["value"]:
-                self.append_recomm_cmd(info["value"])
+                self.append_recommend_cmd(info["value"])
         elif info["func"] == "if_has":
             if info["value"]:
                 self.if_has = info["value"]
@@ -64,11 +64,11 @@ class Variable:
             self.if_has = other_var.if_has
 
         if not self.refresh_tag:
-            for o in other_var.recomm:
-                if o not in self.recomm:
-                    self.recomm.append(o)
+            for o in other_var.recommend:
+                if o not in self.recommend:
+                    self.recommend.append(o)
 
-                # self.recomm_cmd += other_var.recomm_cmd
+                # self.recommend_cmd += other_var.recommend_cmd
 
     @property
     def select(self):
@@ -85,14 +85,14 @@ class Variable:
     def select(self, str):
         self._select = str.strip()
 
-    def get_recomm(self):
+    def get_recommend(self):
         """获取所有推荐选项，返回数组"""
         list = []
-        for c in self.recomm_cmd:
+        for c in self.recommend_cmd:
             # TODO 增加 bash 语句生成推荐项的支持
             list.append(c)
 
-        list += self.recomm
+        list += self.recommend
         return list
 
 

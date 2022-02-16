@@ -154,7 +154,7 @@ def input_custom(title):
 
 def menu_select_cmd_var(cmd):
     for _, var in cmd.vars.items():
-        list = var.get_recomm()
+        list = var.get_recommend()
 
         if var.desc:
             title = f'{var.name}: {var.desc}'
