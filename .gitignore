@@ -5,3 +5,4 @@ cmder.egg-info/*
 dist/*
 *.pyc
 cmder
+src/cmder.egg-info/*
