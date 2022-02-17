@@ -1,6 +1,8 @@
 from __future__ import annotations
 import os
 import platform
+import base64
+import re
 from colorama import Fore, Style
 from typing import List
 from .data import pypaths, pystrs, pyoptions
@@ -12,6 +14,34 @@ def is_windows():
 
 def is_linux():
     return platform.system() == 'Linux'
+
+
+def encode_base64(string: str) -> str:
+    """base64编码"""
+    return str(base64.b64encode(string.encode('utf-8')))[2:-1]
+
+
+def decode_base64(string: str) -> str:
+    return str(base64.b64decode(string).decode('utf-8'))
+
+
+def encode_multi_line_notes(string: str) -> str:
+    """将多行注释编码为单行注释"""
+    match = re.findall(pyoptions.multi_line_note_pattern, string)
+    if match:
+        for m in match:
+            rep_str = "{}:{}".format(
+                pyoptions.encode_flag, encode_base64(m))
+            string = string.replace('"""{}"""'.format(m), rep_str)
+
+    return string
+
+
+def decode_multi_line_notes(encode_str: str) -> str:
+    """将单行编码注释转换为多行注释"""
+    encode_str = encode_str.replace(pyoptions.encode_flag + ':', '')
+    decode_str = decode_base64(encode_str)
+    return decode_str
 
 
 def db_recursion_file(file_path: str) -> List[str]:

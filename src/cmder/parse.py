@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import List
 from .variable import VariableList, Variable
 from .command import Command, CommandList, SplitLine
+from .unit import encode_multi_line_notes
 
 import re
 
@@ -33,9 +34,11 @@ class Parse():
     def _split_area(self, file_path):
         """已空行为界线进行分割区域"""
         new_area = []  # type: List[str]
-        fi = open(file_path, 'r', encoding='UTF-8')
+        file_string = open(
+            file_path, 'r', encoding='UTF-8').read()  # type: str
 
-        for line in fi.readlines():
+        file_string = encode_multi_line_notes(file_string)
+        for line in file_string.splitlines():
             line = line.rstrip()
             if line == '':
                 if len(new_area):

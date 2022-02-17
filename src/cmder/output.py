@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 from . import conf, cool
 from .command import Command, SplitLine
+from .data import pyoptions
+from .unit import decode_multi_line_notes
 
 
 def print_cmd(index, cmd):
@@ -37,7 +39,13 @@ def print_cmds(cmdlist):
 def print_info(cmd):
     print("PATH: " + cmd.path)
     for note in cmd.notes:
-        print(f'# {note}')
+        if pyoptions.encode_flag in note:
+            notes = decode_multi_line_notes(note).splitlines()
+            for note in notes:
+                print(f'# {note}')
+
+        else:
+            print(f'# {note}')
 
     print()
 

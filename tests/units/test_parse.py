@@ -1,5 +1,6 @@
 from cmder.parse import Parse
 from cmder.command import SplitLine, Command
+from cmder.data import pyoptions
 
 CONTEXT = """# desc: Login
 # Login with mssqlclient.py
@@ -36,3 +37,19 @@ class TestParse():
         assert len(cmd.cmd) == 1
         assert cmd.cmd[0] == 'mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth'
         assert cmd.vars['RHOST'].recommend.pop() == '192.168.1.1'
+
+    def test_parse_normal_area(cls):
+        area = CONTEXT.split('\n')
+        area.remove(
+            'mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth')
+
+        p = Parse()
+        p._parse_normal_area(area)
+        assert len(p.g_varlist) == 1
+        assert p.g_varlist['RHOST'].recommend.pop() == '192.168.1.1'
+        notes = [
+            'desc: Login',
+            'Login with mssqlclient.py',
+            'refer: https://book.hacktricks.xyz/pentesting'
+        ]
+        assert p.notes == notes

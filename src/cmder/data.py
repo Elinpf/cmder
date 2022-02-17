@@ -31,12 +31,14 @@ class PyOptions():
         self.note_separator = ':'
         self.db_file_suffix = '.xd'
         self.splitline_color = 'FUCHSIA'
+        self.encode_flag = 'cmder_encode'
 
         # patterns
         self.note_desc_pattern = r"^\s*desc\s*:"
         self.note_refer_pattern = r"^\s*refer\s*:"
         self.note_link_pattern = r"^\s*link\s*:"
         self.variable_pattern = r"#{(.*?)}"
+        self.multi_line_note_pattern = r'"""((?:.|\n)*?)"""'
 
         # cmdlist
         self.cmd_list = None
