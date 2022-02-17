@@ -1,7 +1,11 @@
+from __future__ import annotations
 import os
 import platform
+import base64
+import re
 from colorama import Fore, Style
-from src.data import pypaths, pystrs, pyoptions
+from typing import List
+from .data import pypaths, pystrs, pyoptions
 
 
 def is_windows():
@@ -12,7 +16,35 @@ def is_linux():
     return platform.system() == 'Linux'
 
 
-def db_recursion_file(file_path):
+def encode_base64(string: str) -> str:
+    """base64编码"""
+    return str(base64.b64encode(string.encode('utf-8')))[2:-1]
+
+
+def decode_base64(string: str) -> str:
+    return str(base64.b64decode(string).decode('utf-8'))
+
+
+def encode_multi_line_notes(string: str) -> str:
+    """将多行注释编码为单行注释"""
+    match = re.findall(pyoptions.multi_line_note_pattern, string)
+    if match:
+        for m in match:
+            rep_str = "{}:{}".format(
+                pyoptions.encode_flag, encode_base64(m))
+            string = string.replace('"""{}"""'.format(m), rep_str)
+
+    return string
+
+
+def decode_multi_line_notes(encode_str: str) -> str:
+    """将单行编码注释转换为多行注释"""
+    encode_str = encode_str.replace(pyoptions.encode_flag + ':', '')
+    decode_str = decode_base64(encode_str)
+    return decode_str
+
+
+def db_recursion_file(file_path: str) -> List[str]:
     """用于对指定的文件递归查询所有存在的__init__.xd文件,
     以及用户目录下自定义的文件
     返回List """
@@ -45,22 +77,23 @@ def db_recursion_file(file_path):
     return list
 
 
-def get_select_path(path, select):
+def get_select_path(path: str, select: str) -> str:
     """获取选择的文件，如果在软件目录中不存在，就返回用户目录的路径"""
     for p in get_path_list(path):
         p_select = os.path.join(p, select)
         if os.path.exists(p_select):
             return p_select
+    return ''
 
 
-def get_relate_path(path):
+def get_relate_path(path: str) -> str:
     """获取相对路径"""
     relate_path = path.replace(pypaths.db_path, 'db')
     relate_path = relate_path.replace(pypaths.custom_db_path, 'db')
     return relate_path
 
 
-def get_path_list(path):
+def get_path_list(path: str) -> List[str, str]:
     """取软件目录与用户目录的list"""
     relate_path = get_relate_path(path)
     root_path = os.path.join(pypaths.root_path, relate_path)
@@ -68,7 +101,7 @@ def get_path_list(path):
     return [root_path, custom_path]
 
 
-def store_file(file_relate_path, string):
+def store_file(file_relate_path: str, string: str):
     """用于存储文件, 
     file_relate_path 是相对与用户目录下的文件路径"""
     fi = open_custom_file(file_relate_path, 'w')
@@ -76,19 +109,19 @@ def store_file(file_relate_path, string):
     fi.close()
 
 
-def open_custom_file(file_relate_path, mode):
+def open_custom_file(file_relate_path: str, mode: str) -> object:
     """打开用户目录中的文件"""
     file_path = custom_abspath(file_relate_path)
     fi = open(file_path, mode)
     return fi
 
 
-def custom_abspath(file_relate_path):
+def custom_abspath(file_relate_path: str) -> str:
     """返回用户目录绝对路径"""
     return os.path.join(pypaths.custom_path, file_relate_path)
 
 
-def escap_chars(string: str):
+def escap_chars(string: str) -> str:
     """转义一些字符"""
     if is_linux():
         string = string.replace('\\', '\\\\')
@@ -106,7 +139,7 @@ class Colored():
     FUCHSIA = '\033[35m'
     WHITE = Fore.WHITE
 
-    def color_str(self, color, s, bright=False):
+    def color_str(self, color: str, s: str, bright: bool = False) -> str:
 
         if bright:
             return '{}{}{}'.format(getattr(self, color) + Style.BRIGHT, s, Style.RESET_ALL)

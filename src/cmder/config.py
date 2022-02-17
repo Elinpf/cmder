@@ -1,18 +1,18 @@
 import os
 import json
-import src.unit
+from . import unit
 
 
 class Config():
 
     def __init__(self, config_path):
         self.conf = {}
-        self.config_abspath = None
+        self.config_abspath = ''
         self.load(config_path)
 
     def load(self, config_path):
         """加载配置文件, 如果没有则创建"""
-        self.config_abspath = src.unit.custom_abspath(config_path)
+        self.config_abspath = unit.custom_abspath(config_path)
         if os.path.exists(self.config_abspath):
             json_str = open(self.config_abspath, 'r').read()
             self.conf = json.loads(json_str)
@@ -166,7 +166,7 @@ class Config():
         if self.latest_select == string:
             return
 
-        self.history_select = src.unit.get_relate_path(string)
+        self.history_select = unit.get_relate_path(string)
 
     @property
     def history_select(self):

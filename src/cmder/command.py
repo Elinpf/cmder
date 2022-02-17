@@ -1,9 +1,11 @@
+from __future__ import annotations
 import re
 import wcwidth
-from src.variable import VariableList
-from src.data import pyoptions
-from src import cool
-from src.unit import get_relate_path
+from typing import List
+from .variable import VariableList
+from .data import pyoptions
+from . import cool
+from .unit import get_relate_path
 
 
 class Command():
@@ -59,7 +61,7 @@ class Command():
     def merge_var(self, g_varlist):
         return self.vars.merge(g_varlist)
 
-    def merge_notes(self, notes):
+    def merge_notes(self, notes: list):
         # 合并的notes放在前面
         ln = len(notes)
         for note in notes:
@@ -86,29 +88,33 @@ class Command():
 
 
 class CommandList():
+    # TODO 这里将SplitLine 和 Command 混在一起了，后面分开
     def __init__(self):
         self.list = []
 
-    def append(self, cmd: Command):
+    def append(self, cmd: Command | SplitLine | List[Command | SplitLine]):
         if isinstance(cmd, list):
             self.list.extend(cmd)
         else:
             self.list.append(cmd)
 
-    def __iter__(self):
+    def __len__(self) -> int:
+        return len(self.get_cmd_list())
+
+    def __iter__(self) -> Command | SplitLine:
         return self.list.__iter__()
 
     def __next__(self):
         return next(self.list)
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Command:
         try:
             return self.get_cmd_list()[index]
         except:
             print("[-] Error input of index")
             exit()
 
-    def get_cmd_list(self):
+    def get_cmd_list(self) -> List[Command]:
         """只包含command类"""
         cmds = []
         for c in self.list:
@@ -117,11 +123,11 @@ class CommandList():
 
         return cmds
 
-    def filter(self, str):
+    def filter(self, string: str) -> List[Command]:
         """筛选cmd"""
         cmds = []
         for cmd in self.get_cmd_list():
-            if str in cmd.to_shell():
+            if string in cmd.to_shell():
                 cmds.append(cmd)
 
         return cmds

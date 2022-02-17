@@ -1,5 +1,8 @@
-from src.variable import VariableList
-from src.command import Command, CommandList, SplitLine
+from __future__ import annotations
+from typing import List
+from .variable import VariableList, Variable
+from .command import Command, CommandList, SplitLine
+from .unit import encode_multi_line_notes
 
 import re
 
@@ -30,10 +33,12 @@ class Parse():
 
     def _split_area(self, file_path):
         """已空行为界线进行分割区域"""
-        new_area = []
-        fi = open(file_path, 'r', encoding='UTF-8')
+        new_area = []  # type: List[str]
+        file_string = open(
+            file_path, 'r', encoding='UTF-8').read()  # type: str
 
-        for line in fi.readlines():
+        file_string = encode_multi_line_notes(file_string)
+        for line in file_string.splitlines():
             line = line.rstrip()
             if line == '':
                 if len(new_area):
@@ -66,7 +71,7 @@ class Parse():
         else:
             self._parse_normal_area(area)
 
-    def _parse_cmd_area(self, cmd: Command, area):
+    def _parse_cmd_area(self, cmd: Command, area: list) -> Command:
         """命令区域的解析"""
         cmd.parse()
         for line in area:
@@ -77,7 +82,7 @@ class Parse():
             elif line[0] == '@':
                 res = re.match(r"^@(.*?)\.(.*?)\((.*)\)", line)
                 try:
-                    var = cmd.vars[res[1]]
+                    var = cmd.vars[res[1]]  # type: Variable
                 except (KeyError, TypeError):
                     print(
                         format("[-] (%s) file various write error: #{%s}" % (self.file_path, line)))
@@ -87,7 +92,7 @@ class Parse():
 
         return cmd
 
-    def _parse_normal_area(self, area):
+    def _parse_normal_area(self, area: list):
         """对普通区域进行解析"""
         for line in area:
             line = line.strip()
