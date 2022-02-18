@@ -5,7 +5,7 @@ import argparse
 from .unit import get_relate_path, escap_chars, db_recursion_file
 from .menu import menu_select_file, menu_select_cmd_var, menu
 from .parse import Parse
-from .output import print_cmds, print_info
+from .output import display_cmds, display_cmd_info
 from .variable import VariableList
 from .command import CommandList
 from .data import pypaths, pyoptions
@@ -107,7 +107,7 @@ def default_menu(args):
         exit()
     conf.latest_select = file
     pyoptions.cmd_list = parse_files(file).cmdlist
-    print_cmds(pyoptions.cmd_list)
+    display_cmds(pyoptions.cmd_list)
     dump()
 
 
@@ -141,7 +141,7 @@ def search(args):
         parse = parse_files(file)
         pyoptions.cmd_list.append(parse.cmdlist.filter(args.tool_name))
 
-    print_cmds(pyoptions.cmd_list)
+    display_cmds(pyoptions.cmd_list)
     dump()
 
 
@@ -182,7 +182,7 @@ def show(args):
         pyoptions.cmd_list = parse_files(file).cmdlist
         dump()
 
-    print_cmds(pyoptions.cmd_list)
+    display_cmds(pyoptions.cmd_list)
 
 
 @load
@@ -197,7 +197,7 @@ def use(args):
         return
 
     if args.info:
-        print_info(cmd)
+        display_cmd_info(cmd)
         return
 
     menu_select_cmd_var(cmd)
@@ -239,7 +239,7 @@ def info(args):
     cmd = pyoptions.cmd_list[args.index - 1]
 
     merge_varlist(cmd)
-    print_info(cmd)
+    display_cmd_info(cmd)
 
 
 def workspace(args):
@@ -306,7 +306,7 @@ def select_link(cmd):
     file = cmd.links[idx]
     parse = parse_files(file)
     conf.latest_select = file
-    print_cmds(parse.cmdlist)
+    display_cmds(parse.cmdlist)
 
 
 def dump():

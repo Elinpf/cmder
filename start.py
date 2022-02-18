@@ -2,6 +2,9 @@
 # Author: Elin
 
 from cmder.main import get_options
+from rich.traceback import install
+
+install(show_locals=True)
 
 args = get_options()
 try:

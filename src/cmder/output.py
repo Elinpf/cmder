@@ -5,7 +5,7 @@ from .data import pyoptions
 from .unit import decode_multi_line_notes
 
 
-def print_cmd(index, cmd):
+def display_cmd(index, cmd):
     pad = 5
     index = "[{}]".format(index)
     pad_index = pad - len(index)
@@ -25,18 +25,18 @@ def print_cmd(index, cmd):
     print()
 
 
-def print_cmds(cmdlist):
+def display_cmds(cmdlist):
     idx = 1
     for cmd in cmdlist:
         if type(cmd) == Command:
-            print_cmd(idx, cmd)
+            display_cmd(idx, cmd)
             idx += 1
         elif type(cmd) == SplitLine:
             print(cmd.to_s())
             print()
 
 
-def print_info(cmd):
+def display_cmd_info(cmd):
     print("PATH: " + cmd.path)
     for note in cmd.notes:
         if pyoptions.encode_flag in note:
