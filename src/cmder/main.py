@@ -8,9 +8,9 @@ from .parse import Parse
 from .output import display_cmds, display_cmd_info
 from .variable import VariableList
 from .command import CommandList
-from .data import pypaths, pyoptions
+from .data import pypaths, pyoptions, banner
 from .decorator import load
-from . import cool, conf
+from . import cool, conf, console, __version__
 
 
 def get_options():
@@ -18,6 +18,8 @@ def get_options():
         description='Generate a pentesting command')
     parser.add_argument(
         '-l', '--link', metavar='path', help='show the link file')
+    parser.add_argument(
+        '-v', '--version', action='store_true', help='show the version')
     parser.set_defaults(func=default_menu)
 
     subparsers = parser.add_subparsers(help='sub-command help')
@@ -97,6 +99,10 @@ def default_menu(args):
                 file = fcp
             else:
                 raise ValueError("Can't find file")
+
+        if args.version:
+            console.print(banner.format(version=__version__))
+            exit()
 
         else:
             file = menu_select_file(pypaths.db_path)

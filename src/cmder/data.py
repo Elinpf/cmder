@@ -47,3 +47,15 @@ class PyOptions():
 pypaths = PyPaths()
 pystrs = PyStrs()
 pyoptions = PyOptions()
+
+banner = """[bold bule]
+             _____                   _
+            / ____|                 | |
+           | |       _ __ ___     __| |   ___   _ __
+           | |      | '_ ` _ \   / _` |  / _ \ | '__|
+           | |____  | | | | | | | (_| | |  __/ | |
+            \_____| |_| |_| |_|  \__,_|  \___| |_|  [bold yellow]ver:{version}[/bold yellow]
+
+                        [bold magenta]GitHub:https://github.com/Elinpf/cmder[/bold magenta]
+                                            [bold green]--Info:Elin[/bold green] 
+[bold bule]"""

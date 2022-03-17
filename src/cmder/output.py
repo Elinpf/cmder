@@ -1,11 +1,17 @@
 # -*- coding: UTF-8 -*-
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from . import conf, cool
 from .command import Command, SplitLine
 from .data import pyoptions
 from .unit import decode_multi_line_notes
 
+if TYPE_CHECKING:
+    from .command import CommandList
+
 
 def display_cmd(index, cmd):
+    nitems = []
     pad = 5
     index = "[{}]".format(index)
     pad_index = pad - len(index)
@@ -17,19 +23,19 @@ def display_cmd(index, cmd):
     if cmd.desc:
         desc = cmd.desc + " "
 
-    print(cool.blue_bright(index+" "*pad_index+desc) + cmd.cmd[0])
-
+    nitems.append(cool.blue_bright(index+" "*pad_index+desc) + cmd.cmd[0])
     for cmd in cmd.cmd[1:]:
-        print(" "*pad + cmd)
+        nitems.append(" "*pad + cmd)
 
-    print()
+    return "\n".join(nitems)
 
 
-def display_cmds(cmdlist):
+def display_cmds(cmdlist: CommandList):
     idx = 1
     for cmd in cmdlist:
         if type(cmd) == Command:
-            display_cmd(idx, cmd)
+            print(display_cmd(idx, cmd))
+            print()
             idx += 1
         elif type(cmd) == SplitLine:
             print(cmd.to_s())
