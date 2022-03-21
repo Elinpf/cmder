@@ -1,11 +1,15 @@
 from __future__ import annotations
+
+import base64
 import os
 import platform
-import base64
 import re
-from colorama import Fore, Style
 from typing import List
-from .data import pypaths, pystrs, pyoptions
+
+from colorama import Fore, Style
+
+from .console import console
+from .data import pyoptions, pypaths, pystrs
 
 
 def is_windows():
@@ -128,6 +132,38 @@ def escap_chars(string: str) -> str:
         string = string.replace('!', '\!')
 
     return string
+
+
+def _print(style: str):
+    """装饰器 通用打印方法"""
+    def wrapper(func):
+        def inner(message: str):
+            if style == 'error':
+                code = '[red]![/red]'
+            elif style == 'info':
+                code = '[dim]*[/dim]'
+            elif style == 'success':
+                code = '[green]✓[/green]'
+
+            console.print("[dim][[/dim]{code}[dim]][/dim] {message}".format(
+                code=code, message=message))
+        return inner
+    return wrapper
+
+
+@_print('success')
+def print_success(message: str):
+    """打印成功信息"""
+
+
+@_print('info')
+def print_info(message: str):
+    """打印信息"""
+
+
+@_print('error')
+def print_error(message: str):
+    """打印错误"""
 
 
 class Colored():

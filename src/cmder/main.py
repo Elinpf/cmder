@@ -1,124 +1,91 @@
 import os
 import pickle
-import argparse
+from cgi import print_arguments
+from typing import Tuple, Optional
+import subprocess
+import shlex
 
-from .unit import get_relate_path, escap_chars, db_recursion_file
-from .menu import menu_select_file, menu_select_cmd_var, menu
-from .parse import Parse
-from .output import display_cmds, display_cmd_info
-from .variable import VariableList
+import rich
+from rich.emoji import Emoji
+import rich_typer as typer
+
+from . import __version__, conf, cool
 from .command import CommandList
-from .data import pypaths, pyoptions, banner
+from .data import banner, pyoptions, pypaths, pystrs, repository_url
+from .logging import log
+from .menu import menu, menu_select_cmd_var, menu_select_file
+from .output import display_cmd_info, display_cmds
+from .parse import Parse
+from .unit import db_recursion_file, escap_chars, get_relate_path, print_error, print_info, print_success
+from .variable import VariableList
 from .decorator import load
-from . import cool, conf, console, __version__
+
+app = typer.RichTyper(add_completion=False)
 
 
-def get_options():
-    parser = argparse.ArgumentParser(
-        description='Generate a pentesting command')
-    parser.add_argument(
-        '-l', '--link', metavar='path', help='show the link file')
-    parser.add_argument(
-        '-v', '--version', action='store_true', help='show the version')
-    parser.set_defaults(func=default_menu)
-
-    subparsers = parser.add_subparsers(help='sub-command help')
-    parser_show = subparsers.add_parser(
-        'show', help='show the latest table')
-    parser_show.add_argument(
-        '-hs', '--history', action='store_true', help='show the history')
-    parser_show.set_defaults(func=show)
-
-    parser_search = subparsers.add_parser(
-        'search', help='Search tools in the database')
-    parser_search.add_argument(
-        'tool_name', type=str, metavar='string', help='tool name')
-    parser_search.set_defaults(func=search)
-
-    parser_history = subparsers.add_parser(
-        'history', help='Get history')
-    parser_history.add_argument(
-        '-u', '--use', metavar='index', type=int, help='use the history cmd')
-    parser_history.add_argument(
-        '--size', metavar='NUM', type=int, help='set history size')
-    parser_history.set_defaults(func=history)
-
-    parser_info = subparsers.add_parser(
-        'info', help='show command information')
-    parser_info.add_argument(
-        'index', type=int, help='index of the lastest list')
-    parser_info.set_defaults(func=info)
-
-    parser_use = subparsers.add_parser('use', help='use command')
-    parser_use.add_argument(
-        'index', type=int, help='index of the lastest list')
-    parser_use.add_argument(
-        '-i', '--info', action='store_true', help='show the cmd information')
-    parser_use.add_argument(
-        '--one-line', action='store_true', help='output shell in one line')
-    parser_use.add_argument(
-        '-l', '--link', action='store_true', help='select the command link path')
-    parser_use.add_argument(
-        '-r', '--run', action='store_true', help="running the select command."
-    )
-    parser_use.add_argument(
-        '-d', '--daemon', action='store_true', help='daemon running')
-    parser_use.add_argument(
-        '-o', '--output', type=str, help="output the command to a file"
-    )
-    parser_use.set_defaults(func=use)
-
-    parser_workspace = subparsers.add_parser(
-        'workspace', help='workspace config')
-    parser_workspace.add_argument(
-        '-n', '--new', metavar='name', help='add a new workspace')
-    parser_workspace.add_argument(
-        '-d', '--delete', metavar='name', help='delete a workspace')
-    parser_workspace.add_argument(
-        '-s', '--set', metavar='key=val', help='set a variable eg: RHOST=192.168.0.1')
-    parser_workspace.add_argument(
-        '-u', '--unset', metavar='key', help='unset variable')
-    parser_workspace.add_argument(
-        '-g', '--get', action='store_true', help='get all config')
-    parser_workspace.add_argument(
-        '-c', '--change', metavar='name', help='change to new')
-    parser_workspace.set_defaults(func=workspace)
-
-    return parser.parse_args()
+def dis_banner(display: bool):
+    if display:
+        rich.print(banner.format(version=__version__, url=repository_url))
+        raise typer.Exit()
 
 
-def default_menu(args):
-    """默认情况下呼出菜单, 并存储选择的文件"""
-    try:
-        if args.link:
-            fp = os.path.join(pypaths.root_path, args.link)
-            fcp = os.path.join(pypaths.custom_path, args.link)
-            if os.path.exists(fp):
-                file = fp
-            elif os.path.exists(fcp):
-                file = fcp
-            else:
-                raise ValueError("Can't find file")
-
-        if args.version:
-            console.print(banner.format(version=__version__))
-            exit()
-
+@app.callback(invoke_without_command=True, epilog=repository_url)
+def main(
+    ctx: typer.Context,
+    link: str = typer.Option(None, "--link", "-l",
+                             help="Display the link file"),
+    version: bool = typer.Option(
+        False, "--banner", help="Show banner", is_eager=True, callback=dis_banner)
+):
+    """Generate a pentesting command 👹"""
+    file = ''
+    if link:
+        fp = os.path.join(pypaths.root_path, link)
+        fcp = os.path.join(pypaths.custom_path, link)
+        if os.path.exists(fp):
+            file = fp
+        elif os.path.exists(fcp):
+            file = fcp
         else:
-            file = menu_select_file(pypaths.db_path)
-    except TypeError:
-        exit()
-    except Exception as e:
-        print(f"[-] {repr(e)}")
-        exit()
-    conf.latest_select = file
-    pyoptions.cmd_list = parse_files(file).cmdlist
+            print_error(f"file [u][bold red]{link}[/][/u] is not exsits")
+            raise typer.Exit()
+
+    if ctx.invoked_subcommand is None:
+        file = file or menu_select_file(pypaths.db_path)
+        conf.latest_select = file
+        pyoptions.cmd_list = _parse_files(file).cmdlist
+        display_cmds(pyoptions.cmd_list)
+        _dump()
+
+
+@app.command(epilog=repository_url)
+@load
+def show(
+    ctx: typer.Context,
+    history: bool = typer.Option(
+        False, "--history", "-h", help="Show history"),
+):
+    """Show Commands"""
+    if history:
+        hs = conf.history_select
+        hs = [x.replace(pypaths.db_path, 'db') for x in hs]
+        hs = [x.replace(pypaths.custom_db_path, 'db')
+              for x in hs]
+        idx = menu('History Select:', hs)
+        file = conf.history_select[idx]
+        conf.latest_select = file
+        pyoptions.cmd_list = _parse_files(file).cmdlist
+        _dump()
+
     display_cmds(pyoptions.cmd_list)
-    dump()
 
 
-def search(args):
-    """查找工具命令"""
+@app.command(epilog=repository_url)
+def search(
+    ctx: typer.Context,
+    string: str = typer.Argument(..., help="Search string"),
+):
+    """Search string"""
     file_list = []
     for root, _, files in os.walk(pypaths.db_path):
         for file in files:
@@ -126,7 +93,7 @@ def search(args):
                 file_path = os.path.join(root, file)
                 file_obj = open(file_path, 'rU')
                 for line in file_obj:
-                    if args.tool_name in line:
+                    if string in line:
                         file_list.append(get_relate_path(file_path))
                         break
 
@@ -138,35 +105,48 @@ def search(args):
                 if not relate_path in files:
                     file_obj = open(file_path, 'rU')
                     for line in file_obj:
-                        if args.tool_name in line:
+                        if string in line:
                             file_list.append(relate_path)
                             break
 
     pyoptions.cmd_list = CommandList()
     for file in file_list:
-        parse = parse_files(file)
-        pyoptions.cmd_list.append(parse.cmdlist.filter(args.tool_name))
+        parse = _parse_files(file)
+        pyoptions.cmd_list.append(parse.cmdlist.filter(string))
 
     display_cmds(pyoptions.cmd_list)
-    dump()
+    _dump()
 
 
-def history(args):
-    """历史命令"""
-    if args.size:
-        conf.history_size = args.size
-        exit()
+@app.command(epilog=repository_url)
+def history(
+    ctx: typer.Context,
+    use: int = typer.Option(None, "--use", "-u",
+                            help="Use history command"),
+    size: int = typer.Option(None, "--size", "-s",
+                             help="Set history size", min=0, max=2000, clamp=True),
+):
+    """Commands history"""
 
-    if args.use:
-        if args.use < 1:
-            return
+    if size:
+        old_size = conf.history_size
+        if size <= 0:
+            conf.history_size = 0
+            print_success(
+                f"history size set from [dim]{old_size}[/dim] to [green]0[/green]")
+        else:
+            conf.history_size = size
+            print_success(
+                f"history size set from [dim]{old_size}[/dim] to [green]{conf.history_size}[/green]")
+        raise typer.Exit()
 
+    if use:
         import linecache
-        line = linecache.getline(pypaths.history_path, args.use)
+        line = linecache.getline(pypaths.history_path, use)
         print(line)
 
         os.system(line)
-        exit()
+        raise typer.Exit()
 
     with open(pypaths.history_path, 'r', encoding='UTF-8') as f:
         index = 1
@@ -175,53 +155,50 @@ def history(args):
             index += 1
 
 
+@app.command(epilog=repository_url)
 @load
-def show(args):
-    if args.history:
-        hs = conf.history_select
-        hs = [x.replace(pypaths.db_path, 'db') for x in hs]
-        hs = [x.replace(pypaths.custom_db_path, 'db')
-              for x in hs]
-        idx = menu('History Select:', hs)
-        file = conf.history_select[idx]
-        conf.latest_select = file
-        pyoptions.cmd_list = parse_files(file).cmdlist
-        dump()
+def info(
+    ctx: typer.Context,
+    index: int = typer.Argument(..., help="Index of command", min=1),
+):
+    """Show info of command"""
+    cmd = pyoptions.cmd_list[index - 1]
 
-    display_cmds(pyoptions.cmd_list)
+    _merge_varlist(cmd)
+    display_cmd_info(cmd)
 
 
+@app.command(epilog=repository_url)
 @load
-def use(args):
-    """使用命令, 并存储到历史记录中"""
+def use(
+    ctx: typer.Context,
+    index: int = typer.Argument(..., help="Index of command"),
+    info: bool = typer.Option(False, "--info", "-i", help="Show info"),
+    run: bool = typer.Option(False, "--run", "-r", help="Run command"),
+    daemon: bool = typer.Option(False, "--daemon", "-d", help="Run as daemon"),
+    link: bool = typer.Option(False, "--link", "-l",
+                              help="Display the link cmd"),
+    output: typer.FileText = typer.Option(None, "--output", "-o", mode='w',
+                                          help="Output file"),
+    one_line: bool = typer.Option(
+        False, "--one-line", "-1", help="One line output"),
+):
+    """Use command"""
+    cmd = pyoptions.cmd_list[index - 1]
+    _merge_varlist(cmd)
 
-    cmd = pyoptions.cmd_list[args.index - 1]
-    merge_varlist(cmd)
+    if link:
+        _select_link(cmd)
+        raise typer.Exit()
 
-    if args.link:
-        select_link(cmd)
-        return
-
-    if args.info:
+    if info:
         display_cmd_info(cmd)
-        return
+        raise typer.Exit()
 
     menu_select_cmd_var(cmd)
 
-    shell = cmd.to_shell(one_line=args.one_line)
-
-    if args.daemon:
-        shell = format("%s &" % shell)
-
-    print()
-    print(cool.white_bright(shell))
-
-    if args.output:
-        with open(args.output, 'w') as fi:
-            fi.write(shell)
-
-        print()
-        print(f"file output to {args.output}")
+    shell = cmd.to_shell(one_line=one_line)
+    rich.print(shell + "\n")
 
     # 写入history 并当超过长度长度时删除首行
     with open(pypaths.history_path, "r+") as f:
@@ -235,52 +212,93 @@ def use(args):
         else:
             f.write(shell + "\n")
 
-    if args.run:
-        shell = escap_chars(shell)
-        os.system(shell)
+    if run or daemon:
+        if daemon:
+            shell = format("nohup %s &" % shell)
+
+        subprocess.run(shlex.split(shell),
+                       stdout=output if output else None,
+                       stderr=output if output else None)
+
+        if output:
+            output.write(shell + "\n")
+            rich.print("Command output has been written to %s" % output.name)
+            output.close()
 
 
-@load
-def info(args):
-    cmd = pyoptions.cmd_list[args.index - 1]
+@app.command(epilog=repository_url)
+def workspace(
+    ctx: typer.Context,
+    add: str = typer.Option(None, "--add", "-a", help="Add a new workspace"),
+    remove: str = typer.Option(None, "--remove",
+                               help="Remove a workspace"),
+    set: Tuple[str, str] = typer.Option(None, "--set", "-s",
+                                        help='Set the value of current workspace variable'),
+    unset: str = typer.Option(None, "--unset",
+                              help="Unset a workspace variable"),
+    get: Optional[str] = typer.Option(None, "--get", "-g",
+                                      help="Get a workspace variable"),
+    change: str = typer.Option(None, "--change", "-c",
+                               help="Change the other workspace"),
+):
+    """Workspace"""
+    if add:
+        if add in conf.workspaces_name():
+            print_info(f"Workspace [cyan]{add}[/cyan] already exists")
+        else:
+            conf.add_workspace(add)
+            print_success(f"Add a new workspace [cyan]{add}[/cyan]")
 
-    merge_varlist(cmd)
-    display_cmd_info(cmd)
+        conf.workspace_change(add)
+        print_info(f"Change to workspace: [cyan]{add}[/cyan]")
 
+    elif remove:
+        try:
+            conf.del_workspace(remove)
+            print_success(f"Remove the workspace: [cyan]{remove}[/cyan]")
+        except ValueError as e:
+            print_error(str(e))
 
-def workspace(args):
-    if args.new:
-        conf.add_workspace(args.new)
-
-    elif args.delete:
-        conf.del_workspace(args.delete)
-
-    elif args.unset:
-        conf.workspace_unset_var(args.unset)
-
-    elif args.set:
-        key, val = args.set.split('=', 1)
+    elif set:
+        key, val = set
         conf.workspace_set_var(key, val)
+        print_success(
+            f"Set the value of current workspace variable [yellow]{key}[/yellow] to [green]{val}[/green]")
 
-    elif args.get:
-        for key in conf.workspace_get_var_keys():
-            val = conf.workspace_get_var(key)
+    elif unset:
+        try:
+            conf.workspace_unset_var(unset)
+            print_success(
+                f"Unset a workspace variable [yellow]{unset}[/yellow]")
+        except KeyError:
+            print_error(
+                f"[yellow]{unset}[/yellow] variable does not exist in current workspace")
+
+    elif get:
+        if get == 'all':
+            for key in conf.workspace_get_var_keys():
+                val = conf.workspace_get_var(key)
+                for v in val:
+                    rich.print(f"[yellow]{key}[/yellow]=[green]{v}[/green]")
+        else:
+            val = conf.workspace_get_var(get)
             for v in val:
-                print(f"{key}={v}")
+                rich.print(f"[yellow]{get}[/yellow]=[green]{v}[/green]")
 
-    elif args.change:
-        conf.workspace_change(args.change)
+    elif change:
+        conf.workspace_change(change)
+        print_success(f"Change to workspace: [cyan]{change}[/cyan]")
 
     else:
         now = conf.workspace_now()
         for name in conf.workspaces_name():
             if name == now:
-                print(f" * {name}")
+                rich.print(f" [bold red]*[/bold red] {name}")
             else:
-                print(f"   {name}")
+                rich.print(f"   {name}")
 
 
-def parse_files(select_file_path):
+def _parse_files(select_file_path: str) -> Parse:
     """解析选择的文件"""
     file_list = db_recursion_file(select_file_path)
     parse = Parse()
@@ -288,7 +306,7 @@ def parse_files(select_file_path):
     return parse
 
 
-def merge_varlist(cmd):
+def _merge_varlist(cmd):
     """合并包括config文件中variables"""
     config_varlist = VariableList()
     custom_varlist = VariableList()
@@ -307,14 +325,22 @@ def merge_varlist(cmd):
     cmd.merge_var(custom_varlist)
 
 
-def select_link(cmd):
+def _select_link(cmd):
+    if not cmd.links:
+        print_error("This command no link found")
+        return
     idx = menu('select link to:', cmd.links)
     file = cmd.links[idx]
-    parse = parse_files(file)
+    parse = _parse_files(file)
     conf.latest_select = file
     display_cmds(parse.cmdlist)
 
 
-def dump():
+def _dump():
+    """将获取的命令列表序列化后保存"""
     f = open(pypaths.sequence_path, 'wb')
     pickle.dump(pyoptions.cmd_list, f)
+
+
+if __name__ == '__main__':
+    app(["--help"])

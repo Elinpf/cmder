@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # Author: Elin
 
-from cmder.main import get_options
-from rich.traceback import install
+from rich_typer import Abort
+import cmder.main as main
+from cmder.unit import print_error
 
-install(show_locals=True)
-
-args = get_options()
 try:
-    args.func(args)
-except ValueError as e:
-    print("[-] " + repr(e))
-
-except TypeError as e:
-    exit()
+    main.app()
+except (ValueError, TypeError) as e:
+    print_error(repr(e))
+    raise Abort()
+except KeyboardInterrupt:
+    raise Abort()

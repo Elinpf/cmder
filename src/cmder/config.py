@@ -66,10 +66,11 @@ class Config():
     def del_workspace(self, name):
         """删除工作区"""
         if not name in self.workspaces_name():
-            raise ValueError(f"{name} not in workspace.")
+            raise ValueError(f"[cyan]{name}[/cyan] not in workspace.")
 
         if self.conf['workspace_select'] == name:
-            raise ValueError(f"{name} is current workspace, can't delete.")
+            raise ValueError(
+                f"[cyan]{name}[/cyan] is current workspace, can't delete.")
 
         self.conf['workspaces'].pop(name)
         self.save()
@@ -105,7 +106,8 @@ class Config():
         """设置工作区变量信息"""
         workspace_var = self.workspace_get('variable')
         if key in workspace_var:
-            workspace_var[key].append(val)
+            if val not in workspace_var[key]:
+                workspace_var[key].append(val)
         else:
             workspace_var[key] = [val]
         self.save()

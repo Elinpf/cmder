@@ -1,7 +1,6 @@
 import os
-from rich.console import Console
 from .config import Config
-from .data import pypaths, pystrs, banner
+from .data import pypaths, pystrs
 from .unit import Colored
 
 __version__ = '0.1.0'
@@ -24,5 +23,3 @@ generate_custom_file_path()
 cool = Colored()
 
 conf = Config(pystrs.config_file)
-
-console = Console()
