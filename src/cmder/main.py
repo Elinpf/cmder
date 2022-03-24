@@ -4,9 +4,9 @@ from cgi import print_arguments
 from typing import Tuple, Optional
 import subprocess
 import shlex
+import re
 
 import rich
-from rich.emoji import Emoji
 import rich_typer as typer
 
 from . import __version__, conf, cool
@@ -198,7 +198,7 @@ def use(
     menu_select_cmd_var(cmd)
 
     shell = cmd.to_shell(one_line=one_line)
-    rich.print(shell + "\n")
+    print(shell + "\n")
 
     # 写入history 并当超过长度长度时删除首行
     with open(pypaths.history_path, "r+") as f:
@@ -216,13 +216,20 @@ def use(
         if daemon:
             shell = format("nohup %s &" % shell)
 
-        subprocess.run(shlex.split(shell),
-                       stdout=output if output else None,
-                       stderr=output if output else None)
+        try:
+            subprocess.run(shlex.split(shell),
+                           stdout=output if output else None,
+                           stderr=output if output else None)
+        except FileNotFoundError as e:
+            f = re.search(r"\'(.*?)\'", str(e)).group(1)
+            print_error(
+                f"failed to run command '[bright_red]{f}[/bright_red]': No such file or directory")
+            raise typer.Exit()
 
         if output:
             output.write(shell + "\n")
-            rich.print("Command output has been written to %s" % output.name)
+            rich.print(
+                "Command output has been written to [u]%s[/u]" % output.name)
             output.close()
 
 
@@ -279,11 +286,11 @@ def workspace(
             for key in conf.workspace_get_var_keys():
                 val = conf.workspace_get_var(key)
                 for v in val:
-                    rich.print(f"[yellow]{key}[/yellow]=[green]{v}[/green]")
+                    rich.print(f"[yellow]{key}[/yellow] = [green]{v}[/green]")
         else:
             val = conf.workspace_get_var(get)
             for v in val:
-                rich.print(f"[yellow]{get}[/yellow]=[green]{v}[/green]")
+                rich.print(f"[yellow]{get}[/yellow] = [green]{v}[/green]")
 
     elif change:
         conf.workspace_change(change)

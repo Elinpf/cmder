@@ -1,6 +1,8 @@
 import os
 import re
 
+from rich.prompt import Prompt
+
 from .unit import is_windows, get_path_list, get_select_path
 from .data import pypaths, pystrs
 from . import conf, cool
@@ -143,11 +145,9 @@ def menu_windows(title, menu_list):
 
 def input_custom(title):
     """自定义输入，并且保存到config中"""
-    print(f'(custom) {title}')
-    try:
-        selection = input(cool.red_bright('> '))
-    except (InterruptedError, KeyboardInterrupt):
-        exit()
+    # print(f'(custom) {title}')
+    # selection = input(cool.bright_red('> '))
+    selection = Prompt.ask(f":bone: [dim](custom)[/] {title}")
 
     return selection
 

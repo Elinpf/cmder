@@ -139,7 +139,7 @@ class SplitLine():
     def __init__(self, desc):
         self.desc = desc
 
-    def to_s(self):
+    def __str__(self):
         total_len = 60
         lc = total_len - wcwidth.wcswidth(self.desc) - 2
         llc = int(lc / 2)
@@ -148,8 +148,7 @@ class SplitLine():
             rlc += 1
 
         _ = (pyoptions.splitline_char*llc + ' ' +
-             cool.color_str(pyoptions.splitline_color, self.desc, True) +
-             ' ' + pyoptions.splitline_char*rlc)
+             cool.bright_magenta(self.desc) + ' ' + pyoptions.splitline_char*rlc)
 
         return _
 
