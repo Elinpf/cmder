@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from contextlib import contextmanager
 import base64
 import os
 import platform
 import re
-from typing import List, Iterator
+from contextlib import contextmanager
+from typing import Iterator, List
+
 from rich.panel import Panel
 
 from .console import console

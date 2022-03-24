@@ -2,16 +2,15 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from pygments import highlight
 
 from rich import print
 from rich.text import Text
 
 from . import cool
 from .command import Command, SplitLine
+from .console import cmd_highlighter, console
 from .data import pyoptions
 from .unit import decode_multi_line_notes, section
-from .console import cmd_highlighter, console
 
 if TYPE_CHECKING:
     from .command import CommandList

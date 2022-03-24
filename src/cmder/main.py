@@ -1,24 +1,26 @@
 import os
 import pickle
-from cgi import print_arguments
-from typing import Tuple, Optional
-import subprocess
-import shlex
 import re
+import shlex
+import subprocess
+from typing import TYPE_CHECKING, Optional, Tuple
 
 import rich
 import rich_typer as typer
 
-from . import __version__, conf, cool
+from . import __version__, conf
 from .command import CommandList
-from .data import banner, pyoptions, pypaths, pystrs, repository_url
-from .logging import log
+from .data import banner, pyoptions, pypaths, repository_url
+from .decorator import load
 from .menu import menu, menu_select_cmd_var, menu_select_file
 from .output import display_cmd_info, display_cmds
 from .parse import Parse
-from .unit import db_recursion_file, escap_chars, get_relate_path, print_error, print_info, print_success
+from .unit import (db_recursion_file, get_relate_path, print_error, print_info,
+                   print_success)
 from .variable import VariableList
-from .decorator import load
+
+if TYPE_CHECKING:
+    from .command import Command
 
 app = typer.RichTyper(add_completion=False)
 
@@ -313,7 +315,7 @@ def _parse_files(select_file_path: str) -> Parse:
     return parse
 
 
-def _merge_varlist(cmd):
+def _merge_varlist(cmd: "Command") -> None:
     """合并包括config文件中variables"""
     config_varlist = VariableList()
     custom_varlist = VariableList()
@@ -332,7 +334,7 @@ def _merge_varlist(cmd):
     cmd.merge_var(custom_varlist)
 
 
-def _select_link(cmd):
+def _select_link(cmd: "Command") -> None:
     if not cmd.links:
         print_error("This command no link found")
         return
@@ -343,7 +345,7 @@ def _select_link(cmd):
     display_cmds(parse.cmdlist)
 
 
-def _dump():
+def _dump() -> None:
     """将获取的命令列表序列化后保存"""
     f = open(pypaths.sequence_path, 'wb')
     pickle.dump(pyoptions.cmd_list, f)

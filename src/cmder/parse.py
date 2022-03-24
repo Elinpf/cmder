@@ -1,10 +1,11 @@
 from __future__ import annotations
-from typing import List
-from .variable import VariableList, Variable
-from .command import Command, CommandList, SplitLine
-from .unit import encode_multi_line_notes
 
 import re
+from typing import List
+
+from .command import Command, CommandList, SplitLine
+from .unit import encode_multi_line_notes
+from .variable import Variable, VariableList
 
 
 class Parse():
@@ -17,12 +18,12 @@ class Parse():
         self.notes = []
         self.refers = []
 
-    def parse_file(self, file_path):
+    def parse_file(self, file_path: str) -> None:
         """设置解析的文件"""
         self.file_path = file_path
         self._split_area(file_path)
 
-    def parse_files(self, files: list):
+    def parse_files(self, files: list) -> None:
         for f in files:
             self.parse_file(f)
 
@@ -31,7 +32,7 @@ class Parse():
             cmd.merge_notes(self.notes)
             cmd.path = files[-1]
 
-    def _split_area(self, file_path):
+    def _split_area(self, file_path: str) -> None:
         """已空行为界线进行分割区域"""
         new_area = []  # type: List[str]
         file_string = open(
@@ -51,7 +52,7 @@ class Parse():
         if len(new_area):
             self._parse_area(new_area)
 
-    def _parse_area(self, area: list):
+    def _parse_area(self, area: list) -> None:
         """分析区域"""
         cmd = None
         for line in area:  # first loop to find cmd
@@ -92,7 +93,7 @@ class Parse():
 
         return cmd
 
-    def _parse_normal_area(self, area: list):
+    def _parse_normal_area(self, area: list) -> None:
         """对普通区域进行解析"""
         for line in area:
             line = line.strip()

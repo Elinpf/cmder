@@ -1,6 +1,6 @@
 from rich.console import Console
-from rich.theme import Theme
 from rich.highlighter import RegexHighlighter
+from rich.theme import Theme
 
 console = Console(
     theme=Theme(
