@@ -56,7 +56,7 @@ banner = """[bold bule]
             \_____| |_| |_| |_|  \__,_|  \___| |_|  [bold yellow]ver:{version}[/bold yellow]
 
                         [bold magenta]GitHub:{url}[/bold magenta]
-                                            [bold green]--Info:Elin[/bold green] 
+                                            [bold green]--Author:Elin[/bold green] 
 [bold bule]"""
 
 repository_url = 'https://github.com/Elinpf/cmder'
