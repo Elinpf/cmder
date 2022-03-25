@@ -129,7 +129,7 @@ class Config():
         workspace_var = self.workspace_get('variable')
         return workspace_var.keys()
 
-    def workspace_var_key_with_val(self) -> Generator[Tuple[str, str]]:
+    def workspace_var_key_with_val(self) -> Generator[Tuple[str, str], None, None]:
         """获取变量的key和val"""
         for key in self.workspace_get_var_keys():
             val = self.workspace_get_var(key)
@@ -152,7 +152,7 @@ class Config():
         """获取用户输入的keys"""
         return self.workspace_get('custom_input').keys()
 
-    def workspace_custom_key_with_val(self) -> Generator[Tuple[str, str]]:
+    def workspace_custom_key_with_val(self) -> Generator[Tuple[str, str], None, None]:
         """获取用户输入的key和val"""
         for key in self.workspace_get_custom_input_keys():
             val = self.workspace_get_custom_input(key)

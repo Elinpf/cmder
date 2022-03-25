@@ -117,7 +117,7 @@ class VariableList:
     def items(self) -> Iterator[Tuple[str, Variable]]:
         return self.list.items()
 
-    def key_with_var(self) -> Generator[Tuple[str, Variable]]:
+    def key_with_var(self) -> Generator[Tuple[str, Variable], None, None]:
         for _, var in self.items():
             yield (var.key, var)
 
@@ -130,7 +130,7 @@ class VariableList:
     def has_key(self, key: str) -> bool:
         return key in self.list
 
-    def __iter__(self) -> Generator[Tuple[str, Variable]]:
+    def __iter__(self) -> Generator[Tuple[str, Variable], None, None]:
         for _, var in self.items():
             yield (var.key, var)
 
