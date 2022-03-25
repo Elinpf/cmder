@@ -1,11 +1,16 @@
 from __future__ import annotations
+
+import base64
 import os
 import platform
-import base64
 import re
-from colorama import Fore, Style
-from typing import List
-from .data import pypaths, pystrs, pyoptions
+from contextlib import contextmanager
+from typing import Iterator, List
+
+from rich.panel import Panel
+
+from .console import console
+from .data import pyoptions, pypaths, pystrs
 
 
 def is_windows():
@@ -130,60 +135,61 @@ def escap_chars(string: str) -> str:
     return string
 
 
+def _print(style: str):
+    """装饰器 通用打印方法"""
+    def wrapper(func):
+        def inner(message: str):
+            if style == 'error':
+                code = '[red]![/red]'
+            elif style == 'info':
+                code = '[dim]*[/dim]'
+            elif style == 'success':
+                code = '[green]✓[/green]'
+
+            console.print("[dim][[/dim]{code}[dim]][/dim] {message}".format(
+                code=code, message=message))
+        return inner
+    return wrapper
+
+
+@_print('success')
+def print_success(message: str):
+    """打印成功信息"""
+
+
+@_print('info')
+def print_info(message: str):
+    """打印信息"""
+
+
+@_print('error')
+def print_error(message: str):
+    """打印错误"""
+
+
+@contextmanager
+def section(title: str) -> Iterator[list]:
+    column_list = []
+    yield column_list
+    if column_list:
+        columns = '\n'.join(column_list)
+        console.print(Panel.fit(columns, title=title,
+                                border_style='dim', title_align='center'))
+
+
 class Colored():
-    RED = Fore.RED
-    GREEN = Fore.GREEN
-    YELLOW = Fore.YELLOW
-    ORANGE = '\033[0;33;1m'
-    BLUE = Fore.BLUE
-    FUCHSIA = '\033[35m'
-    WHITE = Fore.WHITE
 
-    def color_str(self, color: str, s: str, bright: bool = False) -> str:
+    def custom_str(self, style: str, message: str) -> str:
+        return f"[{style}]{message}[/{style}]"
 
-        if bright:
-            return '{}{}{}'.format(getattr(self, color) + Style.BRIGHT, s, Style.RESET_ALL)
-        else:
-            return '{}{}{}'.format(getattr(self, color), s, Style.RESET_ALL)
-
-    def red(self, s):
-        return self.color_str('RED', s)
-
-    def green(self, s):
-        return self.color_str('GREEN', s)
-
-    def yellow(self, s):
-        return self.color_str('YELLOW', s)
-
-    def orange(self, s):
-        return self.color_str('ORANGE', s)
-
-    def blue(self, s):
-        return self.color_str('BLUE', s)
-
-    def fuchsia(self, s):
-        return self.color_str('FUCHSIA', s)
-
-    def white(self, s):
-        return self.color_str('WHITE', s)
-
-    def red_bright(self, s):
-        return self.color_str('RED', s, True)
-
-    def green_bright(self, s):
-        return self.color_str('GREEN', s, True)
-
-    def yellow_bright(self, s):
-        return self.color_str('YELLOW', s, True)
-
-    def orange_bright(self, s):
-        return self.color_str('ORANGE', s, True)
-
-    def blue_bright(self, s):
-        return self.color_str('BLUE', s, True)
-
-    def fuchsia_bright(self, s):
-        return self.color_str('FUCHSIA', s, True)
-
-    def white_bright(self, s):
-        return self.color_str('WHITE', s, True)
+    def dim(self, s): return self.custom_str('dim', s)
+    def red(self, s): return self.custom_str('red', s)
+    def blue(self, s): return self.custom_str('blue', s)
+    def green(self, s): return self.custom_str('green', s)
+    def yellow(self, s): return self.custom_str('yellow', s)
+    def magenta(self, s): return self.custom_str('magenta', s)
+    def bright_red(self, s): return self.custom_str('bright_red', s)
+    def bright_blue(self, s): return self.custom_str('bright_blue', s)
+    def bright_green(self, s): return self.custom_str('bright_green', s)
+    def bright_yellow(self, s): return self.custom_str('bright_yellow', s)
+    def bright_magenta(self, s): return self.custom_str('bright_magenta', s)

@@ -1,7 +1,7 @@
-from functools import wraps
 import pickle
+from functools import wraps
 
-from .data import pypaths, pyoptions
+from .data import pyoptions, pypaths
 
 
 def load(func):

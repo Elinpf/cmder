@@ -1,9 +1,15 @@
 import os
 import re
+from typing import TYPE_CHECKING
 
-from .unit import is_windows, get_path_list, get_select_path
+from rich.prompt import Prompt
+
+from . import conf
 from .data import pypaths, pystrs
-from . import conf, cool
+from .unit import get_path_list, get_select_path, is_windows
+
+if TYPE_CHECKING:
+    from .command import Command
 
 if not is_windows():
     from simple_term_menu import TerminalMenu
@@ -97,7 +103,7 @@ def filter_files(files):
     return files
 
 
-def beautify_list(menu_list):
+def beautify_list(menu_list: list) -> list:
     """将文件名转化为固定格式的标题
     eg: 139_445_smb_client.xd => Smb Client (139 445)"""
     b_list = []
@@ -120,7 +126,7 @@ def beautify_list(menu_list):
     return b_list
 
 
-def menu(title, menu_list):
+def menu(title: str, menu_list: list) -> int:
     """显示菜单，并返回选择的index"""
     if is_windows():
         idx = menu_windows(title, menu_list)
@@ -130,7 +136,7 @@ def menu(title, menu_list):
         return menu.show()
 
 
-def menu_windows(title, menu_list):
+def menu_windows(title: str, menu_list: list) -> int:
     """windows 的菜单选项"""
     print(title)
     index = 1
@@ -141,18 +147,16 @@ def menu_windows(title, menu_list):
     return int(input_custom(title)) - 1
 
 
-def input_custom(title):
+def input_custom(title: str) -> str:
     """自定义输入，并且保存到config中"""
-    print(f'(custom) {title}')
-    try:
-        selection = input(cool.red_bright('> '))
-    except (InterruptedError, KeyboardInterrupt):
-        exit()
+    # print(f'(custom) {title}')
+    # selection = input(cool.bright_red('> '))
+    selection = Prompt.ask(f":bone: [dim](custom)[/] {title}")
 
     return selection
 
 
-def menu_select_cmd_var(cmd):
+def menu_select_cmd_var(cmd: "Command") -> None:
     for _, var in cmd.vars.items():
         list = var.get_recommend()
 
@@ -166,7 +170,7 @@ def menu_select_cmd_var(cmd):
         var.select = select
 
 
-def menu_with_custom_choice(title, menu_list):
+def menu_with_custom_choice(title: str, menu_list: list) -> str:
     if not menu_list:
         return input_custom(title)
 
