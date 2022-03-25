@@ -18,6 +18,7 @@ from .parse import Parse
 from .unit import (db_recursion_file, get_relate_path, print_error, print_info,
                    print_success)
 from .variable import VariableList
+from .console import console
 
 if TYPE_CHECKING:
     from .command import Command
@@ -31,13 +32,44 @@ def dis_banner(display: bool):
         raise typer.Exit()
 
 
+def update_db(update: bool) -> None:
+    """更新数据库"""
+    import shutil
+    import tempfile
+    if update:
+        with console.status("[magenta]Updating database...", spinner='earth') as status:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                try:
+                    subprocess.run(shlex.split(
+                        f"git clone {repository_url} --depth 1"), cwd=temp_dir, capture_output=True, check=True, timeout=10)
+                except subprocess.TimeoutExpired:
+                    print_error("Download Timeout")
+                    raise typer.Exit()
+                except subprocess.CalledProcessError:
+                    print_error("Download failed")
+                    raise typer.Exit()
+
+                if not os.path.exists(os.path.join(temp_dir, 'cmder', 'db')):
+                    print_error("Download failed with no Database Directory")
+                    raise typer.Exit()
+
+                shutil.rmtree(pypaths.db_path)
+                shutil.copytree(os.path.join(
+                    temp_dir, 'cmder', 'db'), pypaths.db_path)
+
+        print_success("Update database success")
+        raise typer.Exit()
+
+
 @app.callback(invoke_without_command=True, epilog=repository_url)
 def main(
     ctx: typer.Context,
     link: str = typer.Option(None, "--link", "-l",
                              help="Display the link file"),
-    version: bool = typer.Option(
-        False, "--banner", help="Show banner", is_eager=True, callback=dis_banner)
+    banner: bool = typer.Option(
+        False, "--banner", help="Show banner", is_eager=True, callback=dis_banner),
+    update: bool = typer.Option(
+        False, "--update", help="Update Database 🎂", is_eager=True, callback=update_db)
 ):
     """Generate a pentesting command 👹"""
     file = ''
