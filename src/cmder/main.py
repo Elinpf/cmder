@@ -7,18 +7,20 @@ from typing import TYPE_CHECKING, Optional, Tuple
 
 import rich
 import rich_typer as typer
+from rich.prompt import Prompt
 
 from . import __version__, conf
 from .command import CommandList
+from .console import console
 from .data import banner, pyoptions, pypaths, repository_url
 from .decorator import load
+from .exception import BadParameter
 from .menu import menu, menu_select_cmd_var, menu_select_file
 from .output import display_cmd_info, display_cmds
 from .parse import Parse
-from .unit import (db_recursion_file, get_relate_path, print_error, print_info,
-                   print_success)
+from .unit import (db_recursion_file, get_relate_path, is_linux, print_error,
+                   print_info, print_success)
 from .variable import VariableList
-from .console import console
 
 if TYPE_CHECKING:
     from .command import Command
@@ -66,8 +68,8 @@ def main(
     ctx: typer.Context,
     link: str = typer.Option(None, "--link", "-l",
                              help="Display the link file"),
-    banner: bool = typer.Option(
-        False, "--banner", help="Show banner", is_eager=True, callback=dis_banner),
+    version: bool = typer.Option(
+        False, "--version", "-v", help="Show version & banner", is_eager=True, callback=dis_banner),
     update: bool = typer.Option(
         False, "--update", help="Update Database 🎂", is_eager=True, callback=update_db)
 ):
@@ -210,6 +212,8 @@ def use(
     info: bool = typer.Option(False, "--info", "-i", help="Show info"),
     run: bool = typer.Option(False, "--run", "-r", help="Run command"),
     daemon: bool = typer.Option(False, "--daemon", "-d", help="Run as daemon"),
+    sudo: bool = typer.Option(
+        False, "--sudo", "-S", help="Run as [b]super[/b] user (only linux)"),
     link: bool = typer.Option(False, "--link", "-l",
                               help="Display the link cmd"),
     output: typer.FileText = typer.Option(None, "--output", "-o", mode='w',
@@ -247,23 +251,50 @@ def use(
             f.write(shell + "\n")
 
     if run or daemon:
-        if daemon:
-            shell = format("nohup %s &" % shell)
-
         try:
-            subprocess.run(shlex.split(shell),
-                           stdout=output if output else None,
-                           stderr=output if output else None)
+            if daemon or output:
+                # 后台执行时，输出文件必须指定
+                # 当权限不够的时候，使用 --sudo 参数执行
+
+                if sudo:
+                    if not is_linux():
+                        raise BadParameter('Only linux support sudo')
+
+                    passwd = Prompt.ask(
+                        "\[sudo] Please enter your password", password=True)
+
+                if not output:
+                    raise BadParameter(
+                        'Please set output file with [green]--output[/]')
+
+                passwd_proc = subprocess.Popen(shlex.split(
+                    f"echo {passwd}"), stdout=subprocess.PIPE)
+
+                subprocess.Popen(shlex.split(f"sudo -S {shell}" if sudo else shell),
+                                 shell=False,
+                                 stdin=passwd_proc.stdout,
+                                 stdout=output, stderr=output)
+
+                print_success("Run as daemon")
+
+            else:  # Run as Normal
+                subprocess.run(shlex.split(f"sudo -S {shell}" if sudo else shell),
+                               shell=False, check=True)
+
         except FileNotFoundError as e:
             f = re.search(r"\'(.*?)\'", str(e)).group(1)
             print_error(
                 f"failed to run command '[bright_red]{f}[/bright_red]': No such file or directory")
             raise typer.Exit()
+        except subprocess.CalledProcessError as e:
+            print_error(
+                f"failed to run command: {e.output}")
+            raise typer.Exit()
 
         if output:
-            output.write(shell + "\n")
-            rich.print(
-                "Command output has been written to [u]%s[/u]" % output.name)
+            output.write(shell + "\n" + "=" * len(shell) + "\n")
+            print_info(
+                "Command output has been written to [u]%s[/u] file" % output.name)
             output.close()
 
 

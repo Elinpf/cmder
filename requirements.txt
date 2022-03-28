@@ -1,3 +1,4 @@
 colorama
 simple_term_menu
 rich
+rich_typer
