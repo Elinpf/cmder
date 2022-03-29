@@ -87,11 +87,15 @@ def main(
             raise typer.Exit()
 
     if ctx.invoked_subcommand is None:
-        file = file or menu_select_file(pypaths.db_path)
-        conf.latest_select = file
-        pyoptions.cmd_list = _parse_files(file).cmdlist
-        display_cmds(pyoptions.cmd_list)
-        _dump()
+        try:
+            file = file or menu_select_file(pypaths.db_path)
+            conf.latest_select = file
+            pyoptions.cmd_list = _parse_files(file).cmdlist
+            display_cmds(pyoptions.cmd_list)
+            _dump()
+        except TypeError:  # 如果没有选择文件，则退出
+            print_info('[bold bright_magenta]Nothing selected, Bye!')
+            raise typer.Exit()
 
 
 @app.command(epilog=repository_url)
