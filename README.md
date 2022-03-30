@@ -10,7 +10,8 @@
 - 自动记录上一次输入结果，并显示在推荐中
 - 手动定义推荐变量
 - 划分工作区
-- 多行命令合并
+- 多行命令合并执行
+- 可更新数据库
 
 # 安装方法
 
@@ -47,7 +48,7 @@ optional arguments:
 
 运行后会创建`~/.cmder`目录，其中`db`是用户可以自定义添加的命令文件，可以自行添加目录或者按照软件中的目录路径添加命令文件。
 
-命令文件语法请参考[这里](https://github.com/Elinpf/cmder/blob/master/db/readme.md)。
+命令文件语法请参考[这里](https://github.com/Elinpf/cmder_db)。
 
 # 灵感来源与命令来源
 
