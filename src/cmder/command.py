@@ -29,7 +29,7 @@ class Command():
 
     def to_shell(self, one_line: bool = False) -> str:
         if one_line:
-            str = ";".join(self.cmd)
+            str = " && ".join(self.cmd)
         else:
             str = "\n".join(self.cmd)
 

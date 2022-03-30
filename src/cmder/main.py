@@ -1,6 +1,7 @@
 import os
 import pickle
 import re
+import sys
 import shlex
 import subprocess
 from typing import TYPE_CHECKING, Optional, Tuple
@@ -220,13 +221,13 @@ def use(
         False, "--sudo", "-S", help="Run as [b]super[/b] user (only linux)"),
     link: bool = typer.Option(False, "--link", "-l",
                               help="Display the link cmd"),
-    output: typer.FileText = typer.Option(None, "--output", "-o", mode='w',
+    output: typer.FileText = typer.Option(None, "--output", "-o", mode='a',
                                           help="Output file"),
     one_line: bool = typer.Option(
         False, "--one-line", "-1", help="One line output"),
 ):
     """Use command"""
-    cmd = pyoptions.cmd_list[index - 1]
+    cmd: Command = pyoptions.cmd_list[index - 1]
     _merge_varlist(cmd)
 
     if link:
@@ -239,51 +240,61 @@ def use(
 
     menu_select_cmd_var(cmd)
 
-    shell = cmd.to_shell(one_line=one_line)
-    print(shell + "\n")
+    # 当使用了run的时候，自动为one_line设置为True
+    shell = cmd.to_shell(one_line=True if run or daemon else one_line)
 
-    # 写入history 并当超过长度长度时删除首行
-    with open(pypaths.history_path, "r+") as f:
-        d = f.readlines()
-        if conf.history_size <= len(d):
-            f.seek(0)
-            for i in d[1:conf.history_size]:
-                f.write(i)
-            f.write(shell + "\n")
-            f.truncate()
-        else:
-            f.write(shell + "\n")
+    # 显示 shell
+    (print_success(
+        f"[yellow]Executing[/]: [b]{shell}") if run or daemon else print(shell))
 
     if run or daemon:
+        _save_to_history(shell)
+
+        if output:
+            output.write(f"\n{shell}\n" + "=" * len(shell) + "\n")
+
         try:
-            if daemon or output:
+            if daemon:
                 # 后台执行时，输出文件必须指定
                 # 当权限不够的时候，使用 --sudo 参数执行
-
                 if sudo:
                     if not is_linux():
                         raise BadParameter('Only linux support sudo')
 
                     passwd = Prompt.ask(
-                        "\[sudo] Please enter your password", password=True)
+                        "[dim]\[sudo] Please enter your password", password=True)
+                    passwd_proc = subprocess.Popen(shlex.split(
+                        f"echo {passwd}"), stdout=subprocess.PIPE)
 
                 if not output:
                     raise BadParameter(
                         'Please set output file with [green]--output[/]')
 
-                passwd_proc = subprocess.Popen(shlex.split(
-                    f"echo {passwd}"), stdout=subprocess.PIPE)
-
-                subprocess.Popen(shlex.split(f"sudo -S {shell}" if sudo else shell),
-                                 shell=False,
-                                 stdin=passwd_proc.stdout,
+                subprocess.Popen(f"sudo -S {shell}" if sudo else shell,
+                                 shell=True,
+                                 stdin=passwd_proc.stdout if sudo else None,
                                  stdout=output, stderr=output)
 
                 print_success("Run as daemon")
 
-            else:  # Run as Normal
-                subprocess.run(shlex.split(f"sudo -S {shell}" if sudo else shell),
-                               shell=False, check=True)
+            else:  # Run in Normal
+                # 当权限不够的时候，使用 --sudo 参数执行
+                # 如果没有设置输出文件，则使用标准输出
+                # 如果设置了输出文件，则使用输出文件 以及 打印输出，只会在结束后显示
+                proc = subprocess.Popen(f"sudo -S {shell}" if sudo else shell,
+                                        shell=True,
+                                        stdout=subprocess.PIPE if output else None,
+                                        stderr=subprocess.STDOUT if output else None,
+                                        universal_newlines=True)
+
+                if sudo:
+                    print_info('[dim]Please enter your password if needed')
+
+                if output:
+                    for line in proc.stdout:
+                        sys.stdout.write(line)
+                        output.write(line)
+                proc.wait()
 
         except FileNotFoundError as e:
             f = re.search(r"\'(.*?)\'", str(e)).group(1)
@@ -291,15 +302,14 @@ def use(
                 f"failed to run command '[bright_red]{f}[/bright_red]': No such file or directory")
             raise typer.Exit()
         except subprocess.CalledProcessError as e:
-            print_error(
-                f"failed to run command: {e.output}")
+            print_error(f"failed to run command")
             raise typer.Exit()
 
-        if output:
-            output.write(shell + "\n" + "=" * len(shell) + "\n")
-            print_info(
-                "Command output has been written to [u]%s[/u] file" % output.name)
-            output.close()
+        finally:
+            if output:
+                print_info(
+                    "Command output has been written to [u]%s[/u] file" % output.name)
+                output.close()
 
 
 @app.command(epilog=repository_url)
@@ -410,6 +420,20 @@ def _select_link(cmd: "Command") -> None:
     parse = _parse_files(file)
     conf.latest_select = file
     display_cmds(parse.cmdlist)
+
+
+def _save_to_history(shell: str) -> None:
+    # 写入history 并当超过长度长度时删除首行
+    with open(pypaths.history_path, "r+") as f:
+        d = f.readlines()
+        if conf.history_size <= len(d):
+            f.seek(0)
+            for i in d[1:conf.history_size]:
+                f.write(i)
+            f.write(shell + "\n")
+            f.truncate()
+        else:
+            f.write(shell + "\n")
 
 
 def _dump() -> None:
