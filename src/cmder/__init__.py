@@ -3,7 +3,7 @@ from .config import Config
 from .data import pypaths, pystrs
 from .unit import Colored
 
-__version__ = '0.1.0'
+__version__ = '2.0.0'
 
 
 def generate_custom_file_path():
