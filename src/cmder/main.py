@@ -12,8 +12,7 @@ from rich.prompt import Prompt
 
 from . import __version__, conf
 from .command import CommandList
-from .console import console
-from .data import banner, pyoptions, pypaths, repository_url
+from .data import banner, pyoptions, pypaths, repository_url, database_url
 from .decorator import load
 from .exception import BadParameter
 from .menu import menu, menu_select_cmd_var, menu_select_file
@@ -31,7 +30,8 @@ app = typer.RichTyper(add_completion=False)
 
 def dis_banner(display: bool):
     if display:
-        rich.print(banner.format(version=__version__, url=repository_url))
+        rich.print(banner.format(version=__version__,
+                                 url=repository_url, db=database_url))
         raise typer.Exit()
 
 

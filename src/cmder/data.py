@@ -56,6 +56,7 @@ banner = """[bold bule]
             \_____| |_| |_| |_|  \__,_|  \___| |_|  [bold yellow]ver:{version}[/bold yellow]
 
                         [bold magenta]GitHub:{url}[/bold magenta]
+                        [yellow]Database:{db}[/]
                                             [bold green]--Author:Elin[/bold green] 
 [bold bule]"""
 
