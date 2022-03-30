@@ -20,7 +20,7 @@ from .menu import menu, menu_select_cmd_var, menu_select_file
 from .output import display_cmd_info, display_cmds
 from .parse import Parse
 from .unit import (db_recursion_file, get_relate_path, is_linux, print_error,
-                   print_info, print_success)
+                   print_info, print_success, update_database)
 from .variable import VariableList
 
 if TYPE_CHECKING:
@@ -37,30 +37,8 @@ def dis_banner(display: bool):
 
 def update_db(update: bool) -> None:
     """更新数据库"""
-    import shutil
-    import tempfile
     if update:
-        with console.status("[magenta]Updating database...", spinner='earth') as status:
-            with tempfile.TemporaryDirectory() as temp_dir:
-                try:
-                    subprocess.run(shlex.split(
-                        f"git clone {repository_url} --depth 1"), cwd=temp_dir, capture_output=True, check=True, timeout=10)
-                except subprocess.TimeoutExpired:
-                    print_error("Download Timeout")
-                    raise typer.Exit()
-                except subprocess.CalledProcessError:
-                    print_error("Download failed")
-                    raise typer.Exit()
-
-                if not os.path.exists(os.path.join(temp_dir, 'cmder', 'db')):
-                    print_error("Download failed with no Database Directory")
-                    raise typer.Exit()
-
-                shutil.rmtree(pypaths.db_path)
-                shutil.copytree(os.path.join(
-                    temp_dir, 'cmder', 'db'), pypaths.db_path)
-
-        print_success("Update database success")
+        update_database()
         raise typer.Exit()
 
 

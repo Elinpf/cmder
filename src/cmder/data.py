@@ -60,3 +60,4 @@ banner = """[bold bule]
 [bold bule]"""
 
 repository_url = 'https://github.com/Elinpf/cmder'
+database_url = 'https://github.com/Elinpf/cmder_db'

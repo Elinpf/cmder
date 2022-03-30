@@ -4,13 +4,16 @@ import base64
 import os
 import platform
 import re
+import shlex
+import subprocess
 from contextlib import contextmanager
 from typing import Iterator, List
 
+import rich_typer as typer
 from rich.panel import Panel
 
 from .console import console
-from .data import pyoptions, pypaths, pystrs
+from .data import database_url, pyoptions, pypaths, pystrs
 
 
 def is_windows():
@@ -175,6 +178,33 @@ def section(title: str) -> Iterator[list]:
         columns = '\n'.join(column_list)
         console.print(Panel.fit(columns, title=title,
                                 border_style='dim', title_align='center'))
+
+
+def update_database():
+    import shutil
+    import tempfile
+
+    with console.status("[magenta]Updating database...", spinner='earth') as status:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            try:
+                subprocess.run(shlex.split(
+                    f"git clone {database_url} --depth 1"), cwd=temp_dir, capture_output=True, check=True, timeout=10)
+            except subprocess.TimeoutExpired:
+                print_error("Download Timeout")
+                raise typer.Exit()
+            except subprocess.CalledProcessError:
+                print_error("Download failed")
+                raise typer.Exit()
+
+            if not os.path.exists(os.path.join(temp_dir, 'cmder', 'db')):
+                print_error("Download failed with no Database Directory")
+                raise typer.Exit()
+
+            shutil.rmtree(pypaths.db_path)
+            shutil.copytree(os.path.join(
+                temp_dir, 'cmder', 'db'), pypaths.db_path)
+
+    print_success("Update database success")
 
 
 class Colored():
