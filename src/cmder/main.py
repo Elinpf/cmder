@@ -1,9 +1,9 @@
 import os
 import pickle
 import re
-import sys
 import shlex
 import subprocess
+import sys
 from typing import TYPE_CHECKING, Optional, Tuple
 
 import rich
@@ -238,14 +238,18 @@ def use(
         display_cmd_info(cmd)
         raise typer.Exit()
 
-    menu_select_cmd_var(cmd)
+    try:
+        menu_select_cmd_var(cmd)
+    except TypeError:
+        print_info('[bold bright_magenta]Nothing selected, Bye!')
+        raise typer.Exit()
 
     # 当使用了run的时候，自动为one_line设置为True
     shell = cmd.to_shell(one_line=True if run or daemon else one_line)
 
     # 显示 shell
     (print_success(
-        f"[yellow]Executing[/]: [b]{shell}") if run or daemon else print(shell))
+        f"[yellow]Executing[/]: [b]{shell}[/b]") if run or daemon else print(shell))
 
     if run or daemon:
         _save_to_history(shell)

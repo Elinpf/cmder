@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import os
 import re
 from typing import TYPE_CHECKING
 
+import rich
 from rich.prompt import Prompt
+from rich.text import Text
 
 from . import conf
 from .data import pypaths, pystrs
@@ -126,32 +130,35 @@ def beautify_list(menu_list: list) -> list:
     return b_list
 
 
-def menu(title: str, menu_list: list) -> int:
+def menu(title: Text | str, menu_list: list) -> int:
     """显示菜单，并返回选择的index"""
+    if isinstance(title, str):
+        title = Text.from_markup(title)
+
     if is_windows():
         idx = menu_windows(title, menu_list)
         return idx
     else:
-        menu = TerminalMenu(menu_list, title=title)
+        menu = TerminalMenu(menu_list, title=title.plain)
         return menu.show()
 
 
-def menu_windows(title: str, menu_list: list) -> int:
+def menu_windows(title: Text, menu_list: list) -> int:
     """windows 的菜单选项"""
-    print(title)
+    rich.print(title)
     index = 1
     for e in menu_list:
-        print(f'{index}: {e}')
+        rich.print(f'{index}: {e}')
         index += 1
 
     return int(input_custom(title)) - 1
 
 
-def input_custom(title: str) -> str:
+def input_custom(title: Text) -> str:
     """自定义输入，并且保存到config中"""
     # print(f'(custom) {title}')
     # selection = input(cool.bright_red('> '))
-    selection = Prompt.ask(f":bone: [dim](custom)[/] {title}")
+    selection = Prompt.ask(f":bone: [dim](custom)[/] {title.markup}")
 
     return selection
 
@@ -160,17 +167,15 @@ def menu_select_cmd_var(cmd: "Command") -> None:
     for _, var in cmd.vars.items():
         list = var.get_recommend()
 
-        if var.desc:
-            title = f'{var.name}: {var.desc}'
-        else:
-            title = var.name
+        title = Text.from_markup(
+            f'{var.name} [cyan][{var.desc}][/]' if var.desc else var.name)
 
         select = menu_with_custom_choice(title, list)
         conf.workspace_set_custom_input(var.name, select)
         var.select = select
 
 
-def menu_with_custom_choice(title: str, menu_list: list) -> str:
+def menu_with_custom_choice(title: Text, menu_list: list) -> str:
     if not menu_list:
         return input_custom(title)
 
