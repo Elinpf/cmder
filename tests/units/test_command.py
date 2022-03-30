@@ -72,7 +72,7 @@ class TestCommand():
         assert shell == 'mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth\nhost -t #{type} #{RHOST}'
 
         shell_one_line = cmd.to_shell(one_line=True)
-        assert shell_one_line == 'mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth;host -t #{type} #{RHOST}'
+        assert shell_one_line == 'mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth && host -t #{type} #{RHOST}'
 
     def test_merge_var(cls):
         cmd = Command(
@@ -178,5 +178,5 @@ class TestSplitLine():
     def test_to_s(cls):
         ...
         sp = SplitLine('Sqlmap')
-        string = sp.to_s()
+        string = str(sp)
         assert re.match(r'---.*Sqlmap.*---', string)
