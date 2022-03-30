@@ -196,15 +196,22 @@ def update_database():
                 print_error("Download failed")
                 raise typer.Exit()
 
-            if not os.path.exists(os.path.join(temp_dir, 'cmder', 'db')):
+            database_name = get_repository_name(database_url)
+            if not os.path.exists(os.path.join(temp_dir, database_name, 'db')):
                 print_error("Download failed with no Database Directory")
                 raise typer.Exit()
 
-            shutil.rmtree(pypaths.db_path)
+            if os.path.exists(pypaths.db_path):
+                shutil.rmtree(pypaths.db_path)
             shutil.copytree(os.path.join(
-                temp_dir, 'cmder', 'db'), pypaths.db_path)
+                temp_dir, database_name, 'db'), pypaths.db_path)
 
     print_success("Update database success")
+
+
+def get_repository_name(repository_url: str) -> str:
+    """获取数据库名称"""
+    return repository_url.split('/')[-1].replace('.git', '')
 
 
 class Colored():

@@ -32,6 +32,7 @@ def check_db():
 
 
 generate_custom_file_path()
+check_db()
 
 cool = Colored()
 

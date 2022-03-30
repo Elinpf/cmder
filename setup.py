@@ -10,22 +10,6 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
     requirements = [x.strip() for x in content]
 
 root_path = os.path.split(os.path.abspath(__file__))[0]
-db_path = os.path.join(root_path, 'db')
-
-
-def get_file(path, all_files=[]):
-    files = os.listdir(path)
-    for file in files:
-        f_path = os.path.join(path, file)
-        if not os.path.isdir(f_path):   # not a dir
-            all_files.append((path.replace(db_path, 'db'), [
-                             f_path.replace(db_path, 'db')]))
-        else:  # is a dir
-            get_file(f_path, all_files)
-    return all_files
-
-
-data_files = get_file(db_path)
 
 shutil.copyfile("start.py", 'cmder')
 
@@ -46,7 +30,6 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=requirements,
-    data_files=data_files,
     # packages=find_packages(),
     scripts=['cmder'],
     packages=find_packages('src'),
