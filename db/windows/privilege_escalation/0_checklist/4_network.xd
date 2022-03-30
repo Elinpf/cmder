@@ -1,6 +1,0 @@
-# desc: [Check]
-# refer: https://book.hacktricks.xyz/windows/checklist-windows-privilege-escalation#network
-
-Check current network information​
-
-Check hidden local services restricted to the outside

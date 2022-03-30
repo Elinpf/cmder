@@ -1,4 +1,0 @@
-# refer: https://github.com/initstring/uptux
-
-desc: Found AF_Unix Process
-python uptux.py

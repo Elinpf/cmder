@@ -1,8 +1,0 @@
-# desc: Services
-Get-Service
-
-# desc: Processes
-Get-Process | where {$_.ProcessName -notlike "svchost*"} | ft ProcessName, Id
-
-# desc: Scheduled Tasks
-Get-ScheduledTask | where {$_.TaskPath -notlike "\Microsoft*"} | ft TaskName,TaskPath,State
