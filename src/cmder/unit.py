@@ -180,6 +180,15 @@ def section(title: str) -> Iterator[list]:
                                 border_style='dim', title_align='center'))
 
 
+def check_db():
+    """检查数据库是否存在"""
+    from rich.prompt import Confirm
+
+    if not os.path.exists(pypaths.db_path):
+        if Confirm.ask(f'cmder database not found, do you want to download?', default=True):
+            update_database()
+
+
 def update_database():
     import shutil
     import tempfile

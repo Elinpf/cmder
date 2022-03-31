@@ -19,7 +19,7 @@ from .menu import menu, menu_select_cmd_var, menu_select_file
 from .output import display_cmd_info, display_cmds
 from .parse import Parse
 from .unit import (db_recursion_file, get_relate_path, is_linux, print_error,
-                   print_info, print_success, update_database)
+                   print_info, print_success, update_database, check_db)
 from .variable import VariableList
 
 if TYPE_CHECKING:
@@ -66,6 +66,7 @@ def main(
             raise typer.Exit()
 
     if ctx.invoked_subcommand is None:
+        check_db() # 检查数据库是否存在
         try:
             file = file or menu_select_file(pypaths.db_path)
             conf.latest_select = file

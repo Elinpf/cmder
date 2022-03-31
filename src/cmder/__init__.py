@@ -1,10 +1,8 @@
 import os
 
-from rich.prompt import Confirm
-
 from .config import Config
 from .data import pypaths, pystrs
-from .unit import Colored, update_database
+from .unit import Colored
 
 __version__ = '2.0.0'
 
@@ -21,15 +19,7 @@ def generate_custom_file_path():
         open(pypaths.history_path, 'a').close()
 
 
-def check_db():
-    """检查数据库是否存在"""
-    if not os.path.exists(pypaths.db_path):
-        if Confirm.ask(f'cmder database not found, do you want to download?', default=True):
-            update_database()
-
-
 generate_custom_file_path()
-check_db()
 
 cool = Colored()
 
