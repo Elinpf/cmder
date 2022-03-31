@@ -9,8 +9,8 @@ from rich.prompt import Prompt
 from rich.text import Text
 
 from . import conf
-from .data import pypaths, pystrs
-from .unit import get_path_list, get_select_path, is_windows
+from .data import pyoptions, pystrs
+from .unit import get_db_path_list, get_db_selected_path, is_windows
 
 if TYPE_CHECKING:
     from .command import Command
@@ -19,57 +19,53 @@ if not is_windows():
     from simple_term_menu import TerminalMenu
 
 
-def menu_select_file(path):
-    """用于递归做文件的选择"""
-
+def menu_select_file(history: list = []) -> None:
+    """递归选择数据库文件"""
     menu_list = []
-    back_title = '(Back)'
 
-    for p in get_path_list(path):  # 软件与用户目录的两次循环
-        if not os.path.exists(p):
+    for path in get_db_path_list(history):
+        if not os.path.exists(path):  # 如果不存在
             continue
 
-        for f in os.listdir(p):  # 取目录下的文件名
-            f_path = os.path.join(p, f)
-            if os.path.isdir(f_path):  # 如果是目录
-                if f in conf.extend_dir:
+        for e in os.listdir(path):
+            e_path = os.path.join(path, e)
+            if os.path.isdir(e_path):  # 如果为目录
+                if e in conf.extend_dir or \
+                        is_empty_dir(e_path) or \
+                        e in menu_list:
                     continue
+                menu_list.append(e)
 
-                if is_empty_dir(f_path):  # 并且目录内不为空
+            if os.path.isfile(e_path):
+                if e in menu_list or e == pystrs.init_file:  # 是否为 __init__.xd 文件
                     continue
-
-                if f not in menu_list:  # 并且菜单列表中没有文件名称
-                    menu_list.append(f)  # 则添加
-
-            else:
-                if f not in menu_list:
-                    if os.path.splitext(f)[1] == '.xd':  # 后缀为.xd的
-                        menu_list.append(f)
+                if os.path.splitext(e)[1] == pyoptions.db_file_suffix:  # 是否为数据库文件
+                    menu_list.append(e)
 
     # 排序
     menu_list = sorted(menu_list, key=str2int)
+    blist = beautify_list(menu_list)
+    for l in [menu_list, blist]:  # 添加返回
+        l.append(pystrs.menu_back_str)
 
-    # 美化，并呼出菜单
-    b_list = beautify_list(filter_files(menu_list))
-    b_list.append(back_title)
-    menu_list.append(back_title)
-    idx = menu(path, b_list)
-
-    select = menu_list[idx]
+    # 呼出菜单
+    idx = menu(os.path.join('db', *history), blist)
+    selected = menu_list[idx]
 
     # 递归菜单
-    if select == back_title:
-        back_path = os.path.split(path)[0]
-        if len(back_path) < len(pypaths.db_path):
-            back_path = pypaths.db_path
-        return menu_select_file(back_path)
+    if selected == pystrs.menu_back_str:  # 选择返回时
+        if history:
+            history.pop()
+        return menu_select_file(history)
 
-    select_path = get_select_path(path, select)
-    if os.path.isdir(select_path):
-        return menu_select_file(select_path)
+    # 选择文件
+    selected_path = get_db_selected_path(history, selected)
 
-    elif os.path.isfile(select_path):
-        return select_path
+    if os.path.isfile(selected_path):
+        return selected_path
+    else:
+        history.append(selected)
+        return menu_select_file(history)
 
 
 def str2int(v_str):

@@ -90,7 +90,7 @@ def main(
     if ctx.invoked_subcommand is None:
         check_db()  # 检查数据库是否存在
         try:
-            file = file or menu_select_file(pypaths.db_path)
+            file = file or menu_select_file()
             conf.latest_select = file
             pyoptions.cmd_list = _parse_files(file).cmdlist
             display_cmds(pyoptions.cmd_list)

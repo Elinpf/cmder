@@ -85,20 +85,26 @@ def db_recursion_file(file_path: str) -> List[str]:
     return list
 
 
-def get_select_path(path: str, select: str) -> str:
-    """获取选择的文件，如果在软件目录中不存在，就返回用户目录的路径"""
-    for p in get_path_list(path):
+def get_relate_path(path: str) -> str:
+    """获取相对路径"""
+    relate_path = path.replace(pypaths.db_path, 'db')
+    relate_path = relate_path.replace(pypaths.custom_db_path, 'db')
+    return relate_path
+
+
+def get_db_selected_path(dir_list: list, select: str) -> str:
+    """获取选择的数据库文件, 判断是在仓库目录中还是用户目录中"""
+    for p in get_db_path_list(dir_list):
         p_select = os.path.join(p, select)
         if os.path.exists(p_select):
             return p_select
     return ''
 
 
-def get_relate_path(path: str) -> str:
-    """获取相对路径"""
-    relate_path = path.replace(pypaths.db_path, 'db')
-    relate_path = relate_path.replace(pypaths.custom_db_path, 'db')
-    return relate_path
+def get_db_path_list(dir_list: list) -> List[str, str]:
+    """通过hisotry取得仓库数据库和用户目录下的数据库"""
+    return [os.path.join(pypaths.db_path, *dir_list),
+            os.path.join(pypaths.custom_db_path, *dir_list)]
 
 
 def get_path_list(path: str) -> List[str, str]:

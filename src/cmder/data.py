@@ -6,7 +6,7 @@ class PyPaths():
         # soft path
         self.root_path = os.path.split(
             os.path.split(os.path.abspath(__file__))[0])[0]
-        self.db_path = os.path.join(self.root_path, 'db')
+        self._db_path = os.path.join(self.root_path, 'db')
 
         # user path
         self.user_path = os.path.expanduser('~')
@@ -15,12 +15,20 @@ class PyPaths():
         self.history_path = os.path.join(self.custom_path, 'history')
         self.sequence_path = os.path.join(self.custom_path, '.sequence')
 
+    @property
+    def db_path(self):
+        from . import conf
+        if conf.get_global_config('db_path'):
+            return conf.get_global_config('db_path')
+        return self._db_path
+
 
 class PyStrs():
     def __init__(self):
         self.init_file = '__init__.xd'
         self.config_file = 'config.json'
         self.menu_custom_str = '(Custom)'
+        self.menu_back_str = '(Back)'
 
 
 class PyOptions():
