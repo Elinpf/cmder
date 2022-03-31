@@ -1,0 +1,14 @@
+{
+    "extend_dir": [
+        ".git"
+    ],
+    "history_select": [],
+    "history_size": 50,
+    "workspace_select": "default",
+    "workspaces": {
+        "default": {
+            "custom_input": {},
+            "variable": {}
+        }
+    }
+}

@@ -9,12 +9,11 @@ class Config():
 
     def __init__(self, config_path: str):
         self.conf = {}
-        self.config_abspath = ''
-        self.load(config_path)
+        self.config_abspath = config_path
+        self.load()
 
-    def load(self, config_path: str) -> None:
+    def load(self) -> None:
         """加载配置文件, 如果没有则创建"""
-        self.config_abspath = unit.custom_abspath(config_path)
         if os.path.exists(self.config_abspath):
             json_str = open(self.config_abspath, 'r').read()
             self.conf = json.loads(json_str)
@@ -28,6 +27,10 @@ class Config():
         with open(self.config_abspath, 'w') as fi:
             fi.write(json_str)
 
+    def init_config(self) -> None:
+        """初始化配置"""
+        self.generate_conf()
+
     def generate_conf(self) -> None:
         self.conf = {
             'workspace_select': 'default',
@@ -39,7 +42,8 @@ class Config():
             },
             'history_select': [],
             'extend_dir': ['.git'],
-            'history_size': 50
+            'history_size': 50,
+            'global_config': {}
         }
         self.save()
 
@@ -58,6 +62,38 @@ class Config():
         else:
             self.conf['history_size'] = v
         self.save()
+
+    @property
+    def global_config(self) -> dict:
+        self.check_global_config()
+        return self.conf['global_config']
+
+    def init_global_config(self) -> None:
+        """初始化全局配置"""
+        self.conf['global_config'] = {}
+        self.save()
+
+    def set_global_config(self, conf: Tuple[str, str]) -> None:
+        """设置全局配置中的一个配置"""
+        key, val = conf
+        self.global_config[key] = val
+        self.save()
+
+    def get_global_config(self, key) -> str:
+        """获取全局配置中的一个配置"""
+        if key in self.global_config:
+            return self.global_config[key]
+
+    def del_global_config(self, key) -> None:
+        """删除一个全局配置"""
+        if key in self.global_config:
+            self.global_config.pop(key)
+            self.save()
+
+    def check_global_config(self) -> None:
+        """检查是否有全局配置，低版本兼容"""
+        if 'global_config' not in self.conf:
+            self.init_global_config()
 
     def add_workspace(self, name: str) -> None:
         """添加工作区"""

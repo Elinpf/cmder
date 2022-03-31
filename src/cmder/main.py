@@ -50,7 +50,12 @@ def main(
     version: bool = typer.Option(
         False, "--version", "-v", help="Show version & banner", is_eager=True, callback=dis_banner),
     update: bool = typer.Option(
-        False, "--update", help="Update Database 🎂", is_eager=True, callback=update_db)
+        False, "--update", help="Update Database 🎂", is_eager=True, callback=update_db),
+    config: Tuple[str, str] = typer.Option(
+        None, help='Set Global Config'),
+    del_config: str = typer.Option('', help='Delete Global Config'),
+    show_config: bool = typer.Option(
+        False, "--show-config", help="Show Global Config"),
 ):
     """Generate a pentesting command 👹"""
     file = ''
@@ -65,8 +70,25 @@ def main(
             print_error(f"file [u][bold red]{link}[/][/u] is not exsits")
             raise typer.Exit()
 
+    elif config:
+        conf.set_global_config(config)
+        key, val = config
+        print_success(
+            f"Set Global Config: [yellow]{key}[/] = [bold blue]{val}[/]")
+        raise typer.Exit()
+
+    elif del_config:
+        conf.del_global_config(del_config)
+        print_success(f"Delete Global Config [u][bold red]{del_config}[/][/u]")
+        raise typer.Exit()
+
+    elif show_config:
+        for key, val in conf.global_config.items():
+            rich.print(f"[yellow]{key}[/] = [bold blue]{val}[/]")
+        raise typer.Exit()
+
     if ctx.invoked_subcommand is None:
-        check_db() # 检查数据库是否存在
+        check_db()  # 检查数据库是否存在
         try:
             file = file or menu_select_file(pypaths.db_path)
             conf.latest_select = file

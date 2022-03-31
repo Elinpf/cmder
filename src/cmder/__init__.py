@@ -2,7 +2,7 @@ import os
 
 from .config import Config
 from .data import pypaths, pystrs
-from .unit import Colored
+from .unit import Colored, custom_abspath
 
 __version__ = '2.0.0'
 
@@ -22,5 +22,4 @@ def generate_custom_file_path():
 generate_custom_file_path()
 
 cool = Colored()
-
-conf = Config(pystrs.config_file)
+conf = Config(custom_abspath(pystrs.config_file))
