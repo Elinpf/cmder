@@ -4,7 +4,7 @@ from .config import Config
 from .data import pypaths, pystrs
 from .unit import custom_abspath
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 
 
 def generate_custom_file_path():
