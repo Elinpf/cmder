@@ -221,21 +221,3 @@ def update_database():
 def get_repository_name(repository_url: str) -> str:
     """获取数据库名称"""
     return repository_url.split('/')[-1].replace('.git', '')
-
-
-class Colored():
-
-    def custom_str(self, style: str, message: str) -> str:
-        return f"[{style}]{message}[/{style}]"
-
-    def dim(self, s): return self.custom_str('dim', s)
-    def red(self, s): return self.custom_str('red', s)
-    def blue(self, s): return self.custom_str('blue', s)
-    def green(self, s): return self.custom_str('green', s)
-    def yellow(self, s): return self.custom_str('yellow', s)
-    def magenta(self, s): return self.custom_str('magenta', s)
-    def bright_red(self, s): return self.custom_str('bright_red', s)
-    def bright_blue(self, s): return self.custom_str('bright_blue', s)
-    def bright_green(self, s): return self.custom_str('bright_green', s)
-    def bright_yellow(self, s): return self.custom_str('bright_yellow', s)
-    def bright_magenta(self, s): return self.custom_str('bright_magenta', s)

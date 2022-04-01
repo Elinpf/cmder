@@ -152,8 +152,6 @@ def menu_windows(title: Text, menu_list: list) -> int:
 
 def input_custom(title: Text) -> str:
     """自定义输入，并且保存到config中"""
-    # print(f'(custom) {title}')
-    # selection = input(cool.bright_red('> '))
     selection = Prompt.ask(f":bone: [dim](custom)[/] {title.markup}")
 
     return selection

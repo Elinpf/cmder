@@ -6,9 +6,8 @@ from typing import TYPE_CHECKING
 from rich import print
 from rich.text import Text
 
-from . import cool
 from .command import Command, SplitLine
-from .console import cmd_highlighter, console
+from .console import cmd_highlighter, console, bright_blue, dim, bright_yellow
 from .data import pyoptions
 from .unit import decode_multi_line_notes, section
 
@@ -26,7 +25,7 @@ def _display_cmd(index: int, cmd: Command) -> str:
 
     desc = cmd.desc + " " if cmd.desc else ''
 
-    nitems.append(cool.bright_blue(index+" "*pad_index+desc) + cmd.cmd[0])
+    nitems.append(bright_blue(index+" "*pad_index+desc) + cmd.cmd[0])
     for cmd in cmd.cmd[1:]:
         nitems.append(" "*pad + cmd)
 
@@ -61,14 +60,14 @@ def display_cmd_info(cmd: Command) -> None:
     """显示命令的详细信息"""
     with section('description') as columns:
         for note in _get_cmd_notes(cmd):
-            columns.append(cool.dim(note))
+            columns.append(dim(note))
 
     with section('path') as columns:
         columns.append(cmd.path)
 
-    print(cool.bright_blue(cmd.desc))
+    print(bright_blue(cmd.desc))
     for c in cmd.cmd:
-        c = cool.bright_yellow(c)
+        c = bright_yellow(c)
         console.print(cmd_highlighter(Text.from_markup(c)))
 
     with section('variables') as columns:

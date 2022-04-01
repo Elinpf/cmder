@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, List
 
 import wcwidth
 
-from . import cool
 from .data import pyoptions
 from .unit import get_relate_path
 from .variable import VariableList
+from .console import bright_magenta
 
 if TYPE_CHECKING:
     from .variable import Variable
@@ -154,7 +154,7 @@ class SplitLine():
             rlc += 1
 
         _ = (pyoptions.splitline_char*llc + ' ' +
-             cool.bright_magenta(self.desc) + ' ' + pyoptions.splitline_char*rlc)
+             bright_magenta(self.desc) + ' ' + pyoptions.splitline_char*rlc)
 
         return _
 
