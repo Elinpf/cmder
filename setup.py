@@ -1,4 +1,3 @@
-import shutil
 import os
 from setuptools import setup, find_packages
 
@@ -10,8 +9,6 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
     requirements = [x.strip() for x in content]
 
 root_path = os.path.split(os.path.abspath(__file__))[0]
-
-shutil.copyfile("start.py", 'cmder')
 
 setup(
     name='cmder',
@@ -31,9 +28,7 @@ setup(
     python_requires='>=3.6',
     install_requires=requirements,
     # packages=find_packages(),
-    scripts=['cmder'],
+    scripts=['script/cmder'],
     packages=find_packages('src'),
     package_dir={'': "src"},
 )
-
-os.remove('cmder')
