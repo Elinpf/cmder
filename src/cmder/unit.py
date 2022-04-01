@@ -60,13 +60,15 @@ def db_recursion_file(file_path: str) -> List[str]:
     relate_path = get_relate_path(file_path)
 
     if is_windows():
-        path_split_list = relate_path.split(pyoptions.windows_separator)
+        path_split_list = relate_path.split(pyoptions.windows_separator)[
+            1:]  # 去除db/的路径list
     else:
-        path_split_list = relate_path.split(pyoptions.linux_separator)
+        path_split_list = relate_path.split(pyoptions.linux_separator)[1:]
 
-    p = pypaths.root_path
-    c = pypaths.custom_path
+    p = pypaths.db_path
+    c = pypaths.custom_db_path
     list = []
+    path_split_list.insert(0, '')  # 添加空字符串是为了让第一个路径为空
     for i in path_split_list:
         p = os.path.join(p, i)
         c = os.path.join(c, i)
@@ -78,7 +80,7 @@ def db_recursion_file(file_path: str) -> List[str]:
             list.append(init_path)
 
     # 判断是否文件是否存在, 并在list 中返回
-    for file in get_path_list(file_path):
+    for file in get_db_path_list(path_split_list):
         if os.path.exists(file):
             list.append(file)
 
@@ -107,16 +109,8 @@ def get_db_path_list(dir_list: list) -> List[str, str]:
             os.path.join(pypaths.custom_db_path, *dir_list)]
 
 
-def get_path_list(path: str) -> List[str, str]:
-    """取软件目录与用户目录的list"""
-    relate_path = get_relate_path(path)
-    root_path = os.path.join(pypaths.root_path, relate_path)
-    custom_path = os.path.join(pypaths.custom_path, relate_path)
-    return [root_path, custom_path]
-
-
 def store_file(file_relate_path: str, string: str):
-    """用于存储文件, 
+    """用于存储文件,
     file_relate_path 是相对与用户目录下的文件路径"""
     fi = open_custom_file(file_relate_path, 'w')
     fi.write(string)
