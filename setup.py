@@ -28,7 +28,7 @@ setup(
     python_requires='>=3.6',
     install_requires=requirements,
     # packages=find_packages(),
-    scripts=['script/cmder'],
+    scripts=['bin/cmder'],
     packages=find_packages('src'),
     package_dir={'': "src"},
 )
