@@ -224,8 +224,9 @@ def update_database():
                 shutil.copytree(os.path.join(
                     temp_dir, database_name, 'scripts'), pypaths.scripts_path)
 
-                subprocess.run(f"chmod +x {pypaths.scripts_path}/*",
-                               shell=True, capture_output=True, check=True)
+                if is_linux:
+                    subprocess.run(f"chmod +x {pypaths.scripts_path}/*",
+                                   shell=True, capture_output=True, check=True)
 
             except subprocess.CalledProcessError:
                 print_error(
