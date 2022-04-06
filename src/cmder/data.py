@@ -6,21 +6,30 @@ class PyPaths():
         # soft path
         self.root_path = os.path.split(
             os.path.split(os.path.abspath(__file__))[0])[0]
-        self._db_path = os.path.join(self.root_path, 'db')
 
         # user path
         self.user_path = os.path.expanduser('~')
         self.custom_path = os.path.join(self.user_path, '.cmder')
         self.custom_db_path = os.path.join(self.custom_path, 'db')
+        self.custom_script_path = os.path.join(self.custom_path, 'scripts')
         self.history_path = os.path.join(self.custom_path, 'history')
         self.sequence_path = os.path.join(self.custom_path, '.sequence')
 
     @property
-    def db_path(self):
+    def db_root_path(self):
+        # 取数据库根目录，包含db和scripts文件夹
         from . import conf
         if conf.get_global_config('db_path'):
             return conf.get_global_config('db_path')
-        return self._db_path
+        return self.root_path
+
+    @property
+    def db_path(self):
+        return os.path.join(self.db_root_path, 'db')
+
+    @property
+    def scripts_path(self):
+        return os.path.join(self.db_root_path, 'scripts')
 
 
 class PyStrs():

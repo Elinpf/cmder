@@ -206,14 +206,34 @@ def update_database():
                 raise typer.Exit()
 
             database_name = get_repository_name(database_url)
-            if not os.path.exists(os.path.join(temp_dir, database_name, 'db')):
+            if not os.path.exists(os.path.join(temp_dir, database_name, 'db')) and \
+                    not os.path.exists(os.path.join(temp_dir, database_name, 'scripts')):
                 print_error("Download failed with no Database Directory")
                 raise typer.Exit()
 
-            if os.path.exists(pypaths.db_path):
-                shutil.rmtree(pypaths.db_path)
-            shutil.copytree(os.path.join(
-                temp_dir, database_name, 'db'), pypaths.db_path)
+            try:
+                # 复制db文件夹
+                if os.path.exists(pypaths.db_path):
+                    shutil.rmtree(pypaths.db_path)
+                shutil.copytree(os.path.join(
+                    temp_dir, database_name, 'db'), pypaths.db_path)
+
+                # 复制scripts文件夹,并添加运行权限
+                if os.path.exists(pypaths.scripts_path):
+                    shutil.rmtree(pypaths.scripts_path)
+                shutil.copytree(os.path.join(
+                    temp_dir, database_name, 'scripts'), pypaths.scripts_path)
+
+                subprocess.run(f"chmod +x {pypaths.scripts_path}/*",
+                               shell=True, capture_output=True, check=True)
+
+            except subprocess.CalledProcessError:
+                print_error(
+                    "Running failed with [dim]chmod +x[/] command at scripts directory")
+
+            except:
+                print_error("Failed to copy database")
+                raise typer.Exit()
 
     print_success("Update database success")
 

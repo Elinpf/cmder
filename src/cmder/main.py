@@ -255,6 +255,9 @@ def use(
     if run or daemon:
         _save_to_history(shell)
 
+        my_env = os.environ.copy()
+        my_env['PATH'] = f"{pypaths.scripts_path}:{pypaths.custom_script_path}:" + my_env['PATH']
+
         if output:
             output.write(f"\n{shell}\n" + "=" * len(shell) + "\n")
 
@@ -277,6 +280,7 @@ def use(
 
                 subprocess.Popen(f"sudo -S {shell}" if sudo else shell,
                                  shell=True,
+                                 env=my_env,
                                  stdin=passwd_proc.stdout if sudo else None,
                                  stdout=output, stderr=output)
 
@@ -288,6 +292,7 @@ def use(
                 # 如果设置了输出文件，则使用输出文件 以及 打印输出，只会在结束后显示
                 proc = subprocess.Popen(f"sudo -S {shell}" if sudo else shell,
                                         shell=True,
+                                        env=my_env,
                                         stdout=subprocess.PIPE if output else None,
                                         stderr=subprocess.STDOUT if output else None,
                                         universal_newlines=True)

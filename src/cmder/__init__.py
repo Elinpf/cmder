@@ -4,7 +4,7 @@ from .config import Config
 from .data import pypaths, pystrs
 from .unit import custom_abspath
 
-__version__ = '2.1.0'
+__version__ = '2.2.0'
 
 
 def generate_custom_file_path():
@@ -14,6 +14,9 @@ def generate_custom_file_path():
 
     if not os.path.exists(pypaths.custom_db_path):
         os.makedirs(pypaths.custom_db_path)
+
+    if not os.path.exists(pypaths.custom_script_path):
+        os.makedirs(pypaths.custom_script_path)
 
     if not os.path.exists(pypaths.history_path):
         open(pypaths.history_path, 'a').close()
