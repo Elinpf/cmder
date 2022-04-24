@@ -21,9 +21,11 @@ class Parse():
     def parse_file(self, file_path: str) -> None:
         """设置解析的文件"""
         self.file_path = file_path
-        self._split_area(file_path)
+        with open(file_path, 'r', encoding='utf-8') as f:
+            self._split_area(f.read())
 
     def parse_files(self, files: list) -> None:
+        """解析多个文件"""
         for f in files:
             self.parse_file(f)
 
@@ -32,14 +34,12 @@ class Parse():
             cmd.merge_notes(self.notes)
             cmd.path = files[-1]
 
-    def _split_area(self, file_path: str) -> None:
+    def _split_area(self, string: str) -> None:
         """已空行为界线进行分割区域"""
         new_area = []  # type: List[str]
-        file_string = open(
-            file_path, 'r', encoding='UTF-8').read()  # type: str
 
-        file_string = encode_multi_line_notes(file_string)
-        for line in file_string.splitlines():
+        string = encode_multi_line_notes(string)
+        for line in string.splitlines():
             line = line.rstrip()
             if line == '':
                 if len(new_area):

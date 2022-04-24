@@ -9,12 +9,21 @@ mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth
 # refer: https://book.hacktricks.xyz/pentesting"""
 
 
+CONTEXT_2 = """# desc: JustTest
+
+# desc: Login
+# Login with mssqlclient.py
+@RHOST.recommend(192.168.1.1)
+mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth
+# refer: https://book.hacktricks.xyz/pentesting"""
+
+
 class TestParse():
-    def test_split_area(cls, shared_datadir):
+    def test_parse_file(cls, shared_datadir):
         """检查分割区域"""
         # TODO 后面将SplitLine 和 Command 分开
         p = Parse()
-        p._split_area(shared_datadir / 'sql_post.xd')
+        p.parse_file(shared_datadir / 'sql_post.xd')
         assert len(p.cmdlist.list) == 6
         assert isinstance(p.cmdlist.list[0], SplitLine)
         cmd: Command = p.cmdlist.list[1]
@@ -53,3 +62,7 @@ class TestParse():
             'refer: https://book.hacktricks.xyz/pentesting'
         ]
         assert p.notes == notes
+
+    def test_parse_with_multi_description(cls):
+        p = Parse()
+        area = CONTEXT_2.split('\n')
