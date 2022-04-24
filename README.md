@@ -21,6 +21,12 @@ cd cmder
 python3 setup.py install --user
 ```
 
+或者
+
+```
+pip3 install cmder-elinpf
+```
+
 
 # 使用方法
 
