@@ -11,7 +11,7 @@ with open('requirements.txt', 'r', encoding='utf-8') as f:
 root_path = os.path.split(os.path.abspath(__file__))[0]
 
 setup(
-    name='cmder',
+    name='cmder_elinpf',
     version='2.2.2',
     author='Elin',
     description='Simple CLI tool for the generation hack commands.',
