@@ -45,8 +45,8 @@ def update_db(update: bool) -> None:
 @app.callback(invoke_without_command=True, epilog=repository_url)
 def main(
     ctx: typer.Context,
-    link: str = typer.Option(None, "--link", "-l",
-                             help="Display the link file"),
+    path: str = typer.Option(None, "--path", "-p",
+                             help="Display the DB file for path"),
     version: bool = typer.Option(
         False, "--version", "-v", help="Show version & banner", is_eager=True, callback=dis_banner),
     update: bool = typer.Option(
@@ -59,15 +59,15 @@ def main(
 ):
     """Generate a pentesting command 👹"""
     file = ''
-    if link:
-        fp = os.path.join(pypaths.root_path, link)
-        fcp = os.path.join(pypaths.custom_path, link)
+    if path:
+        fp = os.path.join(pypaths.root_path, path)
+        fcp = os.path.join(pypaths.custom_path, path)
         if os.path.exists(fp):
             file = fp
         elif os.path.exists(fcp):
             file = fcp
         else:
-            print_error(f"file [u][bold red]{link}[/][/u] is not exsits")
+            print_error(f"file [u][bold red]{path}[/][/u] is not exsits")
             raise typer.Exit()
 
     elif config:
