@@ -12,7 +12,7 @@ root_path = os.path.split(os.path.abspath(__file__))[0]
 
 setup(
     name='cmder',
-    version='2.2.0',
+    version='2.2.1',
     author='Elin',
     description='Simple CLI tool for the generation hack commands.',
     long_description=long_description,
