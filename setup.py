@@ -12,14 +12,14 @@ root_path = os.path.split(os.path.abspath(__file__))[0]
 
 setup(
     name='cmder',
-    version='2.2.1',
+    version='2.2.2',
     author='Elin',
     description='Simple CLI tool for the generation hack commands.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/Elinpf/cmder',
     classifiers=[
-        'Environment :: Console'
+        'Environment :: Console',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python :: 3',
