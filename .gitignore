@@ -1,8 +1,8 @@
 src/__pycache__/*
 .vscode/*
 build/*
-cmder.egg-info/*
+cmder*egg-info/*
 dist/*
 *.pyc
-src/cmder.egg-info/*
+src/cmder*egg-info/*
 src/db

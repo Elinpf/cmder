@@ -62,7 +62,3 @@ class TestParse():
             'refer: https://book.hacktricks.xyz/pentesting'
         ]
         assert p.notes == notes
-
-    def test_parse_with_multi_description(cls):
-        p = Parse()
-        area = CONTEXT_2.split('\n')

@@ -20,9 +20,19 @@ class Command():
         self.refer = []
         self.notes = []
         self.links = []
-        self.desc = ""
+        self._desc = ""
         self.vars = VariableList()
         self._path = ""
+
+    @property
+    def desc(self) -> str:
+        return self._desc
+
+    @desc.setter
+    def desc(self, value: str) -> None:
+        """设置描述，只有没有描述的时候才会设置"""
+        if not self._desc:
+            self._desc = value
 
     def __repr__(self) -> str:
         return "<cmd:" + self.cmd[0] + ">"
