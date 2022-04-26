@@ -9,15 +9,6 @@ mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth
 # refer: https://book.hacktricks.xyz/pentesting"""
 
 
-CONTEXT_2 = """# desc: JustTest
-
-# desc: Login
-# Login with mssqlclient.py
-@RHOST.recommend(192.168.1.1)
-mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth
-# refer: https://book.hacktricks.xyz/pentesting"""
-
-
 class TestParse():
     def test_parse_file(cls, shared_datadir):
         """检查分割区域"""
