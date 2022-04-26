@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 
 def _display_cmd(index: int, cmd: Command) -> str:
+    """单条命令的显示"""
     nitems = []
     pad = 5
     index = "[{}]".format(index)
@@ -25,7 +26,13 @@ def _display_cmd(index: int, cmd: Command) -> str:
 
     desc = cmd.desc + " " if cmd.desc else ''
 
-    nitems.append(bright_blue(index+" "*pad_index+desc) + cmd.cmd[0])
+    if cmd.links:
+        # 如果有链接，则以一个小绿点显示
+        nitems.append(bright_blue(index+" "*(pad_index-1) +
+                                  "[green]·[/green]" + desc) + cmd.cmd[0])
+    else:
+        nitems.append(bright_blue(index+" "*pad_index+desc) + cmd.cmd[0])
+
     for cmd in cmd.cmd[1:]:
         nitems.append(" "*pad + cmd)
 
