@@ -248,6 +248,10 @@ def use(
     # 当使用了run的时候，自动为one_line设置为True
     shell = cmd.to_shell(one_line=True if run or daemon else one_line)
 
+    # 如果有描述，则显示
+    print_info(
+        f"[yellow]Description[/]: [bold bright_cyan]{cmd.desc}[/]") if cmd.desc else None
+
     # 显示 shell
     (print_success(
         f"[yellow]Executing[/]: [b]{shell}[/b]") if run or daemon else print(shell))
