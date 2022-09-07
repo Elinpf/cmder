@@ -30,9 +30,7 @@ class Command():
 
     @desc.setter
     def desc(self, value: str) -> None:
-        """设置描述，只有没有描述的时候才会设置"""
-        if not self._desc:
-            self._desc = value
+        self._desc = value
 
     def __repr__(self) -> str:
         return "<cmd:" + self.cmd[0] + ">"
