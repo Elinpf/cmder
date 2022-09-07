@@ -20,9 +20,17 @@ class Command():
         self.refer = []
         self.notes = []
         self.links = []
-        self.desc = ""
+        self._desc = ""
         self.vars = VariableList()
         self._path = ""
+
+    @property
+    def desc(self) -> str:
+        return self._desc
+
+    @desc.setter
+    def desc(self, value: str) -> None:
+        self._desc = value
 
     def __repr__(self) -> str:
         return "<cmd:" + self.cmd[0] + ">"

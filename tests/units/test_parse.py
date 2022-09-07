@@ -10,11 +10,11 @@ mssqlclient.py #{DOMAIN}/#{USER}@#{RHOST} -windows-auth
 
 
 class TestParse():
-    def test_split_area(cls, shared_datadir):
+    def test_parse_file(cls, shared_datadir):
         """检查分割区域"""
         # TODO 后面将SplitLine 和 Command 分开
         p = Parse()
-        p._split_area(shared_datadir / 'sql_post.xd')
+        p.parse_file(shared_datadir / 'sql_post.xd')
         assert len(p.cmdlist.list) == 6
         assert isinstance(p.cmdlist.list[0], SplitLine)
         cmd: Command = p.cmdlist.list[1]
