@@ -2,7 +2,7 @@
 
 这是一款命令行模式下运行的命令生成框架。目标是帮助渗透测试人员快速生成测试命令。并且记录所选择的参数，方便下次使用。
 
-![Example](assert/example_1.gif)
+![Example](assert/example_2.gif)
 
 # 特色
 
@@ -16,45 +16,53 @@
 # 安装方法
 
 ```
-git clone https://github.com/Elinpf/cmder
-cd cmder
-python3 setup.py install --user
-```
-
-或者
-
-```
 pip3 install cmder-elinpf
+```
+
+安装完成后需要获取数据库[cmder_db](https://github.com/Elinpf/cmder_db)
+
+```
+cmder --update
 ```
 
 
 # 使用方法
 
-```
-usage: cmder.py [-h] [-l path] {show,search,history,info,use,workspace} ...
+![](assert/app_help.png)
 
-Generate a pentesting command
+![](assert/app_use_help.png)
 
-positional arguments:
-  {show,search,history,info,use,workspace}
-                        sub-command help
-    show                show the latest table
-    search              Search tools in the database
-    history             Get history
-    info                show command information
-    use                 use command
-    workspace           workspace config
+直接输入`cmder`进行查找命令，使用`cmder use <index>` 选择命令执行。
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -l path, --link path  show the link file
-```
 
-# 自定义命令
+## 自定义命令
 
 运行后会创建`~/.cmder`目录，其中`db`是用户可以自定义添加的命令文件，可以自行添加目录或者按照软件中的目录路径添加命令文件。
 
 命令文件语法请参考[这里](https://github.com/Elinpf/cmder_db)。
+
+## 工作区
+
+工作区是为了方便在不同的项目中使用不同的参数环境，可以通过`cmder workspace -a <name>`添加工作区。`-c`进行切换。
+
+![](assert/app_workspace_help.png)
+
+
+## 自定义推荐
+
+`cmder`会自动记录上一次的输入参数作为第一推荐，另外数据库中会有对相应参数的推荐，同时也可以自定义推荐，例如：
+
+```bash
+cmder workspace -s DOMAIN backdoor.htb
+```
+
+这样就添加了一个其定义参数，在后面的使用中，同一工作区内，`DOMAIN`变量就会自动推荐`backdoor.htb`。
+
+查看所有自定义推荐：
+
+```bash
+cmder workspace -g all
+```
 
 # 灵感来源与命令来源
 
