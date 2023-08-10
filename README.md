@@ -71,3 +71,71 @@ cmder workspace -g all
 - https://github.com/ShutdownRepo/shellerator
 - https://book.hacktricks.xyz/
 - https://www.ired.team/offensive-security-experiments/offensive-security-cheetsheets
+
+# 已知BUG
+
+## Q1 NoneType
+
+```
+$ cmder
+[!] TypeError("'NoneType' object is not iterable")
+```
+
+这个问题是由于 `typer` 包的一个bug，对没有参数的命令会报错
+
+解决方法：
+
+1. 定位出现问题的位置
+
+```
+$ whereis cmder
+cmder: /usr/local/bin/cmder
+
+$vim /usr/local/bin/cmder
+注释掉关于 TyprError 的异常处理
+```
+
+重新运行cmder，会给出完整报错日志
+
+```
+Traceback (most recent call last):
+  File "/usr/local/bin/cmder", line 9, in <module>
+    main.app()
+  File "/usr/local/lib/python3.9/dist-packages/rich_typer/main.py", line 242, in __call__
+    return get_command(self)(*args, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/click/core.py", line 1128, in __call__
+    return self.main(*args, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/click/core.py", line 1053, in main
+    rv = self.invoke(ctx)
+  File "/usr/local/lib/python3.9/dist-packages/click/core.py", line 1637, in invoke
+    super().invoke(ctx)
+  File "/usr/local/lib/python3.9/dist-packages/click/core.py", line 1395, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "/usr/local/lib/python3.9/dist-packages/click/core.py", line 754, in invoke
+    return __callback(*args, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/typer/main.py", line 528, in wrapper
+    use_params[k] = convertors[k](v)
+  File "/usr/local/lib/python3.9/dist-packages/typer/main.py", line 501, in internal_convertor
+    for (convertor, arg) in zip(convertors, param_args)
+TypeError: 'NoneType' object is not iterable
+```
+
+2. 修改 typer 包的代码
+
+进入 `/usr/local/lib/python3.9/dist-packages/typer/main.py` 的第501行，修改为：
+
+```python
+def generate_tuple_convertor(
+    types: Sequence[Any],
+) -> Callable[[Tuple[Any, ...]], Tuple[Any, ...]]:
+    convertors = [determine_type_convertor(type_) for type_ in types]
+
+    def internal_convertor(param_args: Tuple[Any, ...]) -> Tuple[Any, ...]:
+        if not param_args:  # <--------- 加入这两行
+           return tuple()   #
+        return tuple(
+            convertor(arg) if convertor else arg
+            for (convertor, arg) in zip(convertors, param_args)
+        )
+    return internal_convertor
+```
